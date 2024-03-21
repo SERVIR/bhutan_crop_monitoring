@@ -42,10 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'WebApp.apps.WebappConfig',
     'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
     'import_export',
 ]
 
@@ -69,25 +65,8 @@ LOGIN_REDIRECT_URL = '/'
 
 # Additional configuration settings
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http"
-SOCIALACCOUNT_QUERY_EMAIL = True
-ACCOUNT_LOGOUT_ON_GET = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_EMAIL_REQUIRED = True
 APPEND_SLASH = False
 
-# Add google as a provider:
-
-SOCIALACCOUNT_PROVIDERS = {
-    'google': {
-        'SCOPE': [
-            'profile',
-            'email',
-        ],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
 
 ROOT_URLCONF = 'bhutan_crop_monitoring.urls'
 

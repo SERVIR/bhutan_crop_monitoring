@@ -5,11 +5,9 @@ channels:
 dependencies:
   - python=3.9
   - django=4.1
-  - django-allauth
   - django-import-export
   - netcdf4
   - shapely
-  - earthengine-api
   - beautifulsoup4
   - pip
   - pip:
