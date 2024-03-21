@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 import climateserv.api
-import ee
 import netCDF4 as netCDF4
 import numpy as np
 from django.http import JsonResponse
@@ -153,35 +152,6 @@ def get_timeseries_sqlite(request):
 
 
 # Get URL of Image Collection Layer form Google Earth Engine
-@csrf_exempt
-def get_gee_layer(request):
-    service_account = data['service_account']  # service account from data.json file
-    credentials = ee.ServiceAccountCredentials(service_account,
-                                               data['private_key_json'])  # private key from data.json file
-    ee.Initialize(credentials)
-    params = {'min': 258, 'max': 316, 'palette': ['1303ff', '42fff6', 'f3ff40', 'ff5d0f'], }
-    collection = ee.ImageCollection('NASA/GLDAS/V022/CLSM/G025/DA1D').filter(
-        ee.Filter.date('2010-06-01', '2010-06-02'))  # image collection from Google Earth Engine
-    image = collection.select('AvgSurfT_tavg')  # select the image from the collection
-    imgId = image.getMapId(params)
-    json_obj = {"url": imgId['tile_fetcher'].url_format}  # get the URL of the image
-    return JsonResponse(json_obj)
-
-
-# Get URL of User Asset Layer form Google Earth Engine
-@csrf_exempt
-def get_gee_user_layer(request):
-    service_account = data['service_account']  # service account from data.json file
-    credentials = ee.ServiceAccountCredentials(service_account,
-                                               data['private_key_json'])  # private key from data.json file
-    ee.Initialize(credentials)  # initialize the credentials
-    user_asset = ee.Image(
-        "projects/servir-sco-assets/assets/tmp_servir_cms/factors_t1/f2_pcp_x1k")  # user asset from Google Earth Engine
-    params = {'min': 1000, 'max': 3000, 'bands': ['b1'],
-              'palette': ['fcffe7', 'd2ffba', '70d7ff', '423fff'], }  # parameters for the layer
-    user_img = user_asset.getMapId(params)
-    json_obj = {"url": user_img['tile_fetcher'].url_format}  # get the URL of the image
-    return JsonResponse(json_obj)
 
 
 # Get stations list from the Data Model

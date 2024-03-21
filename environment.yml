@@ -11,5 +11,5 @@ dependencies:
   - beautifulsoup4
   - pip
   - pip:
-      - climateserv==0.0.24
+      - climateserv==1.0.5
 prefix: C:\ProgramData\Anaconda3\envs\bhutan_crop_monitoring
