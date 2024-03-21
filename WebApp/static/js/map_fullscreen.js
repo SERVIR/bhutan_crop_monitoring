@@ -7,97 +7,16 @@ let map;
 
 $(function () {
 // Initialize with map control with basemap and time slider
-    map = L.map('map3', {
-        zoomControl: true,
-        fullscreenControl: true,
-        timeDimension: true,
-        timeDimensionOptions: {
-            timeInterval: "2015-09-01/2015-09-03",
-            period: "PT1H",
-            currentTime: Date.parse("2015-09-01T00:00:00Z")
-        },
-        timeDimensionControl: true,
-        timeDimensionControlOptions: {
-            autoPlay: false,
-            loopButton: true,
-            timeSteps: 1,
-            playReverseButton: true,
-            limitSliders: true,
-            playerOptions: {
-                buffer: 0,
-                transitionTime: 250,
-                loop: true,
-            }
-        }, center: [42.35, -71.08], zoom: 3
+    map = L.map('map', {
+        zoomControl: true, fullscreenControl: true, center: [27.41016657183734, 90.44523404431789], zoom: 8
     });
     map.zoomControl.setPosition('topright');
-    osm.addTo(map);
-// Initialize the WMS layers
-    const chirpsTimeLayer = L.timeDimension.layer.wms(chirps, {
-        updateTimeDimension: true,
-    });
-// Variables for the WMS layers
-    const chirps_wms = 'https://thredds.servirglobal.net/thredds/wms/Agg/ucsb-chirps_global_0.05deg_daily.nc4';
-    const esi_wms = 'https://gis1.servirglobal.net/arcgis/rest/services/Global/ESI_4WK/MapServer';
-    const chirps_variable = 'precipitation_amount';
-    const style = 'boxfill/apcp_surface';
-    const colorscalerange = '0,5';
-// when the checkbox for 'CHIRPS Layer' is clicked, show/hide the layer
-    $("#chirps_full").change(function () {
-        if (this.checked) {
-            chirpsTimeLayer.addTo(map);
-            chirpsTimeLayer.bringToFront();
-            chirps_full_opacity.text(Math.round(opacity_chirps_full.val() * 100) + "%");
-            chirps_full_opacity.show();
-            opacity_chirps_full.show();
-            add_legend_fixed_size("chirps", chirps_wms, chirps_variable, colorscalerange, style, 'legend_full_chirps');
-
-
-        } else {
-            chirpsTimeLayer.remove();
-            chirps_full_opacity.hide();
-            opacity_chirps_full.hide();
-            remove_legend_fixed_size("chirps");
-
-        }
-    });
-// when the checkbox for 'ESI Layer' is clicked, show/hide the layer
-    $("#esi_full").change(function () {
-        if (this.checked) {
-            esi.addTo(map);
-            esi.bringToFront();
-            esi_full_opacity.text(Math.round(opacity_esi_full.val() * 100) + "%");
-            esi_full_opacity.show();
-            opacity_esi_full.show();
-            add_legend_fixed_size("esi", esi_wms, "", colorscalerange, style, 'legend_full_esi');
-
-        } else {
-            esi.remove();
-            esi_full_opacity.hide();
-            opacity_esi_full.hide();
-            remove_legend_fixed_size("esi");
-
-        }
-    });
-// when the opacity control for 'CHIRPS Layer' is selected, update the opacity
-    opacity_chirps_full.change(function () {
-        chirpsTimeLayer.setOpacity($(this).val());
-        chirps_full_opacity.text(Math.round($(this).val() * 100) + "%");
-    });
-// when the opacity control for 'ESI Layer' is selected, update the opacity
-    opacity_esi_full.change(function () {
-        esi.setOpacity($(this).val());
-        esi_full_opacity.text(Math.round($(this).val() * 100) + "%");
-    });
-
+    terrainLayer.addTo(map);
 
 // Add the Search Control to the map
     const search = new GeoSearch.GeoSearchControl({
-        provider: new GeoSearch.OpenStreetMapProvider(),
-        showMarker: false, // optional: true|false  - default true
-        showPopup: false,
-        position: 'topright',
-        autoClose: true,
+        provider: new GeoSearch.OpenStreetMapProvider(), showMarker: false, // optional: true|false  - default true
+        showPopup: false, position: 'topright', autoClose: true,
     });
     map.addControl(search);
     $(".leaflet-bar-timecontrol").css("margin-left", "50px");
@@ -145,10 +64,7 @@ add_basemap = function (map_name) {
 function add_legend_fixed_size(dataset, wms, variable, colorscalerange, palette, element) {
     if (variable === "") {
         $.ajax({
-            url: wms + "/legend?f=json",
-            type: "GET",
-            async: true,
-            crossDomain: true
+            url: wms + "/legend?f=json", type: "GET", async: true, crossDomain: true
         }).fail(function (jqXHR, textStatus, errorThrown) {
             console.warn(jqXHR + textStatus + errorThrown);
         }).done(function (data, _textStatus, _jqXHR) {
@@ -164,8 +80,7 @@ function add_legend_fixed_size(dataset, wms, variable, colorscalerange, palette,
         legend.onAdd = function () {
             const src = link;
             const div = L.DomUtil.create('div', 'info legend');
-            div.innerHTML +=
-                '<img src="' + src + '" alt="legend">';
+            div.innerHTML += '<img src="' + src + '" alt="legend">';
             div.id = "legend_" + dataset;
             div.className = "thredds-legend";
             return div;

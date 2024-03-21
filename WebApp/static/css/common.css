@@ -1,6 +1,6 @@
 /* styles common to multiple pages */
 .modal-title {
-    color: #4e73df !important;
+    color: #0D3309 !important;
     font-weight: 700 !important;
     font-size: 1rem;
     line-height: 1.2;
@@ -107,7 +107,7 @@ label {
 }
 
 #navbar_app_base {
-    background-color: #0c1a4e;
+    background-color: #0D3309;
 }
 
 #title_navbar {

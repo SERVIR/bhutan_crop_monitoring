@@ -1,10 +1,15 @@
 /* styles for base template page */
+
+.navbar-expand-lg .navbar-collapse{
+    flex-direction: row-reverse;
+}
+/**/
 #wrapper {
     min-height: calc(100vh - 50px);
 }
 
 #footer {
-    background-color: #0c1a4e;
+    background-color: #0D3309;
     height: 50px;
     position: relative;
 }

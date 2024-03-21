@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block title %}SERVIR AppTemplate - Home{% endblock %}
+{% block title %}Bhutan Crop Monitoring - Map{% endblock %}
 {% block script %}
     <!-- Leaflet-->
     <link rel="stylesheet"
@@ -33,8 +33,8 @@
             rel="stylesheet"
             href="{% static '/css/geosearch.css' %}"
     />
-
-    <link href="{% static '/css/full_map.css' %}" rel="stylesheet"/>
+<link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link href="{% static '/css/map.css' %}" rel="stylesheet"/>
 
     <script src="{% static '/js/geosearch.umd.js' %}"></script>
     <script src="{% static '/js/map_utils.js' %}"></script>
@@ -47,7 +47,7 @@
         <!-- Full Screen WMS map -->
         <!-- This template can be used when there is a need to visualize GEE layers in a full screen page. To make any updates, visit map_fullscreen.js -->
 
-        <div class="row">
+        <div >
                     <span
                             id="nav_opener"
                             onclick="openNav()">&#9776;</span>
@@ -184,20 +184,11 @@
                         </div>
                     </div>
                 </div>
-                <br>
-                <br>
-                <div class="m-auto w-75 text-center">
-                    <button type="button" class="btn btn-info" data-bs-toggle="modal"
-                            data-bs-target="#fullModal">
-                        Learn how to modify this page
-                    </button>
-                </div>
             </div>
-            <div id="map3" style="height:calc(100vh - 166px);">
+            <div id="map" style="height:calc(100vh - 166px);">
             </div>
             <script src="{% static '/js/map_fullscreen.js' %}"></script>
-            <link rel="stylesheet" href="{% static 'css/common.css' %}">
+            
         </div>
     </div>
-    {% include 'WebApp/map_fullscreen_about.html' %}
 {% endblock %}
