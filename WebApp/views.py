@@ -24,6 +24,9 @@ def map(request):
     return render(request, 'WebApp/map.html', context)
 
 
+def dashboard(request):
+    return render(request, 'WebApp/dashboard.html', {})
+
 def about(request):
     return render(request, 'WebApp/about.html', {})
 

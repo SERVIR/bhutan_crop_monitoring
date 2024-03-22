@@ -1,0 +1,65 @@
+{% extends "WebApp/app_base.html" %}
+
+{% load static %}
+
+{% block title %}Bhutan Crop Monitoring - Map{% endblock %}
+{% block script %}
+
+
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        .row {
+            margin-left: 0;
+        }
+    </style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid p-0  bg-white">
+        <div class="row row-sm">
+            <div class="col-sm-6 col-xl-3">
+                <img src="{% static 'images/annual-ndvi-chart.png' %}" style="max-width: 100%">
+            </div>
+            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
+                <img src="{% static 'images/precipitation.png' %}" style="max-width: 100%">
+            </div>
+            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
+                <img src="{% static 'images/soil-moisture.png' %}" style="max-width: 100%">
+            </div>
+            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
+                <img src="{% static 'images/temperature.png' %}" style="max-width: 100%">
+            </div>
+
+            <div class="col-xl-9 mg-t-20">
+                <div id="map"
+                     style="border:1px solid; min-height: 456px; height:100%; width:100%; display: flex; justify-content: center; align-items: center;">
+                    <p style="margin: 0;">Map will be here and have a sidebar similar to ClimateServ to query data which
+                        will result in a floating graph.</p>
+                </div>
+            </div>
+            <div class="col-sm-12  col-xl-3 mg-t-20">
+                <div class="row">
+                    <div class="col-sm-6  col-xl-12 mg-t-20">
+                        <img src="{% static 'images/rice-area.png' %}" style="max-width: 100%"/>
+                    </div>
+                    <div class="col-sm-6  col-xl-12 mg-t-20">
+                        <img src="{% static 'images/paddy-gain.png' %}" style="max-width: 100%"/>
+                    </div>
+                    <div class="col-sm-6  col-xl-12 mg-t-20">
+                        <img src="{% static 'images/paddy-loss.png' %}" style="max-width: 100%"/>
+                    </div>
+                    <div class="col-sm-6  col-xl-12 mg-t-20">
+                        <img src="{% static 'images/piechart.png' %}" style="max-width: 100%"/>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+{% endblock %}
