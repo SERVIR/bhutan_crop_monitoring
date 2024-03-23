@@ -4,6 +4,39 @@
 
 {% block title %}Bhutan Crop Monitoring - Map{% endblock %}
 {% block script %}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+          integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+            integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+    <script src="https://unpkg.com/esri-leaflet@3.0.8/dist/esri-leaflet.js"
+            integrity="sha512-E0DKVahIg0p1UHR2Kf9NX7x7TUewJb30mxkxEm2qOYTVJObgsAGpEol9F6iK6oefCbkJiA4/i6fnTHzM6H1kEA=="
+            crossorigin=""></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+    <script src="{% static '/js/L.Control.Opacity.js' %}"></script>
+    <link href="{% static '/css/L.Control.Opacity.css' %}" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/3.0.5/leaflet-search.src.js"
+            integrity="sha512-PDM7dpetuBcPp2fV/ZyCj9BGV8ybPchsrSzQqVZ3WoM8YcxEa2lAj0n1+4MCRzgsEROmVTwQXGw0IrXCCgH+/Q=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{% static '/js/leaflet-providers.js' %}"></script>
+
+    <script src="{% static 'js/utils.js' %}"></script>
+
+    <script src="{% static 'js/basemaps.js' %}"></script>
+    <script src="{% static '/js/geosearch.umd.js' %}"></script>
+    <link
+            rel="stylesheet"
+            href="{% static '/css/geosearch.css' %}"
+    />
 
 
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
@@ -11,7 +44,182 @@
         .row {
             margin-left: 0;
         }
+
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #ebebeb;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
+        }
+
+        .aspect-ratio-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .chart-holder {
+            height: 100%;
+        }
+
+
     </style>
+    <script>
+        function buildChart(id, title, subtitle, yAxisText, rangeDescription, seriesObject) {
+            Highcharts.chart(id, {
+
+                    title: {
+                        text: title,
+                        align: 'left'
+                    },
+
+                    subtitle: {
+                        text: subtitle,
+                        align: 'left'
+                    },
+
+                    yAxis: {
+                        title: {
+                            text: yAxisText
+                        }
+                    },
+
+                    xAxis: {
+                        accessibility: {
+                            rangeDescription: rangeDescription
+                        }
+                    },
+
+                    legend: {
+                        layout: 'vertical',
+                        align: 'right',
+                        verticalAlign: 'middle'
+                    },
+
+                    plotOptions: {
+                        series: {
+                            label: {
+                                connectorAllowed: false
+                            },
+                            pointStart: 2016,
+                            tooltip: {
+                                pointFormatter: function () {
+                                    return this.y + " " + yAxisText;
+
+                                }
+                            },
+                        }
+                    },
+
+                    series: [seriesObject],
+
+                    responsive: {
+                        rules: [{
+                            condition: {
+                                width: '100%',
+                            },
+                            chartOptions: {
+                                legend: {
+                                    layout: 'horizontal',
+                                    align: 'center',
+                                    verticalAlign: 'bottom'
+                                }
+                            }
+                        }]
+                    }
+
+                },
+                function (event) {
+                    this.series[0].hide();
+                    this.series[0].show();
+                }
+            );
+
+        }
+
+        $(function () {
+            // Initial call to set aspect ratio on page load
+            updateAspectRatio();
+            buildChart('annual_ndvi', 'Annual NDVI', 'Bumthang Dzongkhag 2016: 0.213', 'NDVI', 'Range: 2016 to 2022', {
+                name: 'NDVI',
+                data: [0.213, -1, 0.213, 0.256, -0.014, 0.018,
+                    0.199]
+            });
+            buildChart('annual_precipitation', 'Annual Precipitation', 'Bumthang Dzongkhag 2016: 48.010 mm', 'mm', 'Range: 2016 to 2022', {
+                name: 'Precipitation',
+                data: [48.01, 52.5, 50.5, 52, 73, 58.164,
+                    71]
+            });
+            buildChart('soil_moisture', 'Annual Soil Moisture', 'Bumthang Dzongkhag 2016: 922.956 mm', 'mm', 'Range: 2016 to 2022', {
+                name: 'Soil Moisture',
+                data: [922.956, 1044.206, 868.699, 1034.69, 1139.746, 1026.796,
+                    1203.78]
+            })
+            buildChart('temperature', 'Annual Temperature', 'Bumthang Dzongkhag 2016: 10.96 &deg;c', '&deg;c', 'Range: 2016 to 2022', {
+                name: 'Temperature',
+                data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
+                    10.945]
+            });
+
+            map = L.map('map', {
+                zoomControl: true, fullscreenControl: true, center: [27.41016657183734, 90.44523404431789], zoom: 8
+            });
+            map.zoomControl.setPosition('topright');
+            terrainLayer.addTo(map);
+
+// Add the Search Control to the map
+            const search = new GeoSearch.GeoSearchControl({
+                provider: new GeoSearch.OpenStreetMapProvider(), showMarker: false, // optional: true|false  - default true
+                showPopup: false, position: 'topright', autoClose: true,
+            });
+            map.addControl(search);
+            $(".leaflet-bar-timecontrol").css("margin-left", "50px");
+            $('.leaflet-bar-timecontrol').css('display', 'inline');
+
+        });
+
+        window.addEventListener('resize', updateAspectRatio);
+
+        function updateAspectRatio() {
+            var aspectRatio = 9 / 16; // 9:16 aspect ratio
+            var containers = document.querySelectorAll('.aspect-ratio-container');
+            containers.forEach(function (container) {
+                var containerWidth = container.offsetWidth;
+                var containerHeight = containerWidth * aspectRatio;
+                container.style.height = containerHeight + 'px';
+            });
+        }
+
+
+    </script>
 
 {% endblock %}
 
@@ -19,24 +227,23 @@
 
     <div class="container-fluid p-0  bg-white">
         <div class="row row-sm">
-            <div class="col-sm-6 col-xl-3">
-                <img src="{% static 'images/annual-ndvi-chart.png' %}" style="max-width: 100%">
+            <div class="col-sm-6 col-xl-3 aspect-ratio-container">
+                <div id="annual_ndvi" class="chart-holder"></div>
             </div>
-            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
-                <img src="{% static 'images/precipitation.png' %}" style="max-width: 100%">
+            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container">
+                <div id="annual_precipitation" class="chart-holder"></div>
             </div>
-            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
-                <img src="{% static 'images/soil-moisture.png' %}" style="max-width: 100%">
+            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container">
+                <div id="soil_moisture" class="chart-holder"></div>
             </div>
-            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0">
-                <img src="{% static 'images/temperature.png' %}" style="max-width: 100%">
+            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container">
+                <div id="temperature" class="chart-holder"></div>
             </div>
 
-            <div class="col-xl-9 mg-t-20">
+            <div class="col-xl-9 mg-t-20" style="padding-left: 0;">
                 <div id="map"
-                     style="border:1px solid; min-height: 456px; height:100%; width:100%; display: flex; justify-content: center; align-items: center;">
-                    <p style="margin: 0;">Map will be here and have a sidebar similar to ClimateServ to query data which
-                        will result in a floating graph.</p>
+                     style="min-height: 456px; height:100%; width:100%; display: flex; justify-content: center; align-items: center;">
+
                 </div>
             </div>
             <div class="col-sm-12  col-xl-3 mg-t-20">
