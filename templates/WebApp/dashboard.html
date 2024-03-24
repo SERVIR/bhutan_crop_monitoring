@@ -90,12 +90,89 @@
             height: 100%;
         }
 
+        #rice_area {
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            font-size: 0.7em;
+        }
+
+        #rice_area table {
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
 
     </style>
     <script>
-        function buildChart(id, title, subtitle, yAxisText, rangeDescription, seriesObject) {
-            Highcharts.chart(id, {
+        function buildPie() {
+            Highcharts.chart('pie_chart', {
+                chart: {
+                    type: 'pie'
+                },
+                title: {
+                    text: 'Rice area distribution in acres by Dzongkhag'
+                },
+                tooltip: {
+                    useHTML: true,
+                    headerFormat: '<table>',
+                    footerFormat: '</table>',
+                    pointFormatter: function () {
+                        var dataSum = 0,
+                            percentage;
 
+                        this.series.points.forEach(function (point) {
+                            dataSum += point.y;
+                        });
+
+                        percentage = ((this.y / dataSum) * 100).toFixed(2);
+
+                        return `<tr><th colspan="2"><b>${this.name}</b></th></tr>
+             <tr><th>Value:</th><td>${this.y} acres</td></tr>
+             <tr><th>Percent:</th><td>${percentage}%</td></tr>`
+                    }
+                },
+                series: [
+                    {
+                        name: 'Percentage',
+                        colorByPoint: true,
+                        data: [
+                            {
+                                name: 'District 1',
+                                y: 4100.123
+                            },
+                            {
+                                name: 'District 2',
+                                y: 3240.2
+                            },
+                            {
+                                name: 'District 3',
+                                y: 2345.12
+                            },
+                            {
+                                name: 'District 4',
+                                y: 1345.0
+                            },
+                            {
+                                name: 'District 5',
+                                y: 500.25
+                            },
+                            {
+                                name: 'District 6',
+                                y: 1.68
+                            }
+                        ]
+                    }
+                ]
+            });
+        }
+
+        function buildChart(id, title, subtitle, type, pointStart, yAxisText, rangeDescription, seriesObject, color) {
+            Highcharts.chart(id, {
+                    chart: {
+                        type: type
+                    },
+                    colors: [color],
                     title: {
                         text: title,
                         align: 'left'
@@ -129,7 +206,7 @@
                             label: {
                                 connectorAllowed: false
                             },
-                            pointStart: 2016,
+                            pointStart: pointStart,
                             tooltip: {
                                 pointFormatter: function () {
                                     return this.y + " " + yAxisText;
@@ -165,29 +242,91 @@
 
         }
 
+        // Function to create the table
+        function createTable(data) {
+            const tableContainer = document.getElementById('rice_area');
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+
+            // Create table header
+            const headerRow = document.createElement('tr');
+            const adminLevelHeader = document.createElement('th');
+            adminLevelHeader.textContent = data.admin_level;
+            headerRow.appendChild(adminLevelHeader);
+
+            data.data[0].values.forEach(entry => {
+                const yearHeader = document.createElement('th');
+                yearHeader.textContent = entry.year;
+                headerRow.appendChild(yearHeader);
+            });
+            thead.appendChild(headerRow);
+
+            // Create table body
+            data.data.forEach(item => {
+                const row = document.createElement('tr');
+                const adminLevelCell = document.createElement('td');
+                adminLevelCell.textContent = item.name;
+                row.appendChild(adminLevelCell);
+
+                item.values.forEach(entry => {
+                    const valueCell = document.createElement('td');
+                    valueCell.textContent = entry.value;
+                    row.appendChild(valueCell);
+                });
+
+                tbody.appendChild(row);
+            });
+
+            // Append header and body to table
+            table.appendChild(thead);
+            table.appendChild(tbody);
+
+            const h4 = document.createElement('h4');
+
+            h4.textContent = "Average rice area by " + data.admin_level;
+            tableContainer.appendChild(h4);
+            // Append table to container
+            tableContainer.appendChild(table);
+        }
+
         $(function () {
             // Initial call to set aspect ratio on page load
             updateAspectRatio();
-            buildChart('annual_ndvi', 'Annual NDVI', 'Bumthang Dzongkhag 2016: 0.213', 'NDVI', 'Range: 2016 to 2022', {
+            buildChart('annual_ndvi', 'Annual NDVI', 'Bumthang Dzongkhag 2016: 0.213', 'line', 2016, 'NDVI', 'Range: 2016 to 2022', {
                 name: 'NDVI',
                 data: [0.213, -1, 0.213, 0.256, -0.014, 0.018,
                     0.199]
-            });
-            buildChart('annual_precipitation', 'Annual Precipitation', 'Bumthang Dzongkhag 2016: 48.010 mm', 'mm', 'Range: 2016 to 2022', {
+            }, 'rgb(44, 175, 254)');
+            buildChart('annual_precipitation', 'Annual Precipitation', 'Bumthang Dzongkhag 2016: 48.010 mm', 'line', 2016, 'mm', 'Range: 2016 to 2022', {
                 name: 'Precipitation',
                 data: [48.01, 52.5, 50.5, 52, 73, 58.164,
                     71]
-            });
-            buildChart('soil_moisture', 'Annual Soil Moisture', 'Bumthang Dzongkhag 2016: 922.956 mm', 'mm', 'Range: 2016 to 2022', {
+            }, 'rgb(44, 175, 254)');
+            buildChart('soil_moisture', 'Annual Soil Moisture', 'Bumthang Dzongkhag 2016: 922.956 mm', 'line', 2016, 'mm', 'Range: 2016 to 2022', {
                 name: 'Soil Moisture',
                 data: [922.956, 1044.206, 868.699, 1034.69, 1139.746, 1026.796,
                     1203.78]
-            })
-            buildChart('temperature', 'Annual Temperature', 'Bumthang Dzongkhag 2016: 10.96 &deg;c', '&deg;c', 'Range: 2016 to 2022', {
+            }, 'rgb(44, 175, 254)');
+            buildChart('temperature', 'Annual Temperature', 'Bumthang Dzongkhag 2016: 10.96 &deg;c', 'line', 2016, '&deg;c', 'Range: 2016 to 2022', {
                 name: 'Temperature',
                 data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
                     10.945]
-            });
+            }, 'rgb(44, 175, 254)');
+
+            buildChart('paddy_gain', 'Paddy Gain', 'Bumthang Dzongkhag 2016: 10.96 &deg;c', 'column', 2017, '&deg;c', 'Range: 2016 to 2022', {
+                name: 'Paddy Gain',
+                data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
+                    10.945]
+            }, 'rgb(90,254,44)');
+
+            buildChart('paddy_loss', 'Paddy Loss', 'Bumthang Dzongkhag 2016: 10.96 &deg;c', 'column', 2017, '&deg;c', 'Range: 2016 to 2022', {
+                name: 'Paddy Loss',
+                data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
+                    10.945]
+            }, 'rgb(255,38,0)');
+
+            buildPie();
 
             map = L.map('map', {
                 zoomControl: true, fullscreenControl: true, center: [27.41016657183734, 90.44523404431789], zoom: 8
@@ -204,6 +343,88 @@
             $(".leaflet-bar-timecontrol").css("margin-left", "50px");
             $('.leaflet-bar-timecontrol').css('display', 'inline');
             window.dispatchEvent(new Event('resize'));
+
+            // Sample JSON object
+            const data = {
+                "admin_level": "Dzongkhag",
+                "data": [
+                    {
+                        "name": "District 1",
+                        "values": [
+                            {"year": 2016, "value": 100},
+                            {"year": 2017, "value": 150},
+                            {"year": 2018, "value": 100},
+                            {"year": 2019, "value": 150},
+                            {"year": 2020, "value": 100},
+                            {"year": 2021, "value": 150},
+                            {"year": 2022, "value": 200}
+                        ]
+                    },
+                    {
+                        "name": "District 2",
+                        "values": [
+                            {"year": 2016, "value": 100},
+                            {"year": 2017, "value": 150},
+                            {"year": 2018, "value": 100},
+                            {"year": 2019, "value": 150},
+                            {"year": 2020, "value": 120},
+                            {"year": 2021, "value": 180},
+                            {"year": 2022, "value": 220}
+                        ]
+                    },
+                    {
+                        "name": "District 3",
+                        "values": [
+                            {"year": 2016, "value": 100},
+                            {"year": 2017, "value": 150},
+                            {"year": 2018, "value": 100},
+                            {"year": 2019, "value": 150},
+                            {"year": 2020, "value": 100},
+                            {"year": 2021, "value": 150},
+                            {"year": 2022, "value": 200}
+                        ]
+                    },
+                    {
+                        "name": "District 4",
+                        "values": [
+                            {"year": 2016, "value": 100},
+                            {"year": 2017, "value": 150},
+                            {"year": 2018, "value": 100},
+                            {"year": 2019, "value": 150},
+                            {"year": 2020, "value": 120},
+                            {"year": 2021, "value": 180},
+                            {"year": 2022, "value": 220}
+                        ]
+                    }, {
+                        "name": "District 5",
+                        "values": [
+                            {"year": 2016, "value": 100},
+                            {"year": 2017, "value": 150},
+                            {"year": 2018, "value": 100},
+                            {"year": 2019, "value": 150},
+                            {"year": 2020, "value": 100},
+                            {"year": 2021, "value": 150},
+                            {"year": 2022, "value": 200}
+                        ]
+                    },
+                    {
+                        "name": "District 6",
+                        "values": [
+                            {"year": 2016, "value": 100},
+                            {"year": 2017, "value": 150},
+                            {"year": 2018, "value": 100},
+                            {"year": 2019, "value": 150},
+                            {"year": 2020, "value": 120},
+                            {"year": 2021, "value": 180},
+                            {"year": 2022, "value": 220}
+                        ]
+                    }
+                ]
+            };
+
+            // Call the function with your JSON data
+            createTable(data);
+
         });
 
         window.addEventListener('resize', updateAspectRatio);
@@ -248,17 +469,19 @@
             </div>
             <div class="col-sm-12  col-xl-3 mg-t-20">
                 <div class="row">
-                    <div class="col-sm-6  col-xl-12 mg-t-20">
-                        <img src="{% static 'images/rice-area.png' %}" style="max-width: 100%"/>
+                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container">
+                        <div id="rice_area" class="chart-holder">
+                        </div>
+
                     </div>
-                    <div class="col-sm-6  col-xl-12 mg-t-20">
-                        <img src="{% static 'images/paddy-gain.png' %}" style="max-width: 100%"/>
+                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container">
+                        <div id="paddy_gain" class="chart-holder"></div>
                     </div>
-                    <div class="col-sm-6  col-xl-12 mg-t-20">
-                        <img src="{% static 'images/paddy-loss.png' %}" style="max-width: 100%"/>
+                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container">
+                        <div id="paddy_loss" class="chart-holder"></div>
                     </div>
-                    <div class="col-sm-6  col-xl-12 mg-t-20">
-                        <img src="{% static 'images/piechart.png' %}" style="max-width: 100%"/>
+                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container">
+                        <div id="pie_chart" class="chart-holder"></div>
                     </div>
                 </div>
             </div>
