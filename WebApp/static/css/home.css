@@ -64,10 +64,10 @@
         padding: 20px;
     }
 
-    .intro_container .image {
-        width: 24%;
-        padding: 20px 0;
-    }
+    /*.intro_container .image {*/
+    /*    width: 24%;*/
+    /*    padding: 20px 0;*/
+    /*}*/
 
     .intro_container .image img {
         width: 200px

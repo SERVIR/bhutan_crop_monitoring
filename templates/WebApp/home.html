@@ -13,7 +13,6 @@
     <div class="align-items-center justify-content-between bg-white">
         <div style="position: relative;">
             <!-- Hero image in the home page -->
-            <!-- If there an image that represents the tool/organization, please update the src in the <img> below -->
             <div>
                 <img
                         class="img-fluid hero_style"
@@ -40,26 +39,33 @@
 
             <!-- Application Template Cards -->
             <!-- Looping through the list of cards to generate the interface that contains all the cards. This list can be updated in views.py -->
-
-            <div class="col-lg-12 mb-4 intro_container">
-                <div class="text" id="welcome_text">
-                    <p>
-                        Welcome to Bhutan Crop Monitoring, where Earth observation meets agricultural sustainability!
-                        Our
-                        platform harnesses the power of cutting-edge technology to empower decision-makers and farmers
-                        alike
-                        in tackling the pressing challenges of food security. Through the integration of Earth
-                        observation
-                        data and advanced geospatial analysis, we provide comprehensive insights into crop types,
-                        distribution, and health across Bhutan's diverse terrain. Whether you're a policymaker seeking
-                        to
-                        make informed decisions or a farmer striving to optimize crop management practices, Bhutan Crop
-                        Monitoring equips you with the tools and information you need to thrive in a rapidly changing
-                        world.
-                    </p>
-                </div>
-                <div class="image">
-                    <img src="{% static '/images/farmer.jpg' %} " alt="Farming with technology" id="dynamic-image">
+            <div class="products-div">
+                <div class="row">
+                    <div class="text col-lg-8 mb-4" id="welcome_text">
+                        <p>
+                            Welcome to Bhutan Crop Monitoring, where Earth observation meets agricultural
+                            sustainability!
+                            Our
+                            platform harnesses the power of cutting-edge technology to empower decision-makers and
+                            farmers
+                            alike
+                            in tackling the pressing challenges of food security. Through the integration of Earth
+                            observation
+                            data and advanced geospatial analysis, we provide comprehensive insights into crop types,
+                            distribution, and health across Bhutan's diverse terrain. Whether you're a policymaker
+                            seeking
+                            to
+                            make informed decisions or a farmer striving to optimize crop management practices, Bhutan
+                            Crop
+                            Monitoring equips you with the tools and information you need to thrive in a rapidly
+                            changing
+                            world.
+                        </p>
+                    </div>
+                    <div class="image col-lg-4 mb-4">
+                        <img src="{% static '/images/farmer.jpg' %} " alt="Farming with technology" id="highlight_image"
+                             class="mw-100">
+                    </div>
                 </div>
             </div>
             <div class="products-div">
@@ -71,11 +77,13 @@
                     </div>
                     <div class="col-lg-4 mb-4=">
                         <h3 class="product-title">Regional NDVI</h3>
-                        <img src="{% static '/images/ndvi_image.png' %}" alt="Regional Climate NDVI" class="product-image"/>
+                        <img src="{% static '/images/ndvi_image.png' %}" alt="Regional Climate NDVI"
+                             class="product-image"/>
                     </div>
                     <div class="col-lg-4 mb-4=">
                         <h3 class="product-title">Regional Climate Values</h3>
-                        <img src="{% static '/images/climate_values.jpg' %}" alt="Regional Climate Values" class="product-image" />
+                        <img src="{% static '/images/climate_values.jpg' %}" alt="Regional Climate Values"
+                             class="product-image"/>
                     </div>
                 </div>
             </div>
