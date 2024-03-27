@@ -1,40 +1,39 @@
 from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
-from WebApp.models import Station, Measurement, Organization
+from WebApp.models import Country, Dzongkhag, Gewog
 
 # Register the models to the admin site
 
-admin.site.site_header = "SERVIR Template App Administration"
+admin.site.site_header = "Crop Monitoring Administration"
 
 
-class MeasurementAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+
+@admin.register(Country)
+class CountryAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = (
-        'station', 'measurement_date', 'measurement_temp', 'measurement_precip')  # list of fields to display
-    list_filter = ('station__station_name',)  # filter by station name
-    search_fields = ['station__station_name', ]  # search by station name
-    date_hierarchy = 'measurement_date'  # filter by date
+        'country_id', 'country_name')  # list of fields to display
+    search_fields = ('country_name', )  # search by station name
 
 
-admin.site.register(Measurement, MeasurementAdmin)  # register the Measurement model
+
+@admin.register(Dzongkhag)
+class DzongkhagAdmin(admin.ModelAdmin):
+    list_display = ('dzongkhag_id', 'dzongkhag_name', 'country')
+    list_filter = ('country',)  # Filter by Country
+    search_fields = ('dzongkhag_name', 'country__country_name')  # Search by dzongkhag_name or Country
 
 
-class StationAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('station_id', 'station_name', 'station_location')  # list of fields to display
-    list_filter = ('station_organization__organization_name',
-                   'station_organization__organization_country')  # filter by organization name and country
-    search_fields = ['station_organization__organization_name', 'station_organization__organization_country',
-                     'station_organization__organization_city']  # search by organization name, country, and city
+@admin.register(Gewog)
+class GewogAdmin(admin.ModelAdmin):
+    list_display = ('gewog_id', 'gewog_name', 'get_dzongkhag_country', 'get_dzongkhag_name')
+    list_filter = ('dzongkhag__country', 'dzongkhag')  # Filter by country or Dzongkhag
+    search_fields = ('gewog_name', 'dzongkhag__dzongkhag_name', 'dzongkhag__country__country_name')  # Search by gewog_name, Dzongkhag, or Country
 
+    def get_dzongkhag_country(self, obj):
+        return obj.dzongkhag.country.country_name
+    get_dzongkhag_country.short_description = 'Country'  # Display name in admin
 
-admin.site.register(Station, StationAdmin)  # register the Station model to the admin site
-
-
-class OrganizationAdmin(ImportExportModelAdmin, admin.ModelAdmin):
-    list_display = ('organization_id', 'organization_name', 'organization_country')  # list of fields to display
-    list_filter = ('organization_country', 'organization_city')  # filter by country and city
-    search_fields = ['organization_name', 'organization_country',
-                     'organization_city']  # search by organization name, country, and city
-
-
-admin.site.register(Organization, OrganizationAdmin)  # register the Organization model to the admin site
+    def get_dzongkhag_name(self, obj):
+        return obj.dzongkhag.dzongkhag_name
+    get_dzongkhag_name.short_description = 'Dzongkhag'  # Display name in admin

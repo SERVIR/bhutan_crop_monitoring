@@ -4,7 +4,6 @@ from django.contrib import admin
 from django.urls import path
 
 import WebApp.views as views
-from WebApp import api_handlers
 
 urlpatterns = [
     path('', views.home, name='home'),

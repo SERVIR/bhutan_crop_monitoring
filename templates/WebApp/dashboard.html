@@ -28,6 +28,7 @@
             integrity="sha512-PDM7dpetuBcPp2fV/ZyCj9BGV8ybPchsrSzQqVZ3WoM8YcxEa2lAj0n1+4MCRzgsEROmVTwQXGw0IrXCCgH+/Q=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{% static '/js/leaflet-providers.js' %}"></script>
+    <script src="{% static 'js/boundary.js' %}"></script>
 
     <script src="{% static 'js/utils.js' %}"></script>
 
@@ -103,6 +104,15 @@
             margin-right: auto;
         }
 
+        #dropdownContainer {
+            position: relative;
+        }
+
+        #levelDropdown {
+            position: absolute;
+        {#top: 0;#} left: 100%; /* Position it to the right of the input */
+        }
+
     </style>
     <script>
         function buildPie() {
@@ -118,7 +128,7 @@
                     headerFormat: '<table>',
                     footerFormat: '</table>',
                     pointFormatter: function () {
-                        var dataSum = 0,
+                        let dataSum = 0,
                             percentage;
 
                         this.series.points.forEach(function (point) {
@@ -234,7 +244,7 @@
                     }
 
                 },
-                function (event) {
+                function () {
                     this.series[0].hide();
                     this.series[0].show();
                 }
@@ -334,12 +344,16 @@
             map.zoomControl.setPosition('topright');
             terrainLayer.addTo(map);
 
-// Add the Search Control to the map
+            // Add the Search Control to the map
             const search = new GeoSearch.GeoSearchControl({
                 provider: new GeoSearch.OpenStreetMapProvider(), showMarker: false, // optional: true|false  - default true
                 showPopup: false, position: 'topright', autoClose: true,
             });
             map.addControl(search);
+            var countryGeometry = {{ country_geometry|safe }}; // Assuming country_geometry is a GeoJSON string
+
+            // Create a GeoJSON layer and add it to the map
+            L.geoJSON(countryGeometry).addTo(map);
             $(".leaflet-bar-timecontrol").css("margin-left", "50px");
             $('.leaflet-bar-timecontrol').css('display', 'inline');
             window.dispatchEvent(new Event('resize'));
@@ -424,6 +438,7 @@
 
             // Call the function with your JSON data
             createTable(data);
+            setupMenu();
 
         });
 
@@ -439,6 +454,231 @@
             });
         }
 
+        const levels = {
+            country: ["Bhutan"],
+            dzongkhag: [
+                "All Dzongkhags",
+                "Bumthang",
+                "Chukha",
+                "Dagana",
+                "Gasa",
+                "Haa",
+                "Lhuentse",
+                "Mongar",
+                "Paro",
+                "Pemagatshel",
+                "Punakha",
+                "Samdrup Jongkhar",
+                "Samtse",
+                "Sarpang",
+                "Thimphu",
+                "Trashigang",
+                "Trashiyangtse",
+                "Trongsa",
+                "Tsirang",
+                "Wangdue Phodrang",
+                "Zhemgang"
+            ], // Replace with actual Dzongkhags of Bhutan
+            gewog: ["walla", "whalla", "bing", "bang"], // Replace with actual Gewogs of Bhutan
+        };
+
+        let selectedValue = "Bhutan"; // Variable to store selected value
+
+        function handleChange() {
+            selectedValue = document.getElementById("levelSelect").value;
+            const dropdownContainer = document.getElementById("dropdownContainer");
+
+            if (selectedValue === "country") {
+                dropdownContainer.innerHTML = `<input type="text" style="width:1px; visibility: hidden;">
+                                                <select id="levelDropdown"><option>Bhutan</option></select>`; // Clear dropdown
+            } else {
+                const options = levels[selectedValue].map(option => `<option>${option}</option>`).join('');
+                dropdownContainer.innerHTML = `<input type="text" id="filterInput" onkeyup="filterDropdown()" onfocus="openDropdown()" placeholder="Search...">
+                                                  <select id="levelDropdown" onchange="updateFilter();" onclick="updateFilter();">${options}</select> `;
+
+            }
+        }
+
+        function updateFilter() {
+            const dropdown = document.getElementById("levelDropdown");
+            const selectedOption = dropdown.options[dropdown.selectedIndex].textContent;
+            document.getElementById("filterInput").value = selectedOption;
+            closeDropdown();
+        }
+
+        function filterDropdown() {
+            const input = document.getElementById("filterInput").value.toUpperCase();
+            const dropdown = document.getElementById("levelDropdown");
+            const options = dropdown.getElementsByTagName("option");
+            let closestMatch = "";
+
+            for (let i = 0; i < options.length; i++) {
+                const text = options[i].textContent.toUpperCase();
+                if (text.indexOf(input) > -1) {
+                    options[i].style.display = "";
+                    if (!closestMatch) {
+                        closestMatch = options[i].textContent;
+                    }
+                } else {
+                    options[i].style.display = "none";
+                }
+            }
+
+            // Update selected value to the closest match
+            if (closestMatch && !options.namedItem(selectedValue)) {
+                dropdown.value = closestMatch;
+            }
+        }
+
+        function openDropdown() {
+            const dropdown = document.getElementById("levelDropdown");
+            dropdown.size = dropdown.options.length;
+            dropdown.style.position = "absolute"; // Position dropdown absolutely
+        }
+
+        function closeDropdown() {
+            const dropdown = document.getElementById("levelDropdown");
+            dropdown.size = 1;
+            dropdown.style.position = ""; // Reset position
+        }
+
+        function filterOptions(optionsID, filterID) {
+
+            var input, filter, ul, li, a, i;
+            input = document.getElementById(filterID);
+            filter = input.value.toUpperCase();
+            ul = document.getElementById(optionsID);
+            li = ul.getElementsByTagName("li");
+            for (i = 1; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+
+        function addFilterBox(optionsID, filterID) {
+            var filterInput = document.createElement("input");
+            filterInput.setAttribute("class", "form-control");
+            filterInput.setAttribute("type", "text");
+            filterInput.setAttribute("id", filterID);
+            filterInput.setAttribute("onkeyup", "filterOptions('" + optionsID + "','" + filterID + "')");
+            filterInput.setAttribute("placeholder", "Search...");
+            var filterLi = document.createElement("li");
+            filterLi.appendChild(filterInput);
+            document.getElementById(optionsID).appendChild(filterLi);
+        }
+
+        function loadGewogs(which) {
+            console.log("will add Gewogs for: " + which);
+            document.getElementById("gewogOptions").innerHTML = "";
+            addFilterBox("gewogOptions", "gewogsFilter")
+
+            addOptions(["All Gewogs", ...(getGewogs(which))], "gewogOptions", "gewogsFilter", 'gewog');
+        }
+
+        function getGewogs(dzongkha) {
+            let country = $("#selectedCountry").text();
+            if (boundary["Countries"][country][dzongkha]) {
+                return boundary["Countries"][country][dzongkha];
+            } else {
+                return [];
+            }
+        }
+
+        function loadDzongkhags(country) {
+            // Clear the previous options
+            document.getElementById("dzongkhagOptions").innerHTML = "";
+            addFilterBox("dzongkhagOptions", "dzongkhagFilter")
+
+            addOptions(["All Dzongkhags", ...(getDzongkhags(country))], "dzongkhagOptions", "dzongkhagFilter");
+        }
+
+        function getDzongkhags(country) {
+            if (boundary["Countries"][country]) {
+                return Object.keys(boundary["Countries"][country]);
+            } else {
+                return [];
+            }
+        }
+
+        function addOptions(options, dropdownID, filterID, isGewog) {
+            console.log("isGewog: " + isGewog)
+            const gewog = isGewog ? "Gewog" : "";
+            var ul = document.getElementById(dropdownID);
+            options.forEach(function (option) {
+                var li = document.createElement("li");
+                var a = document.createElement("a");
+                a.setAttribute("href", "#");
+                a.setAttribute("class", "dropdown-item");
+                a.setAttribute("onclick", "select" + gewog + "Option('" + option + "')");
+                a.textContent = option;
+                li.appendChild(a);
+                ul.appendChild(li);
+            });
+        }
+
+        function selectGewogOption(option) {
+            // Update the label of the second dropdown
+            document.getElementById("selectGewog").innerHTML = option;
+            $("#gewogsFilter").val('');
+            filterOptions('gewogOptions', 'gewogsFilter');
+        }
+
+        function selectOption(option) {
+            // Update the label of the second dropdown
+            document.getElementById("selectDzongkhag").innerHTML = option;
+            if (option.toLowerCase() === "all dzongkhags") {
+                $("#gewoglist").hide();
+            } else {
+                loadGewogs(option);
+                document.getElementById("selectGewog").innerHTML = "All Gewogs";
+                $("#gewoglist").show();
+            }
+            $("#dzongkhagFilter").val('');
+            filterOptions('dzongkhagOptions', 'dzongkhagFilter');
+        }
+
+        function setupMenu() {
+            // Get the button element
+            var selectedCountryBtn = document.getElementById("selectedCountry");
+            // Get the ul element
+            var countryList = document.getElementById("countryList");
+
+            // Check the number of countries
+            var countryCount = Object.keys(boundary["Countries"]).length;
+
+            // If there's only one country, set the button text to that country's name
+            if (countryCount === 1) {
+                var countryName = Object.keys(boundary["Countries"])[0];
+                selectedCountryBtn.textContent = countryName;
+                $("#selectedCountry").removeClass("dropdown-toggle");
+                $("#selectedCountry").removeAttr("data-bs-toggle");
+                loadDzongkhags(countryName);
+            } else {
+                // If there are multiple countries, set the button text to "Select Country"
+                selectedCountryBtn.textContent = "Select Country";
+
+                // Add a list of countries sorted in alphabetical order
+                var countries = Object.keys(boundary["Countries"]).sort();
+                countries.forEach(function (country) {
+                    var li = document.createElement("li");
+                    var a = document.createElement("a");
+                    a.setAttribute("href", "#");
+                    a.setAttribute("class", "dropdown-item");
+                    a.textContent = country;
+                    li.appendChild(a);
+                    countryList.appendChild(li);
+                });
+                $("#selectedCountry").addClass("dropdown-toggle");
+                $("#selectedCountry").attr("data-bs-toggle", "dropdown")
+                $(countryList).removeClass("display");
+
+            }
+        }
+
 
     </script>
 
@@ -447,6 +687,36 @@
 {% block content %}
 
     <div class="container-fluid p-0  bg-white">
+        <div class="row" style="z-index: 1000; position: relative;">
+            <div class="col-12 d-flex justify-content-center">
+                <div class="row row-sm justify-content-center align-items-center"
+                     style="z-index: 100; position: relative;">
+                    <div class="dropdown col">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                id="selectedCountry">
+                            <span class="caret"></span></button>
+                        <ul id="countryList" class="dropdown-menu" aria-labelledby="selectedCountry"></ul>
+                    </div>
+                    <div class="dropdown col">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                id="selectDzongkhag">All Dzongkhags
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="dzongkhagOptions">
+
+                        </ul>
+                    </div>
+                    <div class="dropdown col" id="gewoglist" style="display: none;">
+                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                id="selectGewog">All Gewogs
+                            <span class="caret"></span></button>
+                        <ul class="dropdown-menu" id="gewogOptions">
+
+                            <!-- Options will be dynamically populated here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row row-sm">
             <div class="col-sm-6 col-xl-3 aspect-ratio-container">
                 <div id="annual_ndvi" class="chart-holder"></div>

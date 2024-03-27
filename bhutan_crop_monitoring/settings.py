@@ -143,3 +143,5 @@ STATIC_ROOT = os.path.join(str(BASE_DIR), 'staticfiles')
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# GDAL_LIBRARY_PATH = 'C:\\ProgramData\\anaconda3\\envs\\bhutan_crop_monitoring2\\Library\\bin\\gdal.dll'

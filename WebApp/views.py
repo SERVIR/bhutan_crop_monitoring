@@ -1,9 +1,11 @@
 import json
 from pathlib import Path
+import geopandas as gpd
 
 from django.shortcuts import render
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
+from WebApp.models import Gewog, Dzongkhag, Country
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
@@ -25,7 +27,19 @@ def map(request):
 
 
 def dashboard(request):
-    return render(request, 'WebApp/dashboard.html', {})
+    try:
+        country = Country.objects.get(country_id='BT')
+        country_geometry = country.country_geometry
+    except Country.DoesNotExist:
+        # Handle the case where the specified country_id does not exist
+        country_geometry = None
+
+        # Pass the country_geometry in the context
+    context = {
+        'country_geometry': country_geometry
+    }
+
+    return render(request, 'WebApp/dashboard.html', context)
 
 def about(request):
     return render(request, 'WebApp/about.html', {})

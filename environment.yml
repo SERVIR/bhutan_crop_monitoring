@@ -6,10 +6,11 @@ dependencies:
   - python=3.9
   - django=4.1
   - django-import-export
+  - gdal
   - netcdf4
   - shapely
   - beautifulsoup4
   - pip
   - pip:
       - climateserv==1.0.5
-prefix: C:\ProgramData\Anaconda3\envs\bhutan_crop_monitoring
+prefix: C:\ProgramData\Anaconda3\envs\bhutan_crop_monitoring2

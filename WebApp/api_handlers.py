@@ -13,9 +13,6 @@ from django.views.decorators.csrf import csrf_exempt
 from shapely.errors import ShapelyDeprecationWarning
 from shapely.geometry import Polygon
 
-from WebApp.models import Measurement
-from WebApp.utils import get_stations
-
 warnings.filterwarnings("ignore", category=ShapelyDeprecationWarning)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -118,61 +115,61 @@ def get_timeseries_climateserv(request):
 
 
 # Get the time series data from the SQLite database
-@csrf_exempt
-def get_timeseries_sqlite(request):
-    ts_plot_temp = []
-    ts_plot_precip = []
-    json_obj = {}
-    try:
-        station = request.POST["station"]  # Get the station name from the request
-        startdate = request.POST["startdate"]  # Get the start date from the request
-        enddate = request.POST["enddate"]  # Get the end date from the request
-        print(startdate)
-        print(station)
-        print(enddate)
-        if station != "default":
-            measurement_rows = Measurement.objects.all().filter(measurement_date__range=[startdate,enddate]).filter(station__station_name=station).only("measurement_date",
-                                                                                   "measurement_temp",
-                                                                                   "measurement_precip")[:10]
-            print(measurement_rows)
-            for row in measurement_rows:
-                print(row)
-                dt = row.measurement_date
-                time_stamp = calendar.timegm(dt.timetuple()) * 1000
-                val = row.measurement_temp
-                ts_plot_temp.append([time_stamp, float(val)])  # Append the temperature data to the list
-                ts_plot_precip.append([time_stamp, float(row.measurement_precip)])
-
-            ts_plot_temp.sort()
-            json_obj["plot_temp"] = ts_plot_temp  # Add the temperature data to the json object
-            json_obj["plot_precip"] = ts_plot_precip  # Add the precipitation data to the json object
-    except Exception as e:
-        print(e)
-    return JsonResponse(json_obj)
+# @csrf_exempt
+# def get_timeseries_sqlite(request):
+#     ts_plot_temp = []
+#     ts_plot_precip = []
+#     json_obj = {}
+#     try:
+#         station = request.POST["station"]  # Get the station name from the request
+#         startdate = request.POST["startdate"]  # Get the start date from the request
+#         enddate = request.POST["enddate"]  # Get the end date from the request
+#         print(startdate)
+#         print(station)
+#         print(enddate)
+#         if station != "default":
+#             measurement_rows = Measurement.objects.all().filter(measurement_date__range=[startdate,enddate]).filter(station__station_name=station).only("measurement_date",
+#                                                                                    "measurement_temp",
+#                                                                                    "measurement_precip")[:10]
+#             print(measurement_rows)
+#             for row in measurement_rows:
+#                 print(row)
+#                 dt = row.measurement_date
+#                 time_stamp = calendar.timegm(dt.timetuple()) * 1000
+#                 val = row.measurement_temp
+#                 ts_plot_temp.append([time_stamp, float(val)])  # Append the temperature data to the list
+#                 ts_plot_precip.append([time_stamp, float(row.measurement_precip)])
+#
+#             ts_plot_temp.sort()
+#             json_obj["plot_temp"] = ts_plot_temp  # Add the temperature data to the json object
+#             json_obj["plot_precip"] = ts_plot_precip  # Add the precipitation data to the json object
+#     except Exception as e:
+#         print(e)
+#     return JsonResponse(json_obj)
 
 
 # Get URL of Image Collection Layer form Google Earth Engine
 
 
 # Get stations list from the Data Model
-@csrf_exempt
-def stations(request):
-    return JsonResponse(get_stations())
+# @csrf_exempt
+# def stations(request):
+#     return JsonResponse(get_stations())
 
 
-def get_measurements(request):
-    obj = Measurement.objects.all().filter(measurement_date__range=[request.POST["startdate"],request.POST["enddate"]]).filter(station__station_name=request.POST["station"]).values("station__station_name",
-                                                                                         "measurement_date","measurement_precip",
-                                                                                         "measurement_temp")
-    json_obj = {}
-    resullt = []
-    print(obj)
-    for r in obj:
-        temp = r["measurement_temp"]
-        date=r["measurement_date"]
-        precip = r["measurement_precip"]
-        station = r["station__station_name"]
-        resullt.append({"station": station, "date":date,"temp": temp, "precip": precip})
-    print(resullt)
-    json_obj["data"] = resullt
-    return JsonResponse(json_obj)
+# def get_measurements(request):
+#     obj = Measurement.objects.all().filter(measurement_date__range=[request.POST["startdate"],request.POST["enddate"]]).filter(station__station_name=request.POST["station"]).values("station__station_name",
+#                                                                                          "measurement_date","measurement_precip",
+#                                                                                          "measurement_temp")
+#     json_obj = {}
+#     resullt = []
+#     print(obj)
+#     for r in obj:
+#         temp = r["measurement_temp"]
+#         date=r["measurement_date"]
+#         precip = r["measurement_precip"]
+#         station = r["station__station_name"]
+#         resullt.append({"station": station, "date":date,"temp": temp, "precip": precip})
+#     print(resullt)
+#     json_obj["data"] = resullt
+#     return JsonResponse(json_obj)
