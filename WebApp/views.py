@@ -30,13 +30,27 @@ def dashboard(request):
     try:
         country = Country.objects.get(country_id='BT')
         country_geometry = country.country_geometry
+
+        # Query all Dzongkhags related to the specified country
+        dzongkhags = Dzongkhag.objects.filter(country='BT')
+
+        # # Extract geometries from Dzongkhags
+        # dzongkhag_geometries = [dzongkhag.dzongkhag_geometry for dzongkhag in dzongkhags]
+        dzongkhag_data = []
+        for dzongkhag in dzongkhags:
+            dzongkhag_data.append({
+                'id': dzongkhag.dzongkhag_id,
+                'name': dzongkhag.dzongkhag_name,
+                'geometry': dzongkhag.dzongkhag_geometry,
+            })
+
     except Country.DoesNotExist:
         # Handle the case where the specified country_id does not exist
         country_geometry = None
 
         # Pass the country_geometry in the context
     context = {
-        'country_geometry': country_geometry
+        'dzongkhags': dzongkhag_data
     }
 
     return render(request, 'WebApp/dashboard.html', context)

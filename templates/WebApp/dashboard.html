@@ -300,6 +300,10 @@
             tableContainer.appendChild(table);
         }
 
+        function loadGewogs(id) {
+            console.log("Load Gewogs for: " + id);
+        }
+
         $(function () {
             // Initial call to set aspect ratio on page load
             updateAspectRatio();
@@ -350,10 +354,53 @@
                 showPopup: false, position: 'topright', autoClose: true,
             });
             map.addControl(search);
-            var countryGeometry = {{ country_geometry|safe }}; // Assuming country_geometry is a GeoJSON string
+            var dzongkhagData = {{ dzongkhags|safe }}; // Assuming dzongkhags is a list of Dzongkhag data
 
-            // Create a GeoJSON layer and add it to the map
-            L.geoJSON(countryGeometry).addTo(map);
+// Create an empty array to hold the GeoJSON features
+            var dzongkhagFeatures = [];
+
+// Iterate over the Dzongkhag data
+            dzongkhagData.forEach(function (dzongkhag) {
+                // Create a GeoJSON feature object
+                var feature = {
+                    "type": "Feature",
+                    "properties": {
+                        "id": dzongkhag.id,
+                        "name": dzongkhag.name
+                    },
+                    "geometry": dzongkhag.geometry
+                };
+
+                // Add the feature to the array
+                dzongkhagFeatures.push(feature);
+            });
+
+// Create a GeoJSON layer with hover and click events
+            var dzongkhagLayer = L.geoJSON(dzongkhagFeatures, {
+                onEachFeature: function (feature, layer) {
+                    // Bind a popup to the layer with the feature name
+                    layer.bindPopup(feature.properties.name);
+
+                    // Add a mouseover event listener to show the popup when hovering over the layer
+                    layer.on('mouseover', function (e) {
+                        this.openPopup();
+                    });
+
+                    // Add a mouseout event listener to hide the popup when moving away from the layer
+                    layer.on('mouseout', function (e) {
+                        this.closePopup();
+                    });
+
+                    // Add a click event listener to load Gewogs when clicking the layer
+                    layer.on('click', function (e) {
+                        // Call the loadGewogs function passing the ID from the clicked feature
+                        loadGewogs(feature.properties.id);
+                    });
+                }
+            }).addTo(map);
+
+// Fit the map to the extent of the GeoJSON layer
+            map.fitBounds(dzongkhagLayer.getBounds());
             $(".leaflet-bar-timecontrol").css("margin-left", "50px");
             $('.leaflet-bar-timecontrol').css('display', 'inline');
             window.dispatchEvent(new Event('resize'));
