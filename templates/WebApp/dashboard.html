@@ -9,6 +9,9 @@
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css" rel="stylesheet">
 
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css"/>
@@ -137,11 +140,49 @@
             pointer-events: auto;
         }
 
+        .dropdown-menu {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .year-slider {
+            height: 100px; /* Set a fixed height for the slider */
+            width: 90%
+        }
+
+        /* Customize styles for pips */
+        .year-slider .noUi-value {
+            font-size: 12px; /* Adjust font size */
+            color: #333; /* Set color */
+        }
+
+        .pie-slider {
+            z-index: 1002;
+            border-top: solid 1px #0D3309;
+            border-left: solid 1px #0D3309;
+            border-right: solid 1px #0D3309;
+            right: 16px;
+            padding: 0 0 0 16px;
+        }
+
+        .noUi-touch-area {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(to bottom, #0D3309, rgb(13 51 9 / 65%));
+        }
+
+        .noUi-touch-area:hover, .noUi-touch-area:active {
+            background: #0D3309;
+
+        }
+
 
     </style>
     <script>
+        let piechart;
+
         function buildPie() {
-            Highcharts.chart('pie_chart', {
+            piechart = Highcharts.chart('pie_chart', {
                 chart: {
                     type: 'pie'
                 },
@@ -523,8 +564,256 @@
             // Call the function with your JSON data
             createTable(data);
             setupMenu();
+            makeSlider();
 
         });
+
+        function makeSlider() {
+            // Initialize noUiSlider
+            var yearSlider = document.getElementById('yearSlider');
+            noUiSlider.create(yearSlider, {
+                start: [2016], // Initial value
+                step: 1,
+                range: {
+                    'min': [2016],
+                    'max': [2022]
+                },
+                pips: {
+                    mode: 'steps',
+                    density: -1
+                }
+            });
+
+// Listen for change event
+            yearSlider.noUiSlider.on('update', function (values, handle) {
+                // Output the selected year to console
+                console.log('Selected year:', values[handle]);
+                
+                setPieYear(parseInt(values[handle]));
+                
+            });
+        }
+
+        function setPieYear(which) {
+            console.log(which);
+
+            var pieData = [{
+                "year": 2016,
+                data: [
+                    {
+                        name: 'District 1',
+                        y: 4100.123
+                    },
+                    {
+                        name: 'District 2',
+                        y: 3240.2
+                    },
+                    {
+                        name: 'District 3',
+                        y: 2345.12
+                    },
+                    {
+                        name: 'District 4',
+                        y: 1345.0
+                    },
+                    {
+                        name: 'District 5',
+                        y: 500.25
+                    },
+                    {
+                        name: 'District 6',
+                        y: 1.68
+                    }
+                ]
+            },
+                {
+                    "year": 2017,
+                    data: [
+                        {
+                            name: 'District 1',
+                            y: 400.123
+                        },
+                        {
+                            name: 'District 2',
+                            y: 1240.2
+                        },
+                        {
+                            name: 'District 3',
+                            y: 4345.12
+                        },
+                        {
+                            name: 'District 4',
+                            y: 1345.0
+                        },
+                        {
+                            name: 'District 5',
+                            y: 500.25
+                        },
+                        {
+                            name: 'District 6',
+                            y: 1.68
+                        }
+                    ]
+                },
+                {
+                    "year": 2018,
+                    data: [
+                        {
+                            name: 'District 1',
+                            y: 4400.123
+                        },
+                        {
+                            name: 'District 2',
+                            y: 3440.2
+                        },
+                        {
+                            name: 'District 3',
+                            y: 2445.12
+                        },
+                        {
+                            name: 'District 4',
+                            y: 1445.0
+                        },
+                        {
+                            name: 'District 5',
+                            y: 5400.25
+                        },
+                        {
+                            name: 'District 6',
+                            y: 14.68
+                        }
+                    ]
+                },
+                {
+                    "year": 2019,
+                    data: [
+                        {
+                            name: 'District 1',
+                            y: 2300.123
+                        },
+                        {
+                            name: 'District 2',
+                            y: 3740.2
+                        },
+                        {
+                            name: 'District 3',
+                            y: 2945.12
+                        },
+                        {
+                            name: 'District 4',
+                            y: 1945.0
+                        },
+                        {
+                            name: 'District 5',
+                            y: 590.25
+                        },
+                        {
+                            name: 'District 6',
+                            y: 19.68
+                        }
+                    ]
+                },
+                {
+                    "year": 2020,
+                    data: [
+                        {
+                            name: 'District 1',
+                            y: 3100.123
+                        },
+                        {
+                            name: 'District 2',
+                            y: 3240.2
+                        },
+                        {
+                            name: 'District 3',
+                            y: 2345.12
+                        },
+                        {
+                            name: 'District 4',
+                            y: 2345.0
+                        },
+                        {
+                            name: 'District 5',
+                            y: 2300.25
+                        },
+                        {
+                            name: 'District 6',
+                            y: 122.68
+                        }
+                    ]
+                },
+                {
+                    "year": 2021,
+                    data: [
+                        {
+                            name: 'District 1',
+                            y: 3100.123
+                        },
+                        {
+                            name: 'District 2',
+                            y: 1240.2
+                        },
+                        {
+                            name: 'District 3',
+                            y: 3345.12
+                        },
+                        {
+                            name: 'District 4',
+                            y: 2345.0
+                        },
+                        {
+                            name: 'District 5',
+                            y: 1500.25
+                        },
+                        {
+                            name: 'District 6',
+                            y: 133.68
+                        }
+                    ]
+                },
+                {
+                    "year": 2022,
+                    data: [
+                        {
+                            name: 'District 1',
+                            y: 1100.123
+                        },
+                        {
+                            name: 'District 2',
+                            y: 3240.2
+                        },
+                        {
+                            name: 'District 3',
+                            y: 1345.12
+                        },
+                        {
+                            name: 'District 4',
+                            y: 3345.0
+                        },
+                        {
+                            name: 'District 5',
+                            y: 50.25
+                        },
+                        {
+                            name: 'District 6',
+                            y: 231.68
+                        }
+                    ]
+                }];
+
+            var newData = null;
+
+            // Loop through pieData array to find the object with matching year
+            for (var i = 0; i < pieData.length; i++) {
+                if (pieData[i].year === which) {
+                    newData = pieData[i].data;
+                    break; // Stop loop when matching year is found
+                }
+            }
+
+            piechart.series[0].setData(newData);
+
+        }
 
         window.addEventListener('resize', updateAspectRatio);
 
@@ -811,7 +1100,7 @@
             <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container" style="z-index: 1008;">
                 <div id="soil_moisture" class="chart-holder"></div>
             </div>
-            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container"  style="z-index: 1007;">
+            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container" style="z-index: 1007;">
                 <div id="temperature" class="chart-holder"></div>
             </div>
 
@@ -823,19 +1112,26 @@
             </div>
             <div class="col-sm-12  col-xl-3 mg-t-20">
                 <div class="row">
-                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container"  style="z-index: 1005;">
+                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container" style="z-index: 1005;">
                         <div id="rice_area" class="chart-holder">
                         </div>
 
                     </div>
-                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container"  style="z-index: 1004;">
+                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container" style="z-index: 1004;">
                         <div id="paddy_gain" class="chart-holder"></div>
                     </div>
                     <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container" style="z-index: 1003;">
                         <div id="paddy_loss" class="chart-holder"></div>
                     </div>
-                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container" style="z-index: 1002;">
-                        <div id="pie_chart" class="chart-holder"></div>
+
+
+                    <div class="col-sm-6  col-xl-12 mg-t-20 pie-slider"
+                         style="z-index: 1002; border-bottom: solid 1px; border-left: solid 1px; border-right: solid 1px;">
+                        <div class="form-group year-slider">
+                            <label for="yearSlider">Select Year:</label>
+                            <div id="yearSlider"></div>
+                        </div>
+                        <div id="pie_chart"></div>
                     </div>
                 </div>
             </div>
