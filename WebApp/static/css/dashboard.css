@@ -106,6 +106,7 @@
 .dropdown-menu {
     max-height: 200px;
     overflow-y: auto;
+    z-index: 1050;
 }
 
 .year-slider {
@@ -159,6 +160,10 @@
 
     #map {
         width: calc(100% - 16px);
+    }
+    .logo-holder{
+        width: fit-content !important;
+        display: inline;
     }
 }
 
