@@ -122,11 +122,6 @@
                         align: 'left'
                     },
 
-                    subtitle: {
-                        text: subtitle,
-                        align: 'left'
-                    },
-
                     yAxis: {
                         title: {
                             text: yAxisText
@@ -433,6 +428,7 @@
             createTable(data);
             setupMenu();
             makeSlider();
+            add_paddy_wms(2016);
 
         });
 
@@ -454,16 +450,13 @@
 
 // Listen for change event
             yearSlider.noUiSlider.on('update', function (values, handle) {
-                // Output the selected year to console
-                console.log('Selected year:', values[handle]);
-                
+                // set pie chart data for selected year
                 setPieYear(parseInt(values[handle]));
                 
             });
         }
 
         function setPieYear(which) {
-            console.log(which);
 
             var pieData = [{
                 "year": 2016,
@@ -846,7 +839,6 @@
         }
 
         function addOptions(options, dropdownID, filterID, isGewog) {
-            console.log("isGewog: " + isGewog)
             const gewog = isGewog ? "Gewog" : "";
             var ul = document.getElementById(dropdownID);
             options.forEach(function (option) {
@@ -918,6 +910,25 @@
                 $(countryList).removeClass("display");
 
             }
+        }
+        let paddy_layer;
+        function add_paddy_wms(year){
+            if(paddy_layer) {
+                map.removeLayer(paddy_layer);
+            }
+            paddy_layer = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area."+year+"0101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
+            layers: "paddy",
+            format: "image/png",
+            transparent: true,
+            colorscalerange: '.5,1',
+            abovemaxcolor: "transparent",
+            belowmincolor: "transparent",
+            numcolorbands: 100,
+            styles: 'boxfill/paddy',
+            tileSize: 256,
+            version: "1.3.0"
+        });
+            map.addLayer(paddy_layer);
         }
 
 

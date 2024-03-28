@@ -1,8 +1,13 @@
 /* styles for base template page */
 
-.navbar-expand-lg .navbar-collapse{
+.navbar-expand-lg .navbar-collapse {
     flex-direction: row-reverse;
 }
+
+.nav-link {
+    white-space: nowrap;
+}
+
 /**/
 #wrapper {
     min-height: calc(100vh - 50px);
@@ -37,3 +42,20 @@
     transform: translateY(-50%);
     left: 10px;
 }
+
+
+.navbar-collapse.collapse {
+    text-align: center;
+}
+
+#ul_navbar {
+    margin-left: unset;
+}
+
+@media (max-width: 991px) {
+
+    .navbar-nav {
+        width: 100%
+    }
+}
+
