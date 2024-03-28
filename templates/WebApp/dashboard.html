@@ -44,140 +44,8 @@
 
 
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
-    <style>
-        .row {
-            margin-left: 0;
-        }
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 
-        .highcharts-data-table table {
-            font-family: Verdana, sans-serif;
-            border-collapse: collapse;
-            border: 1px solid #ebebeb;
-            margin: 10px auto;
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-        }
-
-        .highcharts-data-table caption {
-            padding: 1em 0;
-            font-size: 1.2em;
-            color: #555;
-        }
-
-        .highcharts-data-table th {
-            font-weight: 600;
-            padding: 0.5em;
-        }
-
-        .highcharts-data-table td,
-        .highcharts-data-table th,
-        .highcharts-data-table caption {
-            padding: 0.5em;
-        }
-
-        .highcharts-data-table thead tr,
-        .highcharts-data-table tr:nth-child(even) {
-            background: #f8f8f8;
-        }
-
-        .highcharts-data-table tr:hover {
-            background: #f1f7ff;
-        }
-
-        .aspect-ratio-container {
-            position: relative;
-            width: 100%;
-        }
-
-        .chart-holder {
-            height: 100%;
-        }
-
-        #rice_area {
-            height: 100%;
-            width: 100%;
-            overflow-y: auto;
-            font-size: 0.7em;
-        }
-
-        #rice_area table {
-            width: 100%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        #dropdownContainer {
-            position: relative;
-        }
-
-        #levelDropdown {
-            position: absolute;
-        {#top: 0;#} left: 100%; /* Position it to the right of the input */
-        }
-
-        /* Custom styles for Leaflet popups */
-        .leaflet-popup-content-wrapper {
-            background-color: #fff;
-            border: 2px solid #0D3309;
-            border-radius: 15px;
-            padding: 10px;
-            font-size: 14px;
-            color: #0D3309;
-        }
-
-        .leaflet-popup-tip-container {
-            display: none; /* Hide the default popup tip */
-        }
-
-        /* Hide the close button (X) in Leaflet popups */
-        .leaflet-popup-close-button {
-            display: none;
-        }
-
-        /* Make all elements of the GeoJSON layer clickable */
-        .leaflet-clickable {
-            pointer-events: auto;
-        }
-
-        .dropdown-menu {
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .year-slider {
-            height: 100px; /* Set a fixed height for the slider */
-            width: 90%
-        }
-
-        /* Customize styles for pips */
-        .year-slider .noUi-value {
-            font-size: 12px; /* Adjust font size */
-            color: #333; /* Set color */
-        }
-
-        .pie-slider {
-            z-index: 1002;
-            border-top: solid 1px #0D3309;
-            border-left: solid 1px #0D3309;
-            border-right: solid 1px #0D3309;
-            right: 16px;
-            padding: 0 0 0 16px;
-        }
-
-        .noUi-touch-area {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(to bottom, #0D3309, rgb(13 51 9 / 65%));
-        }
-
-        .noUi-touch-area:hover, .noUi-touch-area:active {
-            background: #0D3309;
-
-        }
-
-
-    </style>
     <script>
         let piechart;
 
@@ -1105,8 +973,7 @@
             </div>
 
             <div class="col-xl-9 mg-t-20" style="padding-left: 0; z-index: 1006;">
-                <div id="map"
-                     style="min-height: 456px; height:100%; width:100%; display: flex; justify-content: center; align-items: center;">
+                <div id="map">
 
                 </div>
             </div>
