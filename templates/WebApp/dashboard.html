@@ -11,31 +11,41 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
 
+    <link rel="stylesheet" href="{% static '/css/yearpicker.css' %}">
+    <script src="{% static '/js/yearpicker.js' %}" async></script>
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css" rel="stylesheet">
 
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
           integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin=""/>
+    <link rel="stylesheet"
+          href="{% static '/css/leaflet-sidebar.css' %}"
+    />
     <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
             integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
     <script src="https://unpkg.com/esri-leaflet@3.0.8/dist/esri-leaflet.js"
             integrity="sha512-E0DKVahIg0p1UHR2Kf9NX7x7TUewJb30mxkxEm2qOYTVJObgsAGpEol9F6iK6oefCbkJiA4/i6fnTHzM6H1kEA=="
             crossorigin=""></script>
+    <script src="{% static 'js/leaflet-side-by-side.js' %}"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
-    <script src="{% static '/js/L.Control.Opacity.js' %}"></script>
-    <link href="{% static '/css/L.Control.Opacity.css' %}" rel="stylesheet"/>
+    {#    <script src="{% static '/js/L.Control.Opacity.js' %}"></script>#}
+    {#    <link href="{% static '/css/L.Control.Opacity.css' %}" rel="stylesheet"/>#}
     <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/3.0.5/leaflet-search.src.js"
             integrity="sha512-PDM7dpetuBcPp2fV/ZyCj9BGV8ybPchsrSzQqVZ3WoM8YcxEa2lAj0n1+4MCRzgsEROmVTwQXGw0IrXCCgH+/Q=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
     <script src="{% static '/js/leaflet-providers.js' %}"></script>
     <script src="{% static 'js/boundary.js' %}"></script>
 
     <script src="{% static 'js/utils.js' %}"></script>
 
     <script src="{% static 'js/basemaps.js' %}"></script>
+    <script src="{% static 'js/base-layers.js' %}"></script>
     <script src="{% static '/js/geosearch.umd.js' %}"></script>
     <link
             rel="stylesheet"
@@ -47,7 +57,27 @@
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 
     <script>
+        const static_url = "{% static '' %}";
+        let active_basemap = "Terrain";
+        let overlayMaps = {};
         let piechart;
+        let client_layers = [];
+
+        {% for layer in data_layers %}
+            client_layers.push({
+                title: "{{ layer.title }}",
+                url: "{{ layer.url }}",
+                attribution: "{{ layer.attribution }}",
+                layers: "{{ layer.layers }}",
+                styles: "{{ layer.default_style }}",
+                colorrange: "{{ layer.default_color_range }}",
+                overrange: "{{ layer.overrange }}",
+                belowrange: "{{ layer.belowrange }}",
+                id: "{{ layer.ui_id }}",
+                default_year: "{{ layer.default_year }}",
+                default_on: "{{ layer.default_on }}"
+            })
+        {% endfor %}
 
         function buildPie() {
             piechart = Highcharts.chart('pie_chart', {
@@ -274,6 +304,9 @@
             map = L.map('map', {
                 zoomControl: true, fullscreenControl: true, center: [27.41016657183734, 90.44523404431789], zoom: 8
             });
+
+            map.createPane('left');
+            map.createPane('right');
             map.zoomControl.setPosition('topright');
             terrainLayer.addTo(map);
 
@@ -318,19 +351,21 @@
                     layer.bindPopup(feature.properties.name);
 
                     var popupTimer; // Variable to hold the timer for popup display
-
-                    // Add a mouseover event listener with a delay to show the popup when hovering over the layer
-                    layer.on('mouseover', function (e) {
-                        popupTimer = setTimeout(function () {
-                            layer.openPopup();
-                        }, 300); // Adjust the delay (in milliseconds) as needed
-                    });
-
-                    // Add a mouseout event listener with a delay to hide the popup when moving away from the layer
-                    layer.on('mouseout', function (e) {
-                        clearTimeout(popupTimer); // Clear the popup timer
-                        layer.closePopup();
-                    });
+                    /*
+                                        // Add a mouseover event listener with a delay to show the popup when hovering over the layer
+                                        layer.on('mouseover', function (e) {
+                                            popupTimer = setTimeout(function () {
+                                                layer.openPopup();
+                                            }, 300); // Adjust the delay (in milliseconds) as needed
+                                        });
+                    
+                                        // Add a mouseout event listener with a delay to hide the popup when moving away from the layer
+                                        layer.on('mouseout', function (e) {
+                                            clearTimeout(popupTimer); // Clear the popup timer
+                                            layer.closePopup();
+                                        });
+                    
+                                        */
 
                     // Add a click event listener to load Gewogs when clicking the layer
                     layer.on('click', function (e) {
@@ -429,8 +464,130 @@
             setupMenu();
             makeSlider();
             add_paddy_wms(2016);
+            baseLayers = getCommonBaseLayers(map); // use baselayers.js to add, remove, or edit
+            /*L.control.layers(baseLayers, overlayMaps).addTo(map);*/
+            sidebar = L.control.sidebar("sidebar").addTo(map);
+            for (let key of Object.keys(baseLayers)) {
+                const map_thumb = $("<div>");
+                map_thumb.addClass("map-thumb");
+                map_thumb.attr("datavalue", key);
+                map_thumb.on("click", handleBaseMapSwitch);
 
-        });
+                const thumb_cap = $("<div>");
+                thumb_cap.addClass("caption-text");
+
+                const thumb_text = $("<h2>");
+                thumb_text.text(baseLayers[key].options.displayName);
+
+                thumb_text.appendTo(thumb_cap);
+                const img = $("<img src='" +
+                    static_url + "" +
+                    baseLayers[key].options.thumb +
+                    "' alt='" +
+                    baseLayers[key].options.displayName + "'>", {
+                    title: baseLayers[key].options.displayName,
+                    datavalue: key,
+                    click: 'handleBaseMapSwitch($(this)[0].getAttribute("datavalue"))'
+                });
+                img.addClass("basemapbtn");
+                img.appendTo(map_thumb);
+                thumb_cap.appendTo(map_thumb);
+                map_thumb.appendTo("#basemap");
+            }
+
+            sidebar.open('layers');
+            setupYearPicker();
+            client_layers.forEach(createLayer);
+            sortableLayerSetup();
+            adjustLayerIndex();
+
+        }); //End ready
+
+        /**
+         * handleBaseMapSwitch
+         * Switches the basemap to the user selected map.
+         * @param {string} which - The Key of the basemap
+         */
+        function handleBaseMapSwitch(which) {
+            if (which.currentTarget) {
+                which = which.currentTarget.getAttribute('datavalue');
+            }
+            map.removeLayer(baseLayers[active_basemap]);
+            active_basemap = which;
+            baseLayers[active_basemap].addTo(map);
+        }
+
+        function validateYear(input) {
+            var year = parseInt(input.value);
+            if (isNaN(year)) {
+                alert("Please enter a valid year.");
+                input.value = ""; // Clear the input field
+            } else if (year < 2016 || year > 2022) {
+                alert("Please enter a valid 4-digit year.");
+                input.value = ""; // Clear the input field
+            }
+        }
+
+        /**
+         * layer_filter
+         * Helper function to filter layers by user input
+         * in the text field layer_filter
+         */
+        function layer_filter() {
+            const input = document.getElementById('layer_filter');
+            const filter = input.value.toUpperCase();
+            const layer_list = document.getElementById("layer-list");
+            const layers = layer_list.getElementsByTagName('li');
+
+            for (let i = 0; i < layers.length; i++) {
+                const label = layers[i].getElementsByClassName("cblabel")[0];
+                if(label) {
+                    const txtValue = label.textContent || label.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        layers[i].style.display = "";
+                    } else {
+                        layers[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function setupYearPicker() {
+            $('.yearpicker').yearpicker({
+
+                // Initial Year
+                year: 2016,
+
+                // Start Year
+                startYear: 2016,
+
+                // End Year
+                endYear: 2022,
+
+                // Element tag
+                itemTag: 'li',
+
+                // Default CSS classes
+                selectedClass: 'selected',
+                disabledClass: 'disabled',
+                hideClass: 'hide',
+
+                // Custom template
+                template: `<div class="yearpicker-container">
+              <div class="yearpicker-header">
+                  <div class="yearpicker-prev" data-view="yearpicker-prev">&lsaquo;</div>
+                  <div class="yearpicker-current" data-view="yearpicker-current">SelectedYear</div>
+                  <div class="yearpicker-next" data-view="yearpicker-next">&rsaquo;</div>
+              </div>
+              <div class="yearpicker-body">
+                  <ul class="yearpicker-year" data-view="years">
+                  </ul>
+              </div>
+          </div>
+  `,
+
+            });
+        }
 
         function makeSlider() {
             // Initialize noUiSlider
@@ -452,7 +609,7 @@
             yearSlider.noUiSlider.on('update', function (values, handle) {
                 // set pie chart data for selected year
                 setPieYear(parseInt(values[handle]));
-                
+
             });
         }
 
@@ -911,73 +1068,410 @@
 
             }
         }
+
         let paddy_layer;
-        function add_paddy_wms(year){
-            if(paddy_layer) {
+        let compare_control;
+
+        function add_paddy_wms(year) {
+            if (paddy_layer) {
                 map.removeLayer(paddy_layer);
             }
-            paddy_layer = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area."+year+"0101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
-            layers: "paddy",
-            format: "image/png",
-            transparent: true,
-            colorscalerange: '.5,1',
-            abovemaxcolor: "transparent",
-            belowmincolor: "transparent",
-            numcolorbands: 100,
-            styles: 'boxfill/paddy',
-            tileSize: 256,
-            version: "1.3.0"
-        });
-            map.addLayer(paddy_layer);
+            /*            paddy_layer = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area." + year + "0101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
+                            layers: "paddy",
+                            format: "image/png",
+                            transparent: true,
+                            colorscalerange: '.5,1',
+                            abovemaxcolor: "transparent",
+                            belowmincolor: "transparent",
+                            numcolorbands: 100,
+                            styles: 'boxfill/paddy',
+                            tileSize: 256,
+                            version: "1.3.0"
+                        });
+                        */
+            {#map.addLayer(paddy_layer);#}
+        }
+
+        function testCompare() {
+
+            paddy_layer16 = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area.20160101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
+                layers: "paddy",
+                format: "image/png",
+                transparent: true,
+                colorscalerange: '.5,1',
+                abovemaxcolor: "transparent",
+                belowmincolor: "transparent",
+                numcolorbands: 100,
+                styles: 'boxfill/paddy',
+                tileSize: 256,
+                version: "1.3.0",
+                pane: "left"
+            });
+            map.addLayer(paddy_layer16);
+
+            paddy_layer16_compare = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area.20160101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
+                layers: "paddy",
+                format: "image/png",
+                transparent: true,
+                colorscalerange: '.5,1',
+                abovemaxcolor: "transparent",
+                belowmincolor: "transparent",
+                numcolorbands: 100,
+                styles: 'boxfill/paddy_compare',
+                tileSize: 256,
+                version: "1.3.0",
+                pane: "right"
+            });
+            map.addLayer(paddy_layer16_compare);
+
+            paddy_layer20 = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area.20200101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
+                layers: "paddy",
+                format: "image/png",
+                transparent: true,
+                colorscalerange: '.5,1',
+                abovemaxcolor: "transparent",
+                belowmincolor: "transparent",
+                numcolorbands: 100,
+                styles: 'boxfill/paddy',
+                tileSize: 256,
+                version: "1.3.0",
+                pane: "right"
+            });
+            map.addLayer(paddy_layer20);
+
+            paddy_layer20_compare = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area.20200101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
+                layers: "paddy",
+                format: "image/png",
+                transparent: true,
+                colorscalerange: '.5,1',
+                abovemaxcolor: "transparent",
+                belowmincolor: "transparent",
+                numcolorbands: 100,
+                styles: 'boxfill/paddy_compare',
+                tileSize: 256,
+                version: "1.3.0",
+                pane: "left"
+            });
+            map.addLayer(paddy_layer20_compare);
+            compare_control = L.control.sideBySide([paddy_layer16, paddy_layer20_compare], [paddy_layer20, paddy_layer16_compare]).addTo(map);
+
+            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('min', '-0.01');
+            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('max', '1.01');
+
+            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseover', 'map.dragging.disable()')
+            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseout', 'map.dragging.enable()')
+        }
+
+        function toggleLayer(which) {
+            console.log(which);
+
+
+            if (map.hasLayer(overlayMaps[which])) {
+                map.removeLayer(overlayMaps[which]);
+                console.log("removed");
+            } else {
+                console.log("added");
+                map.addLayer(overlayMaps[which]);
+            }
+        }
+
+        function createLayer(item) {
+            overlayMaps[item.id] = L.tileLayer.wms(item.url + "&crs=EPSG%3A3857", {
+                layers: item.layers,
+                format: "image/png",
+                transparent: true,
+                colorscalerange: item.colorrange,
+                abovemaxcolor: item.overrange,
+                belowmincolor: item.belowrange,
+                numcolorbands: 100,
+                styles: item.styles,
+                tileSize: 256,
+                version: "1.3.0",
+                time: item.default_year + "-01-01T00:00:00.000Z"
+            });
+            if (item.default_on === "True") {
+                toggleLayer(item.id);
+            }
+        }
+
+        function updateLayer(which) {
+            console.log("update_" + which.id);
+        }
+
+        /**
+         * sortableLayerSetup
+         * Sets up the sortable layers in the layer manager
+         * jshint says onChange is not used, but it is used.
+         * DO NOT REMOVE onChange
+         */
+        function sortableLayerSetup() {
+            $("ol.layers").sortable({
+                group: "simple_with_animation",
+                handle: ".rst__moveHandle",
+                pullPlaceholder: true,
+                ghostClass: "sortable-ghost",
+                animation: 150,
+                easing: "cubic-bezier(1, 0, 0, 1)",
+                onEnd: function ($item, container, _super) {
+                    adjustLayerIndex();
+                },
+                onChange: function () {
+                    adjustLayerIndex();
+                },
+                filter: ".ignore-elements",
+            });
+        }
+
+        /**
+         * adjustLayerIndex
+         * adjusts the layer indexes to match the order in the layer manager
+         */
+        function adjustLayerIndex() {
+            let count = 10;
+            const ol_layers_li = $("ol.layers li");
+            for (let i = ol_layers_li.length; i > 0; i--) {
+                if (overlayMaps[
+                    ol_layers_li[i - 1].id.replace("_node", "")
+                    ]) {
+                    overlayMaps[
+                        ol_layers_li[i - 1].id.replace("_node", "")
+                        ].setZIndex(count);
+                    count++;
+                } else {
+                    let id = ol_layers_li[i - 1].id.replace("_node", "") + "ens";
+                    let element = $("[id^=" + id + "]");
+                    for (let j = 0; j < element.length; j++) {
+                        overlayMaps[
+                            element[j].id
+                            ].setZIndex(count);
+                        count++;
+                    }
+                }
+            }
         }
 
 
     </script>
+
 
 {% endblock %}
 
 {% block content %}
 
     <div class="container-fluid p-0  bg-white">
+
         <div class="row" style="z-index: 1050; position: relative;">
-            <div class="col-12 d-flex justify-content-center">
-                <div class="row row-sm justify-content-center align-items-center"
-                     style="z-index: 100; position: relative;">
-                    <div class="dropdown col">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                id="selectedCountry">
-                            <span class="caret"></span></button>
-                        <ul id="countryList" class="dropdown-menu" aria-labelledby="selectedCountry"></ul>
-                    </div>
-                    <div class="dropdown col">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                id="selectDzongkhag">All Dzongkhags
-                            <span class="caret"></span></button>
-                        <ul class="dropdown-menu" id="dzongkhagOptions">
 
-                        </ul>
-                    </div>
-                    <div class="dropdown col" id="gewoglist" style="display: none;">
-                        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                                id="selectGewog">All Gewogs
-                            <span class="caret"></span></button>
-                        <ul class="dropdown-menu" id="gewogOptions">
-
-                            <!-- Options will be dynamically populated here -->
-                        </ul>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="row row-sm">
             <div class="col-xl-9 mg-t-20" style="padding-left: 0; z-index: 1006;">
+                <div class="col-12 d-flex justify-content-center"
+                     style="background-color: #909d6b94; position: absolute; z-index: 1000; width: 99%;">
+                    <div class="row row-sm justify-content-center align-items-center"
+                         style="z-index: 100; position: relative;">
+                        <div class="dropdown col">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    id="selectedCountry">
+                                <span class="caret"></span></button>
+                            <ul id="countryList" class="dropdown-menu" aria-labelledby="selectedCountry"></ul>
+                        </div>
+                        <div class="dropdown col">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    id="selectDzongkhag">All Dzongkhags
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu" id="dzongkhagOptions">
+
+                            </ul>
+                        </div>
+                        <div class="dropdown col" id="gewoglist" style="display: none;">
+                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                                    id="selectGewog">All Gewogs
+                                <span class="caret"></span></button>
+                            <ul class="dropdown-menu" id="gewogOptions">
+
+                                <!-- Options will be dynamically populated here -->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div id="sidebar" class="sidebar collapsed">
+                    <!-- Nav tabs -->
+                    <div class="sidebar-tabs">
+                        <ul role="tablist">
+
+                            <li>
+                                <a href="#layers" role="tab" id="tab-layers" title="Layers">
+                                    <i class="fas fa-layer-group"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#basemap" role="tab" id="basemap_link" title="Basemaps"><i
+                                        class="fas fa-map"></i></a>
+                            </li>
+                            <li>
+                                <a href="#layer_compare" role="tab" title="Layer Compare"
+                                   style="background-image: url({% static 'images/compare.png' %});
+                                           background-size: cover;
+                                           padding: 12px;">
+                                    <i class=""></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <ul role="tablist">
+                            <li id="tour_box_blink" class="tour_box_blink">
+                                <a role="tab" id="tour_link" onclick="open_tour()" title="Open interactive tour"><i
+                                        id="tour_icon" class="fas fa-info-circle tour_icon_blink"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Tab panes -->
+                    <div id="sidebar-content" class="sidebar-content">
+                        <div class="sidebar-pane" id="layer_compare">
+                            <div id="chart-builder">
+                                <h1 class="sidebar-header">
+                                    Compare Layers
+                                    <span class="sidebar-close">
+                              <i class="fas fa-caret-left"></i>
+                            </span>
+                                </h1>
+                                <h2 class="step-marker">Choose layers to compare</h2>
+                            </div>
+                        </div>
+                        <div class="sidebar-pane" id="chart2">
+                            <h1 class="sidebar-header">
+                                Statistical Query
+                                <span class="sidebar-close">
+                              <i class="fas fa-caret-left"></i>
+                            </span>
+                            </h1>
+                            <div id="step1">
+
+                                <form id="query-form2" onsubmit="return false;">
+                                    <h2 class="step-marker">Select Data</h2>
+                                    <div class="form-group panel-buffer">
+                                        <label for="requestTypeSelect">Type</label>
+                                        <i
+                                                onclick="stats_info('type')"
+                                                class="fas fa-question-circle"
+                                                aria-hidden="true"
+                                                style="float: right;"></i>
+                                        <select name="requestTypeSelect" class="form-control" id="requestTypeSelect"
+                                                onchange="openDataTypePanel(this)">
+                                            <option value="datasets">Dataset</option>
+                                            <option value="monthly_analysis">Monthly Rainfall Analysis</option>
+                                        </select>
+                                    </div>
+
+
+                                </form>
+
+
+                            </div>
+                        </div>
+                        <div class="sidebar-pane" id="layers">
+                            <h1 class="sidebar-header">
+                                Layers
+                                <span class="sidebar-close">
+                              <i class="fas fa-caret-left"></i>
+                            </span>
+                            </h1>
+                            <input
+                                    type="search"
+                                    placeholder="filter layers.."
+                                    name="search"
+                                    class="form-control searchbox-input"
+                                    title="filter layers.."
+                                    onsearch="layer_filter()"
+                                    onkeyup="layer_filter()"
+                                    id="layer_filter"/>
+                            <ol class="layers vertical" id="layer-list">
+                                {% for layer in data_layers %}
+                                    {% if layer.hasVisualization %}
+                                        <li id="{{ layer.ui_id }}_node"
+                                            style="display: {% if layer.hasVisualization %} block {% else %} none {% endif %}">
+                                            <div class="rst__nodeContent" style="left: 44px">
+                                                <div style="height: 100%">
+                                                    <div class="rst__rowWrapper">
+                                                        <div class="rst__row" style="opacity: 1" draggable="true">
+                                                            <div class="rst__moveHandle"></div>
+                                                            <div class="rst__rowContents ignore-elements">
+                                                                <div class="rst__rowLabel">
+
+                                                                        <span
+                                                                                class="rst__rowTitle"
+                                                                                title="{{ layer.title }}"
+                                                                                data-toggle="tooltip"
+                                                                        >
+                                      <input type="checkbox"
+                                             id="{{ layer.ui_id }}"
+                                             name="{{ layer.ui_id }}"
+                                             onchange="toggleLayer('{{ layer.ui_id }}')" {% if layer.default_on %}
+                                             checked {% endif %}/>
+                                      <label for="{{ layer.ui_id }}"
+                                             class="cblabel">{{ layer.title }}</label>
+                                      <br/>
+                                  </span>
+                                                                    <div>
+                                                                        <i id="legend_{{ layer.ui_id }}TimeLayer "
+                                                                           class="fas fa-list legend-btn"
+                                                                           onclick="openLegend('{{ layer.ui_id }}TimeLayer')"
+                                                                           style="float: right; margin: 0 0 15px 15px;">
+
+                                                                        </i>
+                                                                        <i class="fas fa-cog settings-btn"
+                                                                           onclick="openSettings('{{ layer.ui_id }}TimeLayer')"
+                                                                           style="float: right; margin: 0 0 15px 15px;">
+
+                                                                        </i>
+                                                                        <input type="text" class="yearpicker" size="4"
+                                                                               id="{{ layer.ui_id }}_date"
+                                                                               value="" onblur="validateYear(this)"
+                                                                               onchange="updateLayer(this);">
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="rst__rowToolbar"></div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ol>
+                        </div>
+
+
+                        <div class="sidebar-pane" id="basemap">
+                            <h1 class="sidebar-header" style="margin-bottom: 8px;">
+                                Basemaps
+                                <span class="sidebar-close">
+                              <i class="fas fa-caret-left"></i>
+                            </span>
+                            </h1>
+                        </div>
+
+                        {#                    <div class="sidebar-pane" id="settings">#}
+                        {#                        <h1 class="sidebar-header">#}
+                        {#                            Settings#}
+                        {#                            <span class="sidebar-close">#}
+                        {#                              <i class="fas fa-caret-left"></i>#}
+                        {#                            </span>#}
+                        {#                        </h1>#}
+                        {#                        <p>Currently no settings here, likely will remove as#}
+                        {#                            settings have been moved to each layer</p>#}
+                        {#                    </div>#}
+                    </div>
+                </div>
                 <div id="map">
 
                 </div>
             </div>
-            
 
-            
+
             <div class="col-sm-12  col-xl-3 mg-t-20">
                 <div class="row">
                     <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container" style="z-index: 1005;">
@@ -1020,6 +1514,6 @@
         </div>
 
     </div>
-
+    <script src="{% static '/js/leaflet-sidebar.js' %}"></script>
 
 {% endblock %}
