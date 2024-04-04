@@ -13,6 +13,10 @@
 
     <link rel="stylesheet" href="{% static '/css/yearpicker.css' %}">
     <script src="{% static '/js/yearpicker.js' %}" async></script>
+    <!-- CSS -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css" rel="stylesheet">
 
@@ -358,13 +362,13 @@
                                                 layer.openPopup();
                                             }, 300); // Adjust the delay (in milliseconds) as needed
                                         });
-                    
+
                                         // Add a mouseout event listener with a delay to hide the popup when moving away from the layer
                                         layer.on('mouseout', function (e) {
                                             clearTimeout(popupTimer); // Clear the popup timer
                                             layer.closePopup();
                                         });
-                    
+
                                         */
 
                     // Add a click event listener to load Gewogs when clicking the layer
@@ -496,12 +500,25 @@
             }
 
             sidebar.open('layers');
-            setupYearPicker();
+
             client_layers.forEach(createLayer);
             sortableLayerSetup();
             adjustLayerIndex();
+            $('.yearpicker').off();
+            setupYearPickerold();
 
         }); //End ready
+
+        function openPicker(which) {
+            console.log(which.id);
+            // Get the input field associated with the year picker
+            const $yearpickerInput = $("#" + which.id);
+
+// Retrieve the year picker instance from the data attribute
+            const yearpicker = $yearpickerInput.data(namespace);
+            yearpicker.showView()
+
+        }
 
         /**
          * handleBaseMapSwitch
@@ -541,7 +558,7 @@
 
             for (let i = 0; i < layers.length; i++) {
                 const label = layers[i].getElementsByClassName("cblabel")[0];
-                if(label) {
+                if (label) {
                     const txtValue = label.textContent || label.innerText;
                     if (txtValue.toUpperCase().indexOf(filter) > -1) {
                         layers[i].style.display = "";
@@ -552,7 +569,28 @@
             }
         }
 
+        function showNextElement(element) {
+            // Find the next sibling element
+            var nextElement = element.nextElementSibling;
+
+            // Remove the "hide" class from the next element
+            if (nextElement) {
+                nextElement.classList.remove("hide");
+            }
+        }
+
         function setupYearPicker() {
+
+            $('.yearpicker').datepicker({
+                format: "yyyy",
+                viewMode: "years",
+                minViewMode: "years",
+                autoclose: true
+            });
+
+        }
+
+        function setupYearPickerold() {
             $('.yearpicker').yearpicker({
 
                 // Initial Year
@@ -1163,15 +1201,19 @@
         }
 
         function toggleLayer(which) {
-            console.log(which);
-
-
+            // Get date from the button and set b4 adding, else the layer and date will be out of sync
+            const date_control = $("#" + which + "_date");
             if (map.hasLayer(overlayMaps[which])) {
                 map.removeLayer(overlayMaps[which]);
+
+                date_control.addClass("disabled");
+                date_control.prop( "disabled", true );
                 console.log("removed");
             } else {
                 console.log("added");
                 map.addLayer(overlayMaps[which]);
+                date_control.removeClass("disabled");
+                date_control.prop( "disabled", false );
             }
         }
 
@@ -1195,60 +1237,74 @@
         }
 
         function updateLayer(which) {
-            console.log("update_" + which.id);
-        }
 
-        /**
-         * sortableLayerSetup
-         * Sets up the sortable layers in the layer manager
-         * jshint says onChange is not used, but it is used.
-         * DO NOT REMOVE onChange
-         */
-        function sortableLayerSetup() {
-            $("ol.layers").sortable({
-                group: "simple_with_animation",
-                handle: ".rst__moveHandle",
-                pullPlaceholder: true,
-                ghostClass: "sortable-ghost",
-                animation: 150,
-                easing: "cubic-bezier(1, 0, 0, 1)",
-                onEnd: function ($item, container, _super) {
-                    adjustLayerIndex();
-                },
-                onChange: function () {
-                    adjustLayerIndex();
-                },
-                filter: ".ignore-elements",
-            });
-        }
 
-        /**
-         * adjustLayerIndex
-         * adjusts the layer indexes to match the order in the layer manager
-         */
-        function adjustLayerIndex() {
-            let count = 10;
-            const ol_layers_li = $("ol.layers li");
-            for (let i = ol_layers_li.length; i > 0; i--) {
-                if (overlayMaps[
-                    ol_layers_li[i - 1].id.replace("_node", "")
-                    ]) {
-                    overlayMaps[
+            const id = which.id.replace("_date", "");
+            console.log(id);
+            {#if (!map.hasLayer(overlayMaps[id])) {#}
+            {#    map.addLayer(overlayMaps[id]);#}
+            {#}#}
+                var layer = overlayMaps[id];
+
+                // Check if the layer is a WMS layer
+                if (layer instanceof L.TileLayer.WMS) {
+                    // Update the time parameter
+                    layer.setParams({time: which.value + "-01-01T00:00:00.000Z"});
+                }
+            }
+
+            /**
+             * sortableLayerSetup
+             * Sets up the sortable layers in the layer manager
+             * jshint says onChange is not used, but it is used.
+             * DO NOT REMOVE onChange
+             */
+            function sortableLayerSetup() {
+                $("ol.layers").sortable({
+                    group: "simple_with_animation",
+                    handle: ".rst__moveHandle",
+                    pullPlaceholder: true,
+                    ghostClass: "sortable-ghost",
+                    animation: 150,
+                    easing: "cubic-bezier(1, 0, 0, 1)",
+                    onEnd: function ($item, container, _super) {
+                        adjustLayerIndex();
+                    },
+                    onChange: function () {
+                        adjustLayerIndex();
+                    },
+                    filter: ".ignore-elements",
+                    tolerance: "pointer",
+                });
+            }
+
+            /**
+             * adjustLayerIndex
+             * adjusts the layer indexes to match the order in the layer manager
+             */
+            function adjustLayerIndex() {
+                let count = 10;
+                const ol_layers_li = $("ol.layers li");
+                for (let i = ol_layers_li.length; i > 0; i--) {
+                    if (overlayMaps[
                         ol_layers_li[i - 1].id.replace("_node", "")
-                        ].setZIndex(count);
-                    count++;
-                } else {
-                    let id = ol_layers_li[i - 1].id.replace("_node", "") + "ens";
-                    let element = $("[id^=" + id + "]");
-                    for (let j = 0; j < element.length; j++) {
+                        ]) {
                         overlayMaps[
-                            element[j].id
+                            ol_layers_li[i - 1].id.replace("_node", "")
                             ].setZIndex(count);
                         count++;
+                    } else {
+                        let id = ol_layers_li[i - 1].id.replace("_node", "") + "ens";
+                        let element = $("[id^=" + id + "]");
+                        for (let j = 0; j < element.length; j++) {
+                            overlayMaps[
+                                element[j].id
+                                ].setZIndex(count);
+                            count++;
+                        }
                     }
                 }
             }
-        }
 
 
     </script>
@@ -1412,7 +1468,7 @@
                                              class="cblabel">{{ layer.title }}</label>
                                       <br/>
                                   </span>
-                                                                    <div>
+                                                                    <div class="ignore-elements">
                                                                         <i id="legend_{{ layer.ui_id }}TimeLayer "
                                                                            class="fas fa-list legend-btn"
                                                                            onclick="openLegend('{{ layer.ui_id }}TimeLayer')"
@@ -1424,10 +1480,19 @@
                                                                            style="float: right; margin: 0 0 15px 15px;">
 
                                                                         </i>
-                                                                        <input type="text" class="yearpicker" size="4"
+                                                                        <input type="text"
+                                                                               class="yearpicker ignore-elements {% if not layer.default_on %}
+                                                                               disabled {% endif %}"
+                                                                               size="4"
                                                                                id="{{ layer.ui_id }}_date"
-                                                                               value="" onblur="validateYear(this)"
-                                                                               onchange="updateLayer(this);">
+                                                                               onclick="openPicker(this)"
+                                                                               value="{{ layer.default_year }}"
+                                                                               onblur="validateYear(this)"
+                                                                               onchange="updateLayer(this);"
+                                                                                {% if not layer.default_on %}
+                                                                               disabled {% endif %}/>
+
+                                                                        
 
                                                                     </div>
 

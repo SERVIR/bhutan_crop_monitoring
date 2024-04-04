@@ -129,6 +129,14 @@ img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
+.yearpicker.disabled {
+    background-color: #ddd; /* Change background color */
+    color: #888; /* Change text color */
+    cursor: not-allowed; /* Change cursor */
+    border-color: #ccc; /* Change border color */
+    /* You can add any other styles for the disabled state here */
+}
+
 .yearpicker:hover {
     background-color: #e9e9e9;
 }
