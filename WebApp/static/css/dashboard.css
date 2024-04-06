@@ -116,6 +116,24 @@ img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
 .row {
     margin-left: 0;
 }
+.datepicker{
+    position: absolute;
+    border: 1px solid #0D3309;
+}
+
+.datepicker table tr td span.active{
+    background-image:linear-gradient(to bottom,#0D3309,#134d0f)!important;
+}
+
+.year.active{
+    background-image: linear-gradient(to bottom,#0D3309, #134d0f)!important;
+    background-color: #0D3309!important;
+}
+
+.datepicker table tr td span:hover {
+    background: #909d6b94;
+    color: #0D3309;
+}
 
 .yearpicker {
     margin: 0 0 0 15px;

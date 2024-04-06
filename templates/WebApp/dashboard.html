@@ -15,8 +15,8 @@
     <script src="{% static '/js/yearpicker.js' %}" async></script>
     <!-- CSS -->
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css" rel="stylesheet">
 
@@ -505,18 +505,19 @@
             sortableLayerSetup();
             adjustLayerIndex();
             $('.yearpicker').off();
-            setupYearPickerold();
+            setupYearPicker();
 
         }); //End ready
 
         function openPicker(which) {
-            console.log(which.id);
-            // Get the input field associated with the year picker
-            const $yearpickerInput = $("#" + which.id);
-
-// Retrieve the year picker instance from the data attribute
-            const yearpicker = $yearpickerInput.data(namespace);
-            yearpicker.showView()
+            {#            console.log(which.id);#}
+            {#            // Get the input field associated with the year picker#}
+            {#            const $yearpickerInput = $("#" + which.id);#}
+            {##}
+            {#// Retrieve the year picker instance from the data attribute#}
+            {#            const yearpicker = $yearpickerInput.data(namespace);#}
+            {#            yearpicker.showView()#}
+            $("#" + which.id).datepicker('show');
 
         }
 
@@ -581,13 +582,47 @@
 
         function setupYearPicker() {
 
-            $('.yearpicker').datepicker({
-                format: "yyyy",
-                viewMode: "years",
-                minViewMode: "years",
-                autoclose: true
-            });
+            $('.yearpicker').each(function () {
+                var container = $(this).parent();
 
+                $(this).datepicker({
+                    format: "yyyy",
+                    viewMode: "years",
+                    startView: "years",
+                    minViewMode: "years",
+                    maxViewMode: "years",
+                    autoclose: true,
+                    container: container,
+                    orientation: 'auto',
+                    startDate: new Date(2016, 0, 1), 
+                }).on('show', function (event) {
+                    
+                    
+                    var currentYear = $(this).datepicker('getDate').getFullYear();
+                    console.log(currentYear);
+                    
+                    var startYear = 2016;
+                    var endYear = 2022;
+                    var numYears = endYear - startYear + 1;
+
+
+
+                    // Clear out all existing years
+                    $('.datepicker-years .datepicker-switch').text(startYear);
+                    
+
+
+                    // Generate and append years
+                    var yearsHtml = '';
+                    for (var i = 0; i < numYears; i++) {
+                        var year = startYear + i;
+                        yearsHtml += '<span class="year' + (year === currentYear ? ' active' : '') + '">' + year + '</span>';
+                    }
+                    $('.datepicker-years tbody').html('<tr><td colspan="7">' + yearsHtml + '</td></tr>');
+                    
+                });
+
+            });
         }
 
         function setupYearPickerold() {
@@ -1207,13 +1242,13 @@
                 map.removeLayer(overlayMaps[which]);
 
                 date_control.addClass("disabled");
-                date_control.prop( "disabled", true );
+                date_control.prop("disabled", true);
                 console.log("removed");
             } else {
                 console.log("added");
                 map.addLayer(overlayMaps[which]);
                 date_control.removeClass("disabled");
-                date_control.prop( "disabled", false );
+                date_control.prop("disabled", false);
             }
         }
 
@@ -1468,7 +1503,8 @@
                                              class="cblabel">{{ layer.title }}</label>
                                       <br/>
                                   </span>
-                                                                    <div class="ignore-elements">
+                                                                    <div class="ignore-elements"
+                                                                         style="position: relative;">
                                                                         <i id="legend_{{ layer.ui_id }}TimeLayer "
                                                                            class="fas fa-list legend-btn"
                                                                            onclick="openLegend('{{ layer.ui_id }}TimeLayer')"
@@ -1492,7 +1528,6 @@
                                                                                 {% if not layer.default_on %}
                                                                                disabled {% endif %}/>
 
-                                                                        
 
                                                                     </div>
 
