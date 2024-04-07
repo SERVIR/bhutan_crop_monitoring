@@ -62,7 +62,7 @@
 
     <script>
         const static_url = "{% static '' %}";
-        let active_basemap = "Terrain";
+        let active_basemap = "Google Satellite";
         let overlayMaps = {};
         let piechart;
         let client_layers = [];
@@ -312,7 +312,7 @@
             map.createPane('left');
             map.createPane('right');
             map.zoomControl.setPosition('topright');
-            terrainLayer.addTo(map);
+            gSatLayer.addTo(map);
 
             // Add the Search Control to the map
             const search = new GeoSearch.GeoSearchControl({
@@ -506,6 +506,7 @@
             adjustLayerIndex();
             $('.yearpicker').off();
             setupYearPicker();
+            setupMonthlyPicker();
 
         }); //End ready
 
@@ -580,6 +581,26 @@
             }
         }
 
+        function setupMonthlyPicker() {
+            $('.monthlypicker').each(function () {
+                var container = $(this).parent();
+
+
+                $(this).datepicker({
+                    format: "mm-yyyy", // Set the format to display month and year
+                    viewMode: "months", // Display the datepicker in month view mode
+                    minViewMode: "months", // Set the minimum view mode to months
+                    autoclose: true,
+                    container: container,
+                    orientation: 'auto',
+                    startDate: "01-2016", // Set the start date to January 2016
+                    endDate: "12-2022", // Set the end date to December 2022
+                    defaultViewDate: { year: 2016, month: 0 }
+                });
+            });
+
+        }
+
         function setupYearPicker() {
 
             $('.yearpicker').each(function () {
@@ -594,22 +615,20 @@
                     autoclose: true,
                     container: container,
                     orientation: 'auto',
-                    startDate: new Date(2016, 0, 1), 
+                    startDate: new Date(2016, 0, 1)
                 }).on('show', function (event) {
-                    
-                    
+
+
                     var currentYear = $(this).datepicker('getDate').getFullYear();
                     console.log(currentYear);
-                    
+
                     var startYear = 2016;
                     var endYear = 2022;
                     var numYears = endYear - startYear + 1;
 
 
-
                     // Clear out all existing years
                     $('.datepicker-years .datepicker-switch').text(startYear);
-                    
 
 
                     // Generate and append years
@@ -619,7 +638,7 @@
                         yearsHtml += '<span class="year' + (year === currentYear ? ' active' : '') + '">' + year + '</span>';
                     }
                     $('.datepicker-years tbody').html('<tr><td colspan="7">' + yearsHtml + '</td></tr>');
-                    
+
                 });
 
             });
@@ -1275,18 +1294,22 @@
 
 
             const id = which.id.replace("_date", "");
-            console.log(id);
-            {#if (!map.hasLayer(overlayMaps[id])) {#}
-            {#    map.addLayer(overlayMaps[id]);#}
-            {#}#}
-                var layer = overlayMaps[id];
 
-                // Check if the layer is a WMS layer
-                if (layer instanceof L.TileLayer.WMS) {
-                    // Update the time parameter
+            var layer = overlayMaps[id];
+
+            // Check if the layer is a WMS layer
+            if (layer instanceof L.TileLayer.WMS) {
+                // Update the time parameter
+                if (which.value.indexOf("-") > 0) {
+                    const date_values = which.value.split("-");
+                    layer.setParams({time: date_values[1] + "-" + date_values[0] + "-01T00:00:00.000Z"});
+                } else {
+
                     layer.setParams({time: which.value + "-01-01T00:00:00.000Z"});
                 }
             }
+        }
+
 
             /**
              * sortableLayerSetup
@@ -1517,13 +1540,12 @@
 
                                                                         </i>
                                                                         <input type="text"
-                                                                               class="yearpicker ignore-elements {% if not layer.default_on %}
+                                                                               class="{% if layer.default_month %}monthlypicker {% else %}yearpicker {% endif %} ignore-elements {% if not layer.default_on %}
                                                                                disabled {% endif %}"
-                                                                               size="4"
+                                                                               size="{% if layer.default_month %}6{% else %}4{% endif %}"
                                                                                id="{{ layer.ui_id }}_date"
                                                                                onclick="openPicker(this)"
-                                                                               value="{{ layer.default_year }}"
-                                                                               onblur="validateYear(this)"
+                                                                               value="{% if layer.default_month %}{{ layer.default_month }}-{% endif %}{{ layer.default_year }}"
                                                                                onchange="updateLayer(this);"
                                                                                 {% if not layer.default_on %}
                                                                                disabled {% endif %}/>

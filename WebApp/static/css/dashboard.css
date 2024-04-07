@@ -135,7 +135,7 @@ img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     color: #0D3309;
 }
 
-.yearpicker {
+.yearpicker, .monthlypicker {
     margin: 0 0 0 15px;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
@@ -147,7 +147,7 @@ img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
 }
 
-.yearpicker.disabled {
+.yearpicker.disabled, .monthlypicker.disabled {
     background-color: #ddd; /* Change background color */
     color: #888; /* Change text color */
     cursor: not-allowed; /* Change cursor */
@@ -155,15 +155,15 @@ img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     /* You can add any other styles for the disabled state here */
 }
 
-.yearpicker:hover {
+.yearpicker:hover, .monthlypicker:hover {
     background-color: #e9e9e9;
 }
 
-.yearpicker:focus {
+.yearpicker:focus, .monthlypicker:focus {
     border-color: #007bff;
 }
 
-.yearpicker:active {
+.yearpicker:active, .monthlypicker:active {
     background-color: #d9d9d9;
 }
 
