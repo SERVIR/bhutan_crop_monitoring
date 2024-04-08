@@ -509,6 +509,33 @@
             setupMonthlyPicker();
 
         }); //End ready
+        var the_input;
+var the_picker;
+        function positionDatepicker(inputField) {
+            the_input = inputField;
+            var inputOffset = inputField.offset();
+            var sidebarContentOffset = $('.sidebar-content').offset();
+            var inputHeight = inputField.outerHeight();
+            var datePicker = $(inputField.siblings()[2]);
+            var datePickerHeight = datePicker.outerHeight();
+            var windowHeight = $(window).height();
+            var sidebarContentHeight = $('#sidebar').height();
+
+            the_picker = datePicker;
+
+            console.log(inputOffset.top );
+            console.log( inputHeight);
+            console.log(datePickerHeight);
+
+            console.log(sidebarContentOffset.top);
+            console.log(sidebarContentHeight);
+
+            // Check if the datepicker would be partially or fully outside the sidebar content
+            if (inputOffset.top + inputHeight + datePickerHeight > sidebarContentOffset.top + sidebarContentHeight) {
+                console.log("reposition");
+                datePicker.css('top', datePickerHeight * -1 + "px");
+            }
+        }
 
         function openPicker(which) {
             {#            console.log(which.id);#}
@@ -596,6 +623,8 @@
                     startDate: "01-2016", // Set the start date to January 2016
                     endDate: "12-2022", // Set the end date to December 2022
                     defaultViewDate: { year: 2016, month: 0 }
+                }).on('show', function (event) {
+                    positionDatepicker($(this));
                 });
             });
 
@@ -638,6 +667,8 @@
                         yearsHtml += '<span class="year' + (year === currentYear ? ' active' : '') + '">' + year + '</span>';
                     }
                     $('.datepicker-years tbody').html('<tr><td colspan="7">' + yearsHtml + '</td></tr>');
+
+                    positionDatepicker($(this));
 
                 });
 

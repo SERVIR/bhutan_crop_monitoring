@@ -55,7 +55,7 @@ def dashboard(request):
          "belowrange": "transparent", "default_year": "2016", "default_on": True},
         {"hasVisualization": True, "ui_id": 'crop_land_', "title": "Crop land extent ", "url": "https://csthredds.servirglobal.net/thredds/wms/Agg/ucsb-chirps_global_0.05deg_daily.nc4?service=WMS&version=1.3.0&", "attribution": "BillyZ 3",
          "layers": "precipitation_amount", "default_style": "boxfill/cape_surface", "default_color_range": "1,50", "overrange": "extend",
-         "belowrange": "extend", "default_year": "2016", "default_on": False},{"hasVisualization": True, "ui_id": 'average_precipitation_', "title": "Average Precipitation", "url": "https://thredds.servirglobal.net/thredds/wms/agg/crop/global/ucsb-chirps_global_0.05deg_daily_accumulation.nc4?service=WMS&version=1.3.0&", "attribution": "BillyZ 3",
+         "belowrange": "extend", "default_year": "2016", "default_on": False},{"hasVisualization": True, "ui_id": 'average_precipitation_', "title": "Average Precipitation", "url": "https://thredds.servirglobal.net/thredds/wms/agg/crop/global/ucsb-chirps_global_0.05deg_1d_monthly_avg.nc4?service=WMS&version=1.3.0&", "attribution": "BillyZ 3",
          "layers": "precipitation_monthly_avg", "default_style": "boxfill/cape_surface", "default_color_range": "1,40", "overrange": "transparent",
          "belowrange": "transparent", "default_year": "2016", "default_month": "01", "default_on": False}]}
 
