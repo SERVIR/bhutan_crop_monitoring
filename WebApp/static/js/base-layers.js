@@ -47,6 +47,20 @@ function getCommonBaseLayers(map) {
         }
     );
 
+    var NatGeo_World_Map = L.tileLayer.wms(
+        "https://server.arcgisonline.com/arcgis/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}",
+        {
+            format: "image/png",
+            transparent: true,
+            attribution:
+                'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
+                'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
+            opacity: 1,
+            thumb: "images/natgeo.png",
+            displayName: "NatGeo",
+        }
+    );
+
     var labelLayer = L.tileLayer.wms(
         "https://server.arcgisonline.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
         {
@@ -89,7 +103,7 @@ function getCommonBaseLayers(map) {
             subdomains:['mt0','mt1','mt2','mt3']
         }
     );
-    // gSatLayer.addTo(map);
+    gSatLayer.addTo(map);
 
     var terrainLayer = L.tileLayer(
         "https://{s}.tile.jawg.io/jawg-terrain/{z}/{x}/{y}{r}.png?access-token={accessToken}",
@@ -105,24 +119,8 @@ function getCommonBaseLayers(map) {
         }
     );
 
-    //   var labelLayer2 = L.tileLayer.wms(
-    //     "https://server.arcgisonline.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-    //     {
-    //       format: "image/png",
-    //       transparent: true,
-    //       attribution:
-    //         'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
-    //         'rest/services/Reference/World_Boundaries_and_Places/MapServer">ArcGIS</a>',
-    //       opacity: 1,
-    //     }
-    //   );
-
-    //   var terrainGroup = L.layerGroup([terrainLayer, labelLayer2]);
-    //   terrainGroup.options.thumb = "images/terrain.png";
-    //   terrainGroup.options.displayName = "Terrain";
-
     var deLormeLayer = L.tileLayer.wms(
-        "https://server.arcgisonline.com/arcgis/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}",
+        "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/{z}/{y}/{x}",
         {
             format: "image/png",
             transparent: true,
@@ -135,13 +133,23 @@ function getCommonBaseLayers(map) {
         }
     );
 
+    var vectorTileUrl = 'https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer';
+
+
+// Create a new VectorGrid layer using the vector tile URL
+    var vectorTileLayer = L.esri.Vector.vectorTileLayer(vectorTileUrl, {
+        rendererFactory: L.canvas.tile, vectorTileLayerStyles: {
+            // Define styles for different layers (optional)
+        }, opacity: 1, thumb: "images/world_base.png", displayName: "World Base",
+    });
+
     return {
         OSM: osmLayer,
         Gsatellite: gSatLayer,
         Satellite: satGroupLayer,
         Topo: topoLayer,
         Terrain: terrainLayer,
-        "EMODnet Bathymetry": bathymetryGroupLayer,
-        DeLorme: deLormeLayer,
+        NatGeo: NatGeo_World_Map,
+        world_base: vectorTileLayer,
     };
 }

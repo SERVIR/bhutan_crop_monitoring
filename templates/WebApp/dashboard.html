@@ -10,6 +10,7 @@
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+    <link rel="stylesheet" href="{% static '/js/jquery-ui.min.css' %}">
 
     <link rel="stylesheet" href="{% static '/css/yearpicker.css' %}">
     <script src="{% static '/js/yearpicker.js' %}" async></script>
@@ -32,6 +33,8 @@
     <script src="https://unpkg.com/esri-leaflet@3.0.8/dist/esri-leaflet.js"
             integrity="sha512-E0DKVahIg0p1UHR2Kf9NX7x7TUewJb30mxkxEm2qOYTVJObgsAGpEol9F6iK6oefCbkJiA4/i6fnTHzM6H1kEA=="
             crossorigin=""></script>
+    <script src="https://unpkg.com/esri-leaflet-vector@4/dist/esri-leaflet-vector.js"></script>
+
     <script src="{% static 'js/leaflet-side-by-side.js' %}"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
     {#    <script src="{% static '/js/L.Control.Opacity.js' %}"></script>#}
@@ -43,6 +46,7 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+    <script src="{% static '/js/jquery-ui.min.js' %}"></script>
     <script src="{% static '/js/leaflet-providers.js' %}"></script>
     <script src="{% static 'js/boundary.js' %}"></script>
 
@@ -62,10 +66,12 @@
 
     <script>
         const static_url = "{% static '' %}";
-        let active_basemap = "Google Satellite";
+        let active_basemap = "Gsatellite";
         let overlayMaps = {};
         let piechart;
         let client_layers = [];
+        var the_picker;
+        var dzongkhagLayer;
 
         {% for layer in data_layers %}
             client_layers.push({
@@ -312,7 +318,6 @@
             map.createPane('left');
             map.createPane('right');
             map.zoomControl.setPosition('topright');
-            gSatLayer.addTo(map);
 
             // Add the Search Control to the map
             const search = new GeoSearch.GeoSearchControl({
@@ -342,11 +347,12 @@
             });
 
             // Create a GeoJSON layer with hover and click events
-            var dzongkhagLayer = L.geoJSON(dzongkhagFeatures, {
+            dzongkhagLayer = L.geoJSON(dzongkhagFeatures, {
+                id:  "dzongkhagLayer",
                 style: function (feature) {
                     return {
                         fillColor: 'transparent', // Set fill color to 'none' to remove fill
-                        color: '#0D3309', // Set border color (stroke color)
+                        color: '#ffffff', // Set border color (stroke color)
                         weight: 2 // Set border width (stroke width)
                     };
                 },
@@ -469,7 +475,6 @@
             makeSlider();
             add_paddy_wms(2016);
             baseLayers = getCommonBaseLayers(map); // use baselayers.js to add, remove, or edit
-            /*L.control.layers(baseLayers, overlayMaps).addTo(map);*/
             sidebar = L.control.sidebar("sidebar").addTo(map);
             for (let key of Object.keys(baseLayers)) {
                 const map_thumb = $("<div>");
@@ -510,7 +515,7 @@
 
         }); //End ready
         var the_input;
-var the_picker;
+
         function positionDatepicker(inputField) {
             the_input = inputField;
             var inputOffset = inputField.offset();
@@ -523,30 +528,74 @@ var the_picker;
 
             the_picker = datePicker;
 
-            console.log(inputOffset.top );
-            console.log( inputHeight);
-            console.log(datePickerHeight);
-
-            console.log(sidebarContentOffset.top);
-            console.log(sidebarContentHeight);
-
             // Check if the datepicker would be partially or fully outside the sidebar content
             if (inputOffset.top + inputHeight + datePickerHeight > sidebarContentOffset.top + sidebarContentHeight) {
-                console.log("reposition");
                 datePicker.css('top', datePickerHeight * -1 + "px");
             }
         }
 
         function openPicker(which) {
-            {#            console.log(which.id);#}
-            {#            // Get the input field associated with the year picker#}
-            {#            const $yearpickerInput = $("#" + which.id);#}
-            {##}
-            {#// Retrieve the year picker instance from the data attribute#}
-            {#            const yearpicker = $yearpickerInput.data(namespace);#}
-            {#            yearpicker.showView()#}
             $("#" + which.id).datepicker('show');
+        }
 
+        /**
+         * openLegend
+         * Opens the legend for the selected layer
+         * @param {string} which - Name of layer to open legend for
+         */
+        function openLegend(which) {
+            close_dialog();
+            const dialog = $("#dialog");
+            let id = which.replace("TimeLayer", "") + "ens";
+            const active_layer = getLayer(which) || getLayer($("[id^=" + id + "]")[0].id);
+            const src =
+                active_layer.url +
+                "&REQUEST=GetLegendGraphic&LAYER=" +
+                active_layer.layers +
+                "&colorscalerange=" +
+                active_layer.colorrange +
+                "&PALETTE=" +
+                active_layer.styles.substr(active_layer.styles.indexOf("/") + 1);
+            const style = "text-align:center;";
+            dialog.html(
+                '<p style="' + style + '"><img src="' + src + '" alt="legend"></p>'
+            );
+            dialog.dialog({
+                title: active_layer.title,
+                resizable: {handles: "se"},
+                width: 169,
+                height: 322,
+                position: {
+                    my: "center",
+                    at: "center",
+                    of: window
+                }
+            });
+            $(".ui-dialog-title").attr("title", active_layer.title);
+        }
+
+        /**
+         * close_dialog
+         * Closes the dialog if it is open
+         */
+        function close_dialog() {
+            const dialog = $("#dialog");
+            if (dialog.dialog()) {
+                dialog.dialog("close");
+            }
+        }
+
+        /**
+         * getLayer
+         * Helper function to get a layer out of globalLayerArray
+         * @param {string} which - name of layer requesting
+         * @returns layer json object
+         */
+        function getLayer(which) {
+            console.log(which);
+            return client_layers.find(
+                (item) => item.id === which.replace("TimeLayer", "")
+            );
         }
 
         /**
@@ -555,12 +604,15 @@ var the_picker;
          * @param {string} which - The Key of the basemap
          */
         function handleBaseMapSwitch(which) {
+            console.log(which);
             if (which.currentTarget) {
                 which = which.currentTarget.getAttribute('datavalue');
             }
+            console.log(which);
             map.removeLayer(baseLayers[active_basemap]);
             active_basemap = which;
             baseLayers[active_basemap].addTo(map);
+            changeDzongkhagLayerStyle(which);
         }
 
         function validateYear(input) {
@@ -572,6 +624,47 @@ var the_picker;
                 alert("Please enter a valid 4-digit year.");
                 input.value = ""; // Clear the input field
             }
+        }
+        
+        // Function to find the layer with the specified ID
+        function findLayerById(id) {
+            var foundLayer = null;
+            map.eachLayer(function (layer) {
+                if (layer.options && layer.options.id === id) {
+                    foundLayer = layer;
+                }
+            });
+            return foundLayer;
+        }
+
+        function changeDzongkhagLayerStyle(basemapName) {
+            
+            {#dzongkhagLayer = findLayerById("dzongkhagLayer");#}
+            // Check the name of the basemap and set the fill color of dzongkhagLayer accordingly
+            const white = ["Gsatellite", "Satellite"]
+            const green = ["OSM", "Topo", "Terrain", "NatGeo"]
+console.log("changing " + basemapName);
+            dzongkhagLayer.eachLayer(function (layer) {
+                
+                console.log("in style function");
+                // Define default style properties
+                var style = {
+                    fillColor: 'transparent', // Default fill color
+                    color: '#0D3309', // Default border color
+                    weight: 2 // Default border width
+                };
+
+                // Update style based on the basemapName
+                if (green.includes(basemapName)) {
+                    style.color = '#0D3309'; // Change fill color to green
+                } else if (white.includes(basemapName)) {
+                    style.color = '#ffffff'; // Change fill color to white
+                }
+
+                 layer.setStyle(style);
+            });
+            
+            
         }
 
         /**
@@ -622,7 +715,7 @@ var the_picker;
                     orientation: 'auto',
                     startDate: "01-2016", // Set the start date to January 2016
                     endDate: "12-2022", // Set the end date to December 2022
-                    defaultViewDate: { year: 2016, month: 0 }
+                    defaultViewDate: {year: 2016, month: 0}
                 }).on('show', function (event) {
                     positionDatepicker($(this));
                 });
@@ -1342,58 +1435,58 @@ var the_picker;
         }
 
 
-            /**
-             * sortableLayerSetup
-             * Sets up the sortable layers in the layer manager
-             * jshint says onChange is not used, but it is used.
-             * DO NOT REMOVE onChange
-             */
-            function sortableLayerSetup() {
-                $("ol.layers").sortable({
-                    group: "simple_with_animation",
-                    handle: ".rst__moveHandle",
-                    pullPlaceholder: true,
-                    ghostClass: "sortable-ghost",
-                    animation: 150,
-                    easing: "cubic-bezier(1, 0, 0, 1)",
-                    onEnd: function ($item, container, _super) {
-                        adjustLayerIndex();
-                    },
-                    onChange: function () {
-                        adjustLayerIndex();
-                    },
-                    filter: ".ignore-elements",
-                    tolerance: "pointer",
-                });
-            }
+        /**
+         * sortableLayerSetup
+         * Sets up the sortable layers in the layer manager
+         * jshint says onChange is not used, but it is used.
+         * DO NOT REMOVE onChange
+         */
+        function sortableLayerSetup() {
+            $("ol.layers").sortable({
+                group: "simple_with_animation",
+                handle: ".rst__moveHandle",
+                pullPlaceholder: true,
+                ghostClass: "sortable-ghost",
+                animation: 150,
+                easing: "cubic-bezier(1, 0, 0, 1)",
+                onEnd: function ($item, container, _super) {
+                    adjustLayerIndex();
+                },
+                onChange: function () {
+                    adjustLayerIndex();
+                },
+                filter: ".ignore-elements",
+                tolerance: "pointer",
+            });
+        }
 
-            /**
-             * adjustLayerIndex
-             * adjusts the layer indexes to match the order in the layer manager
-             */
-            function adjustLayerIndex() {
-                let count = 10;
-                const ol_layers_li = $("ol.layers li");
-                for (let i = ol_layers_li.length; i > 0; i--) {
-                    if (overlayMaps[
+        /**
+         * adjustLayerIndex
+         * adjusts the layer indexes to match the order in the layer manager
+         */
+        function adjustLayerIndex() {
+            let count = 10;
+            const ol_layers_li = $("ol.layers li");
+            for (let i = ol_layers_li.length; i > 0; i--) {
+                if (overlayMaps[
+                    ol_layers_li[i - 1].id.replace("_node", "")
+                    ]) {
+                    overlayMaps[
                         ol_layers_li[i - 1].id.replace("_node", "")
-                        ]) {
+                        ].setZIndex(count);
+                    count++;
+                } else {
+                    let id = ol_layers_li[i - 1].id.replace("_node", "") + "ens";
+                    let element = $("[id^=" + id + "]");
+                    for (let j = 0; j < element.length; j++) {
                         overlayMaps[
-                            ol_layers_li[i - 1].id.replace("_node", "")
+                            element[j].id
                             ].setZIndex(count);
                         count++;
-                    } else {
-                        let id = ol_layers_li[i - 1].id.replace("_node", "") + "ens";
-                        let element = $("[id^=" + id + "]");
-                        for (let j = 0; j < element.length; j++) {
-                            overlayMaps[
-                                element[j].id
-                                ].setZIndex(count);
-                            count++;
-                        }
                     }
                 }
             }
+        }
 
 
     </script>
@@ -1572,14 +1665,15 @@ var the_picker;
                                                                         </i>
                                                                         <input type="text"
                                                                                class="{% if layer.default_month %}monthlypicker {% else %}yearpicker {% endif %} ignore-elements {% if not layer.default_on %}
-                                                                               disabled {% endif %}"
+                                                                       disabled {% endif %}"
                                                                                size="{% if layer.default_month %}6{% else %}4{% endif %}"
                                                                                id="{{ layer.ui_id }}_date"
                                                                                onclick="openPicker(this)"
-                                                                               value="{% if layer.default_month %}{{ layer.default_month }}-{% endif %}{{ layer.default_year }}"
                                                                                onchange="updateLayer(this);"
                                                                                 {% if not layer.default_on %}
-                                                                               disabled {% endif %}/>
+                                                                               disabled {% endif %}
+                                                                               value="{% if layer.default_month %}{{ layer.default_month }}-{% endif %}{{ layer.default_year }}"
+                                                                        />
 
 
                                                                     </div>
@@ -1665,7 +1759,14 @@ var the_picker;
 
 
         </div>
-
+        <div id="dialog" style="display: none" class="ui-widget-content dialog-max-height">
+            <p>
+                This is the default dialog which is useful for displaying information.
+                The dialog window can be moved, resized and closed with the
+                &apos;x&apos; icon.
+            </p>
+        </div>
+        <span id="isMobile"></span>
     </div>
     <script src="{% static '/js/leaflet-sidebar.js' %}"></script>
 
