@@ -11,6 +11,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('about/', views.about, name='about'),
     path('feedback/', views.feedback, name='feedback'),
+    path('get-gewog-by-dzongkhag-id/<str:dzongkhag_id>', views.get_gewog_by_dzongkhag_id, name='get_gewog_by_dzongkhag_id')
 
 
 ]

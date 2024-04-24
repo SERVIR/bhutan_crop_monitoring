@@ -1,8 +1,5 @@
 const boundary = {
     "Countries": {
-        // "capstone":{
-        //     "bob":[]
-        // },
         "Bhutan": {
             "Haa": [
                 "Gakiling",
@@ -251,4 +248,4 @@ const boundary = {
             ]
         }
     }
-}
+};

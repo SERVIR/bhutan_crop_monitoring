@@ -1,6 +1,62 @@
 from django.db import models
 
-# Organization model: This data model describes an organization that operates a monitoring station network
+
+class AverageRice(models.Model):
+    value = models.FloatField()
+    year = models.PositiveSmallIntegerField()
+    gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
+    dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class PaddyGain(models.Model):
+    value = models.FloatField()
+    year = models.PositiveSmallIntegerField()
+    gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
+    dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class PaddyLoss(models.Model):
+    value = models.FloatField()
+    year = models.PositiveSmallIntegerField()
+    gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
+    dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class NDVI(models.Model):
+    value = models.FloatField()
+    year = models.PositiveSmallIntegerField()
+    gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
+    dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class Precipitation(models.Model):
+    value = models.FloatField()
+    year = models.PositiveSmallIntegerField()
+    gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
+    dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class SoilMoisture(models.Model):
+    value = models.FloatField()
+    year = models.PositiveSmallIntegerField()
+    gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
+    dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class Temperature(models.Model):
+    value = models.FloatField()
+    year = models.PositiveSmallIntegerField()
+    gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
+    dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+
+
+class RiceDistribution(models.Model):
+    value = models.FloatField()
+    year = models.PositiveSmallIntegerField()
+    gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
+    dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+
+
 class Country(models.Model):
     country_id = models.CharField(max_length=10, primary_key=True,
                                   help_text="Country ID")
@@ -29,3 +85,22 @@ class Gewog(models.Model):
 
     def __str__(self):
         return self.gewog_name
+
+
+class DataLayer(models.Model):
+    hasVisualization = models.BooleanField(default=True)
+    ui_id = models.CharField(max_length=100)
+    title = models.CharField(max_length=200)
+    url = models.URLField()
+    attribution = models.CharField(max_length=200)
+    layers = models.CharField(max_length=100)
+    default_style = models.CharField(max_length=100)
+    default_color_range = models.CharField(max_length=20)
+    overrange = models.CharField(max_length=20)
+    belowrange = models.CharField(max_length=20)
+    default_year = models.CharField(max_length=4)
+    default_month = models.CharField(max_length=2, null=True, blank=True)
+    default_on = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title

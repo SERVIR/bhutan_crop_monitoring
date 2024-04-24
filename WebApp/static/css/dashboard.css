@@ -282,7 +282,57 @@ ol {
     height: 100%;
 }
 
-#rice_area {
+#sparklineChart {
+    max-width: 100%;
+    width: 100%;
+    table-layout: fixed;
+    overflow-x: auto;
+     font-size: 0.7em;
+}
+
+#paddyHolder{
+    border-top: solid 1px #0D3309;
+    border-left: solid 1px #0D3309;
+    border-right: solid 1px #0D3309;
+    right: 16px;
+    padding: 0;
+}
+
+#riceAreaHolder, #sparkLineHolder{
+    right: 16px;
+    padding: 0;
+    max-height: 350px;
+}
+.table-wrapper {
+    overflow-x: auto; /* Allow horizontal scrolling if table exceeds container width */
+    width: 100%; /* Ensure the wrapper div occupies 100% width */
+}
+#sparklineTable {
+    width: 100%;
+    table-layout: fixed;
+    /* Optional: Adjust other table styles as needed
+    border-collapse: collapse;*/
+}
+
+#sparklineTable th,
+#sparklineTable td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+#sparklineTable th:nth-child(1),
+#sparklineTable td:nth-child(1) {
+    width: 100px; /* Allow the first column to adjust its width based on content */
+}
+
+#sparklineTable th:nth-child(2),
+#sparklineTable td:nth-child(2) {
+    width: calc(100% - 100px); /* Set the width of the second column to take up the remaining space */
+}
+
+
+#rice_area{
     height: 100%;
     width: 100%;
     overflow-y: auto;
@@ -445,6 +495,53 @@ ol {
 
 }
 
+/* Style the input range slider */
+input[type='range'] {
+    -webkit-appearance: none; /* Remove default styles */
+    width: 100%; /* Set width */
+    height: 8px; /* Set height */
+    background: linear-gradient(to bottom, #0D3309, rgba(13, 51, 9, 0.65)); /* Set background */
+    border: none; /* Remove border */
+    outline: none; /* Remove outline */
+    border-radius: 5px; /* Set border radius */
+}
+
+.ui-sortable-placeholder{
+    opacity: .25;
+    visibility: visible!important;
+    background-color: #0D3309;
+}
+
+/* Style the thumb (handle) of the input range slider */
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Remove default styles */
+    width: 20px; /* Set width */
+    height: 16px; /* Set height */
+    background: #fff; /* Set background color */
+    background-image: url('/static/images/handle_lines.png');
+    background-size: contain;
+    border: 2px solid #0D3309; /* Set border */
+    border-radius: 0; /* Set border radius to 0 to make it square */
+    cursor: pointer; /* Set cursor */
+    position: relative; /* Set position to relative for absolute positioning of pseudo-element */
+}
+
+input[type='range']::-webkit-slider-thumb:hover {
+    -webkit-appearance: none; /* Remove default styles */
+    width: 20px; /* Set width */
+    height: 16px; /* Set height */
+    background: #0D3309; /* Set background color */
+    background-image: url('/static/images/handle_lines_hover.png');
+    background-size: contain;
+    border: 2px solid #0D3309; /* Set border */
+    border-radius: 0; /* Set border radius to 0 to make it square */
+    cursor: pointer; /* Set cursor */
+    position: relative; /* Set position to relative for absolute positioning of pseudo-element */
+}
+
+
+
+
 .leaflet-sbs-range {
     position: absolute;
     top: 50%;
@@ -504,6 +601,10 @@ ol {
 
 /* For whatever reason, these need to be defined
  * on their own so dont group them */
+
+.slider-container{
+        margin: 5px 0;
+}
 
 .leaflet-sbs-range::-webkit-slider-thumb {
     -webkit-appearance: none;

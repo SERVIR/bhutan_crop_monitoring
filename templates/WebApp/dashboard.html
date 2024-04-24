@@ -4,13 +4,17 @@
 
 {% block title %}Bhutan Crop Monitoring - Map{% endblock %}
 {% block script %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
+          integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/series-label.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
     <script src="https://code.highcharts.com/modules/export-data.js"></script>
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
-    <link rel="stylesheet" href="{% static '/js/jquery-ui.min.css' %}">
+    {#    <link rel="stylesheet" href="{% static '/js/jquery-ui.min.css' %}">#}
 
     <link rel="stylesheet" href="{% static '/css/yearpicker.css' %}">
     <script src="{% static '/js/yearpicker.js' %}" async></script>
@@ -44,11 +48,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/3.0.5/leaflet-search.src.js"
             integrity="sha512-PDM7dpetuBcPp2fV/ZyCj9BGV8ybPchsrSzQqVZ3WoM8YcxEa2lAj0n1+4MCRzgsEROmVTwQXGw0IrXCCgH+/Q=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
     <script src="{% static '/js/jquery-ui.min.js' %}"></script>
+    {#    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>#}
+    {#    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>#}
+
+    {#    <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>#}
     <script src="{% static '/js/leaflet-providers.js' %}"></script>
-    <script src="{% static 'js/boundary.js' %}"></script>
+    {#    <script src="{% static 'js/boundary.js' %}"></script>#}
 
     <script src="{% static 'js/utils.js' %}"></script>
 
@@ -72,6 +78,9 @@
         let client_layers = [];
         var the_picker;
         var dzongkhagLayer;
+        var gewog_features;
+        var full_data = {{ full_data|safe }};
+        var boundary = {{ boundary|safe }};
 
         {% for layer in data_layers %}
             client_layers.push({
@@ -89,10 +98,35 @@
             })
         {% endfor %}
 
+        // Function to update chart dimensions
+        function updateChartDimensions() {
+            // Get the width of the container element
+            const containerWidth = document.getElementById('pie_chart').clientWidth;
+
+            // Calculate height based on the container width and aspect ratio
+            const aspectRatio = 16 / 9;
+            const height = containerWidth / aspectRatio;
+
+            // Update the chart dimensions
+            piechart.setSize(containerWidth, height);
+        }
+
+        window.addEventListener('resize', function () {
+            updateChartDimensions();
+        });
+
         function buildPie() {
+            // Get the width of the container element
+            const containerWidth = document.getElementById('pie_chart').clientWidth;
+
+// Calculate height based on the container width and aspect ratio
+            const aspectRatio = 16 / 9;
+            const height = containerWidth / aspectRatio;
             piechart = Highcharts.chart('pie_chart', {
                 chart: {
-                    type: 'pie'
+                    type: 'pie',
+                    height: height,
+                    width: containerWidth
                 },
                 title: {
                     text: 'Rice area distribution in acres by Dzongkhag'
@@ -156,7 +190,7 @@
                     chart: {
                         type: type
                     },
-                    colors: [color],
+                    colors: color,
                     title: {
                         text: title,
                         align: 'left'
@@ -195,7 +229,7 @@
                         }
                     },
 
-                    series: [seriesObject],
+                    series: seriesObject,
 
                     responsive: {
                         rules: [{
@@ -269,251 +303,399 @@
             tableContainer.appendChild(table);
         }
 
-        function loadGewogs(id) {
-            console.log("Load Gewogs for: " + id);
+        function loadGewogs(dzongkhag, which) {
+            document.getElementById("gewogOptions").innerHTML = "";
+            addFilterBox("gewogOptions", "gewogsFilter")
+
+            addOptions([{
+                name: "All Gewogs",
+                gewog_id: "-999"
+            }, ...(getGewogs(dzongkhag))], "gewogOptions", "gewogsFilter", 'gewog');
+            if (which) {
+                dzongkhag = which;
+            }
+
+            $.ajax({
+                url: '/get-gewog-by-dzongkhag-id/' + dzongkhag, // Adjust the URL as per your Django API endpoint
+                method: 'GET',
+                success: function (data) {
+                    // Handle the response data here
+                    // Remove previously added features
+                    removePreviousFeatures();
+
+// Add features from JSON object to the layer
+                    addFeaturesToLayer(data);
+                },
+                error: function (error) {
+                    // Handle errors here
+                    console.error('Error loading Gewogs:', error);
+                }
+            });
+        }
+
+        function createSparklineChart(container, data) {
+            var units = ['NDVI', 'mm', 'mm', '&deg;C'];
+            Highcharts.chart(container, {
+                chart: {
+                    type: 'line',
+                    backgroundColor: null,
+                    borderWidth: 0,
+                    margin: [2, 0, 2, 0],
+                    style: {
+                        overflow: 'visible'
+                    }
+                },
+                title: {
+                    text: null
+                },
+                credits: {
+                    enabled: false
+                },
+                xAxis: {
+                    visible: false,
+                    categories: ['2016', '2017', '2018', '2019', '2020', '2021', '2022']
+                },
+                yAxis: {
+                    visible: false
+                },
+                legend: {
+                    enabled: false
+                },
+                tooltip: {
+                    formatter: function () {
+                        var pointIndex = this.point.index;
+                        var series = this.series.chart.series[this.series.index];
+                        var unit = series.userOptions.unit;
+                        return '<b>' + Highcharts.dateFormat('%Y', this.x) + '</b><br/>' +
+                            Highcharts.numberFormat(this.y, 2) + ' ' + unit;
+                    }
+                },
+                plotOptions: {
+                    series: {
+                        animation: false,
+                        color: 'white'
+                    }
+                },
+                exporting: {
+                    enabled: false // Disable exporting for this chart
+                },
+                series: [data]
+            });
         }
 
         $(function () {
-            // Initial call to set aspect ratio on page load
-            updateAspectRatio();
-            buildChart('annual_ndvi', 'Annual NDVI', 'Bumthang Dzongkhag 2016: 0.213', 'line', 2016, 'NDVI', 'Range: 2016 to 2022', {
-                name: 'NDVI',
-                data: [0.213, -1, 0.213, 0.256, -0.014, 0.018,
-                    0.199]
-            }, 'rgb(44, 175, 254)');
-            buildChart('annual_precipitation', 'Annual Precipitation', 'Bumthang Dzongkhag 2016: 48.010 mm', 'line', 2016, 'mm', 'Range: 2016 to 2022', {
-                name: 'Precipitation',
-                data: [48.01, 52.5, 50.5, 52, 73, 58.164,
-                    71]
-            }, 'rgb(44, 175, 254)');
-            buildChart('soil_moisture', 'Annual Soil Moisture', 'Bumthang Dzongkhag 2016: 922.956 mm', 'line', 2016, 'mm', 'Range: 2016 to 2022', {
-                name: 'Soil Moisture',
-                data: [922.956, 1044.206, 868.699, 1034.69, 1139.746, 1026.796,
-                    1203.78]
-            }, 'rgb(44, 175, 254)');
-            buildChart('temperature', 'Annual Temperature', 'Bumthang Dzongkhag 2016: 10.96 &deg;c', 'line', 2016, '&deg;c', 'Range: 2016 to 2022', {
-                name: 'Temperature',
-                data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
-                    10.945]
-            }, 'rgb(44, 175, 254)');
+                // Initial call to set aspect ratio on page load
+                updateAspectRatio();
+                /*  buildChart('annual_ndvi', 'Annual NDVI', 'Bumthang Dzongkhag 2016: 0.213', 'line', 2016, 'NDVI', 'Range: 2016 to 2022', [{
+                      name: 'NDVI',
+                      data: [0.213, -1, 0.213, 0.256, -0.014, 0.018,
+                          0.199]
+                  }], ['rgb(44, 175, 254)']);
+                  buildChart('annual_precipitation', 'Annual Precipitation', 'Bumthang Dzongkhag 2016: 48.010 mm', 'line', 2016, 'mm', 'Range: 2016 to 2022', [{
+                      name: 'Precipitation',
+                      data: [48.01, 52.5, 50.5, 52, 73, 58.164,
+                          71]
+                  }], ['rgb(44, 175, 254)']);
+                  buildChart('soil_moisture', 'Annual Soil Moisture', 'Bumthang Dzongkhag 2016: 922.956 mm', 'line', 2016, 'mm', 'Range: 2016 to 2022', [{
+                      name: 'Soil Moisture',
+                      data: [922.956, 1044.206, 868.699, 1034.69, 1139.746, 1026.796,
+                          1203.78]
+                  }], ['rgb(44, 175, 254)']);
+                  buildChart('temperature', 'Annual Temperature', 'Bumthang Dzongkhag 2016: 10.96 &deg;c', 'line', 2016, '&deg;c', 'Range: 2016 to 2022', [{
+                      name: 'Temperature',
+                      data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
+                          10.945]
+                  }], ['rgb(44, 175, 254)']);
+                  */
 
-            buildChart('paddy_gain', 'Paddy Gain', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', {
-                name: 'Paddy Gain',
-                data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
-                    10.945]
-            }, 'rgb(90,254,44)');
+                buildChart('paddy_gain', 'Paddy Gain/Loss', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
+                    name: 'Paddy Gain',
+                    data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
+                        10.945]
+                }, {
+                    name: 'Paddy Loss',
+                    data: [-1.96, -4.531, -19.802, -5.854, -8.057, -6.813,
+                        -10.945]
+                }], ['rgb(90,254,44)', 'rgb(255,38,0)']);
 
-            buildChart('paddy_loss', 'Paddy Loss', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres ', 'Range: 2016 to 2022', {
-                name: 'Paddy Loss',
-                data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
-                    10.945]
-            }, 'rgb(255,38,0)');
+                var seriesData = [
+                    {
+                        name: 'NDVI',
+                        data: full_data["ndvi"].map(function (data) {
+                            return data.val;
+                        }),
+                        unit: 'NDVI'
+                    },
+                    {
+                        name: 'Precipitation',
+                        data: full_data["precipitation"].map(function (data) {
+                            return data.val;
+                        }),
+                        unit: 'mm'
+                    },
+                    {
+                        name: 'Soil Moisture',
+                        data: full_data["soil_moisture"].map(function (data) {
+                            return data.val;
+                        }),
+                        unit: 'mm'
+                    },
+                    {
+                        name: 'Temperature',
+                        data: full_data["temperature"].map(function (data) {
+                            return data.val;
+                        }),
+                        unit: '&deg;C'
+                    }
+                ];
 
-            buildPie();
+                var tableBody = $('#sparklineTable tbody');
 
-            map = L.map('map', {
-                zoomControl: true, fullscreenControl: true, center: [27.41016657183734, 90.44523404431789], zoom: 8
-            });
+                seriesData.forEach(function (series) {
+                    var row = $('<tr></tr>');
+                    var parameterCell = $('<td></td>').text(series.name);
+                    var sparklineCell = $('<td></td>').addClass('sparkline-chart');
 
-            map.createPane('left');
-            map.createPane('right');
-            map.zoomControl.setPosition('topright');
+                    row.append(parameterCell);
+                    row.append(sparklineCell);
+                    tableBody.append(row);
 
-            // Add the Search Control to the map
-            const search = new GeoSearch.GeoSearchControl({
-                provider: new GeoSearch.OpenStreetMapProvider(), showMarker: false, // optional: true|false  - default true
-                showPopup: false, position: 'topright', autoClose: true,
-            });
-            map.addControl(search);
-            var dzongkhagData = {{ dzongkhags|safe }}; // Assuming dzongkhags is a list of Dzongkhag data
+                    createSparklineChart(sparklineCell[0], series);
+                });
 
-            // Create an empty array to hold the GeoJSON features
-            var dzongkhagFeatures = [];
+                buildPie();
 
-            // Iterate over the Dzongkhag data
-            dzongkhagData.forEach(function (dzongkhag) {
-                // Create a GeoJSON feature object
+                map = L.map('map', {
+                    zoomControl: true, fullscreenControl: true, center: [27.41016657183734, 90.44523404431789], zoom: 8
+                });
+
+                map.createPane('left');
+                map.createPane('right');
+                map.zoomControl.setPosition('topright');
+
+                // Add the Search Control to the map
+                const search = new GeoSearch.GeoSearchControl({
+                    provider: new GeoSearch.OpenStreetMapProvider(), showMarker: false, // optional: true|false  - default true
+                    showPopup: false, position: 'topright', autoClose: true,
+                });
+                map.addControl(search);
+                var dzongkhagData = {{ dzongkhags|safe }}; // Assuming dzongkhags is a list of Dzongkhag data
+
+                // Create an empty array to hold the GeoJSON features
+                var dzongkhagFeatures = [];
+
+                // Iterate over the Dzongkhag data
+                dzongkhagData.forEach(function (dzongkhag) {
+                    // Create a GeoJSON feature object
+                    var feature = {
+                        "type": "Feature",
+                        "properties": {
+                            "id": dzongkhag.id,
+                            "name": dzongkhag.name
+                        },
+                        "geometry": dzongkhag.geometry
+                    };
+
+                    // Add the feature to the array
+                    dzongkhagFeatures.push(feature);
+                });
+                gewog_features = L.geoJSON(null, {
+                    id: 'gewog_features',
+                    // Add style function to customize the appearance of features
+                    style: function (feature) {
+                        return {
+                            fillColor: 'transparent', // Set fill color to 'none' to remove fill
+                            color: '#0a57c9', // Set border color (stroke color)
+                            weight: 4 // Set border width (stroke width)
+                        };
+                    },
+                    onEachFeature: function (feature, layer) {
+
+                        // Add a click event listener to load Gewogs when clicking the layer
+                        layer.on('click', function (e) {
+
+                            var bounds = layer.getBounds();
+
+
+                            // Fit the map view to the bounds of the clicked feature
+                            {#map.fitBounds(bounds);#}
+                            // Call the loadGewogs function passing the ID from the clicked feature
+                            selectGewogOption(feature.properties.name, feature.properties.id);
+                            if (feature.properties.id != "-999") {
+                                L.DomEvent.stopPropagation(e);
+                                L.DomEvent.preventDefault(e);
+                                L.DomEvent.stop(e);
+                                L.DomEvent.stopPropagation(e.originalEvent);
+                                L.DomEvent.preventDefault(e.originalEvent);
+                                L.DomEvent.stop(e.originalEvent);
+                            }
+                        });
+                    }
+                }).addTo(map);
+
+                // Create a GeoJSON layer with hover and click events
+                dzongkhagLayer = L.geoJSON(dzongkhagFeatures, {
+                    id: "dzongkhagLayer",
+                    style: function (feature) {
+                        return {
+                            fillColor: 'transparent', // Set fill color to 'none' to remove fill
+                            color: '#ffffff', // Set border color (stroke color)
+                            weight: 2 // Set border width (stroke width)
+                        };
+                    },
+                    onEachFeature: function (feature, layer) {
+
+                        // Add a click event listener to load Gewogs when clicking the layer
+                        layer.on('click', function (e) {
+                            var bounds = layer.getBounds();
+
+                            map.fitBounds(bounds);
+
+                            var sidebarWidth = document.getElementById('sidebar-content').offsetWidth;
+                            var mapCenter = map.getCenter();
+                            var newCenter = map.unproject(map.project(mapCenter).subtract(L.point(sidebarWidth / 2, 0)));
+
+
+                            // Fit the map view to the bounds of the clicked feature
+
+
+                            // Call the loadGewogs function passing the ID from the clicked feature
+                            selectOption(feature.properties.name, feature.properties.id);
+
+                            map.setView(newCenter);
+
+                        });
+                    }
+                }).addTo(map);
+
+// Fit the map to the extent of the GeoJSON layer
+                map.fitBounds(dzongkhagLayer.getBounds());
+                $(".leaflet-bar-timecontrol").css("margin-left", "50px");
+                $('.leaflet-bar-timecontrol').css('display', 'inline');
+                window.dispatchEvent(new Event('resize'));
+
+
+                var formatted_data = [];
+
+// Loop through each Dzongkhag in the full_data object
+                const excluded = ["temperature", "precipitation", "ndvi", "soil_moisture"]
+                for (var dzongkhag_name in full_data) {
+                    if (full_data.hasOwnProperty(dzongkhag_name) && !excluded.includes(dzongkhag_name)) {
+                        // Initialize an array to store the values for the current Dzongkhag
+                        var dzongkhag_values = [];
+
+                        // Loop through each year's data for the current Dzongkhag
+                        for (var year in full_data[dzongkhag_name]) {
+                            if (full_data[dzongkhag_name].hasOwnProperty(year)) {
+                                // Extract the average rice value for the current year
+                                var average_rice_value = full_data[dzongkhag_name][year]['average_rice'];
+
+                                // Push the year and value pair to the dzongkhag_values array
+                                dzongkhag_values.push({
+                                    'year': parseInt(year),
+                                    'value': average_rice_value.length > 0 ? average_rice_value[0] : null
+                                });
+                            }
+                        }
+
+                        // Push the formatted data for the current Dzongkhag to the formatted_data array
+                        formatted_data.push({
+                            'name': dzongkhag_name,
+                            'values': dzongkhag_values
+                        });
+                    }
+                }
+
+                const data = {
+                    "admin_level": "Dzongkhag",
+                    "data": formatted_data
+                }
+
+
+                // Call the function with your JSON data
+                createTable(data);
+                setupMenu();
+                makeSlider();
+                add_paddy_wms(2016);
+                baseLayers = getCommonBaseLayers(map); // use baselayers.js to add, remove, or edit
+                sidebar = L.control.sidebar("sidebar").addTo(map);
+                for (let key of Object.keys(baseLayers)) {
+                    const map_thumb = $("<div>");
+                    map_thumb.addClass("map-thumb");
+                    map_thumb.attr("datavalue", key);
+                    map_thumb.on("click", handleBaseMapSwitch);
+
+                    const thumb_cap = $("<div>");
+                    thumb_cap.addClass("caption-text");
+
+                    const thumb_text = $("<h2>");
+                    thumb_text.text(baseLayers[key].options.displayName);
+
+                    thumb_text.appendTo(thumb_cap);
+                    const img = $("<img src='" +
+                        static_url + "" +
+                        baseLayers[key].options.thumb +
+                        "' alt='" +
+                        baseLayers[key].options.displayName + "'>", {
+                        title: baseLayers[key].options.displayName,
+                        datavalue: key,
+                        click: 'handleBaseMapSwitch($(this)[0].getAttribute("datavalue"))'
+                    });
+                    img.addClass("basemapbtn");
+                    img.appendTo(map_thumb);
+                    thumb_cap.appendTo(map_thumb);
+                    map_thumb.appendTo("#basemap");
+                }
+
+                sidebar.open('layers');
+
+                client_layers.forEach(createLayer);
+                sortableLayerSetup();
+                adjustLayerIndex();
+                $('.yearpicker').off();
+                setupYearPicker();
+                setupMonthlyPicker();
+
+
+            }
+        )
+        //End ready
+
+        // Function to remove previously added features from the layer
+        function removePreviousFeatures() {
+            gewog_features.clearLayers();
+        }
+
+        // Function to add features from JSON object to the layer
+        function addFeaturesToLayer(data) {
+            // Iterate over each gewog in the JSON object
+            data.gewogs.forEach(function (gewog) {
+                // Create a GeoJSON feature for each gewog
                 var feature = {
                     "type": "Feature",
                     "properties": {
-                        "id": dzongkhag.id,
-                        "name": dzongkhag.name
+                        "id": gewog.id,
+                        "name": gewog.name
                     },
-                    "geometry": dzongkhag.geometry
+                    "geometry": gewog.geometry
                 };
 
-                // Add the feature to the array
-                dzongkhagFeatures.push(feature);
+                // Add the feature to the layer
+                gewog_features.addData(feature);
             });
+        }
 
-            // Create a GeoJSON layer with hover and click events
-            dzongkhagLayer = L.geoJSON(dzongkhagFeatures, {
-                id:  "dzongkhagLayer",
-                style: function (feature) {
-                    return {
-                        fillColor: 'transparent', // Set fill color to 'none' to remove fill
-                        color: '#ffffff', // Set border color (stroke color)
-                        weight: 2 // Set border width (stroke width)
-                    };
-                },
-                onEachFeature: function (feature, layer) {
-                    // Bind a popup to the layer with the feature name
-                    layer.bindPopup(feature.properties.name);
 
-                    var popupTimer; // Variable to hold the timer for popup display
-                    /*
-                                        // Add a mouseover event listener with a delay to show the popup when hovering over the layer
-                                        layer.on('mouseover', function (e) {
-                                            popupTimer = setTimeout(function () {
-                                                layer.openPopup();
-                                            }, 300); // Adjust the delay (in milliseconds) as needed
-                                        });
-
-                                        // Add a mouseout event listener with a delay to hide the popup when moving away from the layer
-                                        layer.on('mouseout', function (e) {
-                                            clearTimeout(popupTimer); // Clear the popup timer
-                                            layer.closePopup();
-                                        });
-
-                                        */
-
-                    // Add a click event listener to load Gewogs when clicking the layer
-                    layer.on('click', function (e) {
-                        // Call the loadGewogs function passing the ID from the clicked feature
-                        loadGewogs(feature.properties.id);
-                    });
+        // Resize sparkline charts when window is resized
+        $(window).resize(function () {
+            $('#sparklineTable .sparkline-chart').each(function () {
+                var chart = $(this).highcharts();
+                if (chart) {
+                    chart.setSize(this.offsetWidth, 50);
                 }
-            }).addTo(map);
+            });
+        });
 
-// Fit the map to the extent of the GeoJSON layer
-            map.fitBounds(dzongkhagLayer.getBounds());
-            $(".leaflet-bar-timecontrol").css("margin-left", "50px");
-            $('.leaflet-bar-timecontrol').css('display', 'inline');
-            window.dispatchEvent(new Event('resize'));
-
-            // Sample JSON object
-            const data = {
-                "admin_level": "Dzongkhag",
-                "data": [
-                    {
-                        "name": "District 1",
-                        "values": [
-                            {"year": 2016, "value": 100},
-                            {"year": 2017, "value": 150},
-                            {"year": 2018, "value": 100},
-                            {"year": 2019, "value": 150},
-                            {"year": 2020, "value": 100},
-                            {"year": 2021, "value": 150},
-                            {"year": 2022, "value": 200}
-                        ]
-                    },
-                    {
-                        "name": "District 2",
-                        "values": [
-                            {"year": 2016, "value": 100},
-                            {"year": 2017, "value": 150},
-                            {"year": 2018, "value": 100},
-                            {"year": 2019, "value": 150},
-                            {"year": 2020, "value": 120},
-                            {"year": 2021, "value": 180},
-                            {"year": 2022, "value": 220}
-                        ]
-                    },
-                    {
-                        "name": "District 3",
-                        "values": [
-                            {"year": 2016, "value": 100},
-                            {"year": 2017, "value": 150},
-                            {"year": 2018, "value": 100},
-                            {"year": 2019, "value": 150},
-                            {"year": 2020, "value": 100},
-                            {"year": 2021, "value": 150},
-                            {"year": 2022, "value": 200}
-                        ]
-                    },
-                    {
-                        "name": "District 4",
-                        "values": [
-                            {"year": 2016, "value": 100},
-                            {"year": 2017, "value": 150},
-                            {"year": 2018, "value": 100},
-                            {"year": 2019, "value": 150},
-                            {"year": 2020, "value": 120},
-                            {"year": 2021, "value": 180},
-                            {"year": 2022, "value": 220}
-                        ]
-                    }, {
-                        "name": "District 5",
-                        "values": [
-                            {"year": 2016, "value": 100},
-                            {"year": 2017, "value": 150},
-                            {"year": 2018, "value": 100},
-                            {"year": 2019, "value": 150},
-                            {"year": 2020, "value": 100},
-                            {"year": 2021, "value": 150},
-                            {"year": 2022, "value": 200}
-                        ]
-                    },
-                    {
-                        "name": "District 6",
-                        "values": [
-                            {"year": 2016, "value": 100},
-                            {"year": 2017, "value": 150},
-                            {"year": 2018, "value": 100},
-                            {"year": 2019, "value": 150},
-                            {"year": 2020, "value": 120},
-                            {"year": 2021, "value": 180},
-                            {"year": 2022, "value": 220}
-                        ]
-                    }
-                ]
-            };
-
-            // Call the function with your JSON data
-            createTable(data);
-            setupMenu();
-            makeSlider();
-            add_paddy_wms(2016);
-            baseLayers = getCommonBaseLayers(map); // use baselayers.js to add, remove, or edit
-            sidebar = L.control.sidebar("sidebar").addTo(map);
-            for (let key of Object.keys(baseLayers)) {
-                const map_thumb = $("<div>");
-                map_thumb.addClass("map-thumb");
-                map_thumb.attr("datavalue", key);
-                map_thumb.on("click", handleBaseMapSwitch);
-
-                const thumb_cap = $("<div>");
-                thumb_cap.addClass("caption-text");
-
-                const thumb_text = $("<h2>");
-                thumb_text.text(baseLayers[key].options.displayName);
-
-                thumb_text.appendTo(thumb_cap);
-                const img = $("<img src='" +
-                    static_url + "" +
-                    baseLayers[key].options.thumb +
-                    "' alt='" +
-                    baseLayers[key].options.displayName + "'>", {
-                    title: baseLayers[key].options.displayName,
-                    datavalue: key,
-                    click: 'handleBaseMapSwitch($(this)[0].getAttribute("datavalue"))'
-                });
-                img.addClass("basemapbtn");
-                img.appendTo(map_thumb);
-                thumb_cap.appendTo(map_thumb);
-                map_thumb.appendTo("#basemap");
-            }
-
-            sidebar.open('layers');
-
-            client_layers.forEach(createLayer);
-            sortableLayerSetup();
-            adjustLayerIndex();
-            $('.yearpicker').off();
-            setupYearPicker();
-            setupMonthlyPicker();
-
-        }); //End ready
         var the_input;
 
         function positionDatepicker(inputField) {
@@ -592,7 +774,6 @@
          * @returns layer json object
          */
         function getLayer(which) {
-            console.log(which);
             return client_layers.find(
                 (item) => item.id === which.replace("TimeLayer", "")
             );
@@ -604,11 +785,9 @@
          * @param {string} which - The Key of the basemap
          */
         function handleBaseMapSwitch(which) {
-            console.log(which);
             if (which.currentTarget) {
                 which = which.currentTarget.getAttribute('datavalue');
             }
-            console.log(which);
             map.removeLayer(baseLayers[active_basemap]);
             active_basemap = which;
             baseLayers[active_basemap].addTo(map);
@@ -625,7 +804,7 @@
                 input.value = ""; // Clear the input field
             }
         }
-        
+
         // Function to find the layer with the specified ID
         function findLayerById(id) {
             var foundLayer = null;
@@ -638,15 +817,12 @@
         }
 
         function changeDzongkhagLayerStyle(basemapName) {
-            
+
             {#dzongkhagLayer = findLayerById("dzongkhagLayer");#}
             // Check the name of the basemap and set the fill color of dzongkhagLayer accordingly
             const white = ["Gsatellite", "Satellite"]
             const green = ["OSM", "Topo", "Terrain", "NatGeo"]
-console.log("changing " + basemapName);
             dzongkhagLayer.eachLayer(function (layer) {
-                
-                console.log("in style function");
                 // Define default style properties
                 var style = {
                     fillColor: 'transparent', // Default fill color
@@ -661,10 +837,10 @@ console.log("changing " + basemapName);
                     style.color = '#ffffff'; // Change fill color to white
                 }
 
-                 layer.setStyle(style);
+                layer.setStyle(style);
             });
-            
-            
+
+
         }
 
         /**
@@ -742,7 +918,6 @@ console.log("changing " + basemapName);
 
 
                     var currentYear = $(this).datepicker('getDate').getFullYear();
-                    console.log(currentYear);
 
                     var startYear = 2016;
                     var endYear = 2022;
@@ -1178,18 +1353,10 @@ console.log("changing " + basemapName);
             document.getElementById(optionsID).appendChild(filterLi);
         }
 
-        function loadGewogs(which) {
-            console.log("will add Gewogs for: " + which);
-            document.getElementById("gewogOptions").innerHTML = "";
-            addFilterBox("gewogOptions", "gewogsFilter")
-
-            addOptions(["All Gewogs", ...(getGewogs(which))], "gewogOptions", "gewogsFilter", 'gewog');
-        }
-
         function getGewogs(dzongkha) {
             let country = $("#selectedCountry").text();
-            if (boundary["Countries"][country][dzongkha]) {
-                return boundary["Countries"][country][dzongkha];
+            if (boundary["Countries"][country]["dzongkhags"][dzongkha]) {
+                return boundary["Countries"][country]["dzongkhags"][dzongkha]["gewogs"];
             } else {
                 return [];
             }
@@ -1200,12 +1367,24 @@ console.log("changing " + basemapName);
             document.getElementById("dzongkhagOptions").innerHTML = "";
             addFilterBox("dzongkhagOptions", "dzongkhagFilter")
 
-            addOptions(["All Dzongkhags", ...(getDzongkhags(country))], "dzongkhagOptions", "dzongkhagFilter");
+            const dzongkhags = getDzongkhags(country);
+            const dzongkhas_list = []
+            for (const key in dzongkhags) {
+
+                dzongkhas_list.push(dzongkhags[key]);
+
+            }
+
+
+            addOptions([{
+                name: "All Dzongkhags",
+                dzongkhag_id: "-999"
+            }, ...dzongkhas_list], "dzongkhagOptions", "dzongkhagFilter");
         }
 
         function getDzongkhags(country) {
             if (boundary["Countries"][country]) {
-                return Object.keys(boundary["Countries"][country]);
+                return boundary["Countries"][country]["dzongkhags"];
             } else {
                 return [];
             }
@@ -1214,37 +1393,93 @@ console.log("changing " + basemapName);
         function addOptions(options, dropdownID, filterID, isGewog) {
             const gewog = isGewog ? "Gewog" : "";
             var ul = document.getElementById(dropdownID);
+
+
             options.forEach(function (option) {
                 var li = document.createElement("li");
                 var a = document.createElement("a");
                 a.setAttribute("href", "#");
                 a.setAttribute("class", "dropdown-item");
-                a.setAttribute("onclick", "select" + gewog + "Option('" + option + "')");
-                a.textContent = option;
+                if (isGewog) {
+                    a.setAttribute("onclick", "select" + gewog + "Option('" + option.name + "', '" + option.gewog_id + "')");
+                } else {
+                    a.setAttribute("onclick", "selectOption('" + option.name + "', '" + option.dzongkhag_id + "')");
+                }
+                a.textContent = option.name;
                 li.appendChild(a);
                 ul.appendChild(li);
             });
         }
 
-        function selectGewogOption(option) {
+        function selectGewogOption(name, id) {
             // Update the label of the second dropdown
-            document.getElementById("selectGewog").innerHTML = option;
+            document.getElementById("selectGewog").innerHTML = name;
             $("#gewogsFilter").val('');
             filterOptions('gewogOptions', 'gewogsFilter');
+            if (id == "-999") {
+                gewog_features.clearLayers();
+                // ********   selectOption()
+                var buttonText = document.getElementById('selectDzongkhag').innerText.trim();
+
+                // Step 2: Iterate through the list items inside the dropdown menu
+                var listItems = document.querySelectorAll('#dzongkhagOptions .dropdown-item');
+                listItems.forEach(function (listItem) {
+                    // Step 3: Extract the text of the <a> tag
+                    var linkText = listItem.innerText.trim();
+
+                    // Step 4: If the text matches the text of the button, trigger a click event on that <a> tag
+                    if (linkText === buttonText) {
+                        listItem.click();
+                        // If you want to stop after finding the first match, you can break the loop here
+                        // return;
+                    }
+                });
+            } else {
+                gewog_features.eachLayer(function (layer) {
+                    // Check if the layer's feature id matches the provided featureId
+                    if (layer.feature.properties.id === id) {
+                        // Fit the map bounds to the geometry of the matched layer
+                        map.fitBounds(layer.getBounds());
+                    }
+                });
+            }
+
+            console.log("Ajax to get and update values for gewog");
         }
 
-        function selectOption(option) {
+        function selectOption(option, dzongkhagID) {
+
             // Update the label of the second dropdown
             document.getElementById("selectDzongkhag").innerHTML = option;
             if (option.toLowerCase() === "all dzongkhags") {
                 $("#gewoglist").hide();
+                gewog_features.clearLayers();
+                map.fitBounds(dzongkhagLayer.getBounds());
             } else {
-                loadGewogs(option);
+                loadGewogs(option, dzongkhagID);
                 document.getElementById("selectGewog").innerHTML = "All Gewogs";
                 $("#gewoglist").show();
+
+                let feature = getFeatureByDzongkhagID(dzongkhagID);
+
+                // Fit map bounds to the feature's geometry
+                if (feature) {
+                    map.fitBounds(feature.getBounds());
+                }
             }
             $("#dzongkhagFilter").val('');
             filterOptions('dzongkhagOptions', 'dzongkhagFilter');
+        }
+
+        function getFeatureByDzongkhagID(dzongkhagID) {
+            // Iterate through the GeoJSON layer's features to find the one with the matching dzongkhag ID
+            let feature = null;
+            dzongkhagLayer.eachLayer(function (layer) {
+                if (layer.feature.properties.id === dzongkhagID) {
+                    feature = layer;
+                }
+            });
+            return feature;
         }
 
         function setupMenu() {
@@ -1275,13 +1510,16 @@ console.log("changing " + basemapName);
                     a.setAttribute("href", "#");
                     a.setAttribute("class", "dropdown-item");
                     a.textContent = country;
+                    // Add click event listener to load dzongkhags for the selected country
+                    a.addEventListener("click", function () {
+                        loadDzongkhags(country);
+                    });
                     li.appendChild(a);
                     countryList.appendChild(li);
                 });
                 $("#selectedCountry").addClass("dropdown-toggle");
-                $("#selectedCountry").attr("data-bs-toggle", "dropdown")
+                $("#selectedCountry").attr("data-bs-toggle", "dropdown");
                 $(countryList).removeClass("display");
-
             }
         }
 
@@ -1386,9 +1624,7 @@ console.log("changing " + basemapName);
 
                 date_control.addClass("disabled");
                 date_control.prop("disabled", true);
-                console.log("removed");
             } else {
-                console.log("added");
                 map.addLayer(overlayMaps[which]);
                 date_control.removeClass("disabled");
                 date_control.prop("disabled", false);
@@ -1434,6 +1670,39 @@ console.log("changing " + basemapName);
             }
         }
 
+        function navigateDate(inputId, direction) {
+            const input = document.getElementById(inputId);
+            const dateValue = input.value;
+
+            // Extract year and month from the date value
+            const dateValues = dateValue.split("-");
+            const year = parseInt(dateValues[0]);
+            const month = parseInt(dateValues[1]) || 1; // Default to 1 if month is not provided
+
+            // Calculate the new date based on the direction
+            let newYear = year;
+            let newMonth = month;
+            if (direction === 'prev') {
+                newMonth -= 1;
+                if (newMonth < 1) {
+                    newMonth = 12;
+                    newYear -= 1;
+                }
+            } else if (direction === 'next') {
+                newMonth += 1;
+                if (newMonth > 12) {
+                    newMonth = 1;
+                    newYear += 1;
+                }
+            }
+
+            // Update the input value with the new date
+            input.value = newYear + "-" + (newMonth < 10 ? '0' : '') + newMonth;
+
+            // Trigger the onchange event to update the layer
+            updateLayer(input);
+        }
+
 
         /**
          * sortableLayerSetup
@@ -1445,17 +1714,22 @@ console.log("changing " + basemapName);
             $("ol.layers").sortable({
                 group: "simple_with_animation",
                 handle: ".rst__moveHandle",
+                revert: true,
                 pullPlaceholder: true,
-                ghostClass: "sortable-ghost",
+                ghostClass: "ui-sortable-placeholder",  // Class name for the drop placeholder
+                chosenClass: "sortable-chosen",  // Class name for the chosen item
+                dragClass: "sortable-drag",  // Class name for the dragging item
                 animation: 150,
                 easing: "cubic-bezier(1, 0, 0, 1)",
-                onEnd: function ($item, container, _super) {
-                    adjustLayerIndex();
+                change: function (event, ui) {
+                    adjustLayerIndex(ui);
+                    console.log("change");
                 },
-                onChange: function () {
+                update: function () {
                     adjustLayerIndex();
+                    console.log("update");
                 },
-                filter: ".ignore-elements",
+                filter: ".slider",
                 tolerance: "pointer",
             });
         }
@@ -1464,28 +1738,46 @@ console.log("changing " + basemapName);
          * adjustLayerIndex
          * adjusts the layer indexes to match the order in the layer manager
          */
-        function adjustLayerIndex() {
+        function adjustLayerIndex(ui) {
+
             let count = 10;
-            const ol_layers_li = $("ol.layers li");
-            for (let i = ol_layers_li.length; i > 0; i--) {
-                if (overlayMaps[
-                    ol_layers_li[i - 1].id.replace("_node", "")
-                    ]) {
-                    overlayMaps[
-                        ol_layers_li[i - 1].id.replace("_node", "")
-                        ].setZIndex(count);
-                    count++;
+            const ol_layers = $("ol.layers");
+
+            if (ui) {
+                const current_index = ui.placeholder.index();
+                const dragging_id = ui.helper[0].id;
+
+                // Remove the dragging element temporarily
+                const dragging_element = ol_layers.find(`#${dragging_id}`).detach();
+
+                // Insert the dragging element at the correct position
+                if (current_index === ol_layers.children().length) {
+                    // Insert after the last element
+                    ol_layers.append(dragging_element);
                 } else {
-                    let id = ol_layers_li[i - 1].id.replace("_node", "") + "ens";
-                    let element = $("[id^=" + id + "]");
-                    for (let j = 0; j < element.length; j++) {
-                        overlayMaps[
-                            element[j].id
-                            ].setZIndex(count);
-                        count++;
-                    }
+                    ol_layers.children().eq(current_index).before(dragging_element);
                 }
             }
+            const li_elements = ol_layers.find("li").toArray().reverse();
+            // Re-index the overlayMaps
+            li_elements.forEach(function (element) {
+                const id = $(element)[0].id.replace("_node", "");
+                if (overlayMaps[id]) {
+                    overlayMaps[id].setZIndex(count);
+                    count++;
+                } else {
+                    const ensId = id + "ens";
+                    $("[id^=" + ensId + "]").each(function () {
+                        overlayMaps[$(this)[0].id].setZIndex(count);
+                        count++;
+                    });
+                }
+            });
+        }
+
+        function set_layer_opacity(layer_id, value) {
+            overlayMaps[layer_id].setOpacity(value / 100);
+
         }
 
 
@@ -1631,13 +1923,13 @@ console.log("changing " + basemapName);
                                             <div class="rst__nodeContent" style="left: 44px">
                                                 <div style="height: 100%">
                                                     <div class="rst__rowWrapper">
-                                                        <div class="rst__row" style="opacity: 1" draggable="true">
+                                                        <div class="rst__row" style="opacity: 1">
                                                             <div class="rst__moveHandle"></div>
-                                                            <div class="rst__rowContents ignore-elements">
-                                                                <div class="rst__rowLabel">
+                                                            <div class="rst__rowContents ignore-elements ">
+                                                                <div class="rst__rowLabel ">
 
                                                                         <span
-                                                                                class="rst__rowTitle"
+                                                                                class="rst__rowTitle "
                                                                                 title="{{ layer.title }}"
                                                                                 data-toggle="tooltip"
                                                                         >
@@ -1650,7 +1942,7 @@ console.log("changing " + basemapName);
                                              class="cblabel">{{ layer.title }}</label>
                                       <br/>
                                   </span>
-                                                                    <div class="ignore-elements"
+                                                                    <div class="ignore-elements "
                                                                          style="position: relative;">
                                                                         <i id="legend_{{ layer.ui_id }}TimeLayer "
                                                                            class="fas fa-list legend-btn"
@@ -1663,8 +1955,9 @@ console.log("changing " + basemapName);
                                                                            style="float: right; margin: 0 0 15px 15px;">
 
                                                                         </i>
+
                                                                         <input type="text"
-                                                                               class="{% if layer.default_month %}monthlypicker {% else %}yearpicker {% endif %} ignore-elements {% if not layer.default_on %}
+                                                                               class="{% if layer.default_month %}monthlypicker {% else %}yearpicker {% endif %} ignore-elements  {% if not layer.default_on %}
                                                                        disabled {% endif %}"
                                                                                size="{% if layer.default_month %}6{% else %}4{% endif %}"
                                                                                id="{{ layer.ui_id }}_date"
@@ -1677,11 +1970,20 @@ console.log("changing " + basemapName);
 
 
                                                                     </div>
+                                                                    <div class="slider-container opacity-control">
+                                                                        <input type="range" min="0" max="100"
+                                                                               value="100"
+                                                                               class="slider opacity-control"
+                                                                               style="display:block; width:100%"
+                                                                               oninput="set_layer_opacity('{{ layer.ui_id }}', this.value )">
+                                                                    </div>
 
                                                                 </div>
-                                                                <div class="rst__rowToolbar"></div>
+                                                                <div class="rst__rowToolbar">
+                                                                </div>
                                                             </div>
                                                         </div>
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -1700,17 +2002,6 @@ console.log("changing " + basemapName);
                             </span>
                             </h1>
                         </div>
-
-                        {#                    <div class="sidebar-pane" id="settings">#}
-                        {#                        <h1 class="sidebar-header">#}
-                        {#                            Settings#}
-                        {#                            <span class="sidebar-close">#}
-                        {#                              <i class="fas fa-caret-left"></i>#}
-                        {#                            </span>#}
-                        {#                        </h1>#}
-                        {#                        <p>Currently no settings here, likely will remove as#}
-                        {#                            settings have been moved to each layer</p>#}
-                        {#                    </div>#}
                     </div>
                 </div>
                 <div id="map">
@@ -1721,20 +2012,31 @@ console.log("changing " + basemapName);
 
             <div class="col-sm-12  col-xl-3 mg-t-20">
                 <div class="row">
-                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container" style="z-index: 1005;">
+                    <div class="col-sm-12  col-xl-12 mg-t-20" id="riceAreaHolder" style="z-index: 1005;">
                         <div id="rice_area" class="chart-holder">
                         </div>
 
                     </div>
-                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container" style="z-index: 1004;">
+                    <div class="col-sm-12  col-xl-12 mg-t-20 aspect-ratio-container" id="paddyHolder"
+                         style="z-index: 1004;">
                         <div id="paddy_gain" class="chart-holder"></div>
                     </div>
-                    <div class="col-sm-6  col-xl-12 mg-t-20 aspect-ratio-container" style="z-index: 1003;">
-                        <div id="paddy_loss" class="chart-holder"></div>
+                    <div class="col-sm-12 col-md-12  col-xl-12 mg-t-20 " id="sparkLineHolder" style="z-index: 1003;">
+                        <div id="sparklineChart" class="chart-holder">
+                            <table id="sparklineTable" style="width:100%">
+                                <thead>
+                                <tr>
+                                    <th>Parameter</th>
+                                    <th>Annual Pattern</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <!-- Table rows will be dynamically added here -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
-
-                    <div class="col-sm-6  col-xl-12 mg-t-20 pie-slider"
+                    <div class="col-sm-12 col-md-12 col-xl-12 mg-t-20 pie-slider order-sm-second"
                          style="z-index: 1002; border-bottom: solid 1px; border-left: solid 1px; border-right: solid 1px;">
                         <div class="form-group year-slider">
                             <label for="yearSlider">Select Year:</label>
@@ -1743,18 +2045,6 @@ console.log("changing " + basemapName);
                         <div id="pie_chart"></div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-6 col-xl-3 aspect-ratio-container" style="z-index: 1010;">
-                <div id="annual_ndvi" class="chart-holder"></div>
-            </div>
-            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container" style="z-index: 1009;">
-                <div id="annual_precipitation" class="chart-holder"></div>
-            </div>
-            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container" style="z-index: 1008;">
-                <div id="soil_moisture" class="chart-holder"></div>
-            </div>
-            <div class="col-sm-6 col-xl-3 mg-t-20 mg-sm-t-0 aspect-ratio-container" style="z-index: 1007;">
-                <div id="temperature" class="chart-holder"></div>
             </div>
 
 
