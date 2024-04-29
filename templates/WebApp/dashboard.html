@@ -257,7 +257,9 @@
 
         // Function to create the table
         function createTable(data) {
+
             const tableContainer = document.getElementById('rice_area');
+            tableContainer.innerHTML = '';
             const table = document.createElement('table');
             const thead = document.createElement('thead');
             const tbody = document.createElement('tbody');
@@ -290,6 +292,32 @@
 
                 tbody.appendChild(row);
             });
+
+             // Add a separator row
+            const separatorRow = document.createElement('tr');
+            const separatorCell = document.createElement('td');
+            separatorCell.colSpan = data.data[0].values.length + 1; // Span all columns
+            separatorCell.textContent = data.admin_level.toLowerCase().trim() === "dzongkhag" ? '--- Country Sum ---' : '--- Dzongkhag Sum ---'; // Separate label
+            separatorRow.appendChild(separatorCell);
+            tbody.appendChild(separatorRow);
+
+
+            // Calculate and add country totals row
+            const countryTotalsRow = document.createElement('tr');
+            const countryTotalsLabelCell = document.createElement('td');
+            countryTotalsLabelCell.textContent = data.active;
+            countryTotalsRow.appendChild(countryTotalsLabelCell);
+
+            // Calculate sum of values for each year
+            data.data[0].values.forEach((_, index) => {
+                const sum = data.data.reduce((total, item) => total + item.values[index].value, 0);
+                const valueCell = document.createElement('td');
+                valueCell.textContent = sum.toFixed(2); // Format to two decimal places
+                countryTotalsRow.appendChild(valueCell);
+            });
+
+            tbody.appendChild(countryTotalsRow);
+
 
             // Append header and body to table
             table.appendChild(thead);
@@ -383,39 +411,69 @@
             });
         }
 
+        function highlightTableRow(name) {
+            // Remove background color from all rows
+            const tableRows = document.querySelectorAll('#rice_area tbody tr');
+            tableRows.forEach(row => {
+                row.style.backgroundColor = '';
+            });
+
+            // Find the row with the matching name and add background color
+            tableRows.forEach(row => {
+                const firstCell = row.querySelector('td:first-child');
+                if (firstCell && firstCell.textContent.trim() === name) {
+                    row.style.backgroundColor = 'darkcyan';
+                }
+            });
+        }
+
+        function get_formatted_data(data) {
+            const formatted_data = [];
+            const excluded = ["temperature", "precipitation", "ndvi", "soil_moisture", "paddy_gain", "paddy_loss"]
+            for (var dzongkhag_name in data) {
+                if (data.hasOwnProperty(dzongkhag_name) && !excluded.includes(dzongkhag_name)) {
+                    // Initialize an array to store the values for the current Dzongkhag
+                    var dzongkhag_values = [];
+
+                    // Loop through each year's data for the current Dzongkhag
+                    for (var year in data[dzongkhag_name]) {
+                        if (data[dzongkhag_name].hasOwnProperty(year)) {
+                            // Extract the average rice value for the current year
+                            var average_rice_value = data[dzongkhag_name][year]['average_rice'];
+
+                            // Push the year and value pair to the dzongkhag_values array
+                            dzongkhag_values.push({
+                                'year': parseInt(year),
+                                'value': average_rice_value.length > 0 ? average_rice_value[0] : null
+                            });
+                        }
+                    }
+
+                    // Push the formatted data for the current Dzongkhag to the formatted_data array
+                    formatted_data.push({
+                        'name': dzongkhag_name,
+                        'values': dzongkhag_values
+                    });
+                }
+            }
+
+            return formatted_data;
+        }
+
         $(function () {
                 // Initial call to set aspect ratio on page load
                 updateAspectRatio();
-                /*  buildChart('annual_ndvi', 'Annual NDVI', 'Bumthang Dzongkhag 2016: 0.213', 'line', 2016, 'NDVI', 'Range: 2016 to 2022', [{
-                      name: 'NDVI',
-                      data: [0.213, -1, 0.213, 0.256, -0.014, 0.018,
-                          0.199]
-                  }], ['rgb(44, 175, 254)']);
-                  buildChart('annual_precipitation', 'Annual Precipitation', 'Bumthang Dzongkhag 2016: 48.010 mm', 'line', 2016, 'mm', 'Range: 2016 to 2022', [{
-                      name: 'Precipitation',
-                      data: [48.01, 52.5, 50.5, 52, 73, 58.164,
-                          71]
-                  }], ['rgb(44, 175, 254)']);
-                  buildChart('soil_moisture', 'Annual Soil Moisture', 'Bumthang Dzongkhag 2016: 922.956 mm', 'line', 2016, 'mm', 'Range: 2016 to 2022', [{
-                      name: 'Soil Moisture',
-                      data: [922.956, 1044.206, 868.699, 1034.69, 1139.746, 1026.796,
-                          1203.78]
-                  }], ['rgb(44, 175, 254)']);
-                  buildChart('temperature', 'Annual Temperature', 'Bumthang Dzongkhag 2016: 10.96 &deg;c', 'line', 2016, '&deg;c', 'Range: 2016 to 2022', [{
-                      name: 'Temperature',
-                      data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
-                          10.945]
-                  }], ['rgb(44, 175, 254)']);
-                  */
 
                 buildChart('paddy_gain', 'Paddy Gain/Loss', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                     name: 'Paddy Gain',
-                    data: [10.96, 10.531, 9.802, 10.854, 10.057, 9.813,
-                        10.945]
+                    data: full_data["paddy_gain"].map(function (data) {
+                            return data.val;
+                        })
                 }, {
                     name: 'Paddy Loss',
-                    data: [-1.96, -4.531, -19.802, -5.854, -8.057, -6.813,
-                        -10.945]
+                    data: full_data["paddy_loss"].map(function (data) {
+                            return data.val;
+                        })
                 }], ['rgb(90,254,44)', 'rgb(255,38,0)']);
 
                 var seriesData = [
@@ -475,6 +533,7 @@
 
                 // Add the Search Control to the map
                 const search = new GeoSearch.GeoSearchControl({
+                    id:"search_ctl",
                     provider: new GeoSearch.OpenStreetMapProvider(), showMarker: false, // optional: true|false  - default true
                     showPopup: false, position: 'topright', autoClose: true,
                 });
@@ -521,6 +580,9 @@
                             {#map.fitBounds(bounds);#}
                             // Call the loadGewogs function passing the ID from the clicked feature
                             selectGewogOption(feature.properties.name, feature.properties.id);
+                            
+                            
+                            
                             if (feature.properties.id != "-999") {
                                 L.DomEvent.stopPropagation(e);
                                 L.DomEvent.preventDefault(e);
@@ -575,45 +637,17 @@
                 window.dispatchEvent(new Event('resize'));
 
 
-                var formatted_data = [];
+                {#var formatted_data = [];#}
 
 // Loop through each Dzongkhag in the full_data object
-                const excluded = ["temperature", "precipitation", "ndvi", "soil_moisture"]
-                for (var dzongkhag_name in full_data) {
-                    if (full_data.hasOwnProperty(dzongkhag_name) && !excluded.includes(dzongkhag_name)) {
-                        // Initialize an array to store the values for the current Dzongkhag
-                        var dzongkhag_values = [];
-
-                        // Loop through each year's data for the current Dzongkhag
-                        for (var year in full_data[dzongkhag_name]) {
-                            if (full_data[dzongkhag_name].hasOwnProperty(year)) {
-                                // Extract the average rice value for the current year
-                                var average_rice_value = full_data[dzongkhag_name][year]['average_rice'];
-
-                                // Push the year and value pair to the dzongkhag_values array
-                                dzongkhag_values.push({
-                                    'year': parseInt(year),
-                                    'value': average_rice_value.length > 0 ? average_rice_value[0] : null
-                                });
-                            }
-                        }
-
-                        // Push the formatted data for the current Dzongkhag to the formatted_data array
-                        formatted_data.push({
-                            'name': dzongkhag_name,
-                            'values': dzongkhag_values
-                        });
-                    }
-                }
-
-                const data = {
-                    "admin_level": "Dzongkhag",
-                    "data": formatted_data
-                }
 
 
                 // Call the function with your JSON data
-                createTable(data);
+                createTable({
+                    "active": "Bhutan",
+                    "admin_level": "Dzongkhag",
+                    "data": get_formatted_data(full_data)
+                });
                 setupMenu();
                 makeSlider();
                 add_paddy_wms(2016);
@@ -1435,6 +1469,35 @@
                     }
                 });
             } else {
+                highlightTableRow(name);
+                $.ajax({
+                    url: '/get-gewog-data/' + id, // Adjust the URL as per your Django API endpoint
+                    method: 'GET',
+                    success: function (gewog_data) {
+                        
+                        // Clear all graphs and load with the new data
+                        buildChart('paddy_gain', 'Paddy Gain/Loss', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
+                            name: 'Paddy Gain',
+                            data: gewog_data["paddy_gain"].map(function (data) {
+                                return data.val;
+                            })
+                        }, {
+                            name: 'Paddy Loss',
+                            data: gewog_data["paddy_loss"].map(function (data) {
+                                return data.val;
+                            })
+                        }], ['rgb(90,254,44)', 'rgb(255,38,0)']);
+
+                        
+                        
+                    },
+                    error: function (error) {
+                        // Handle errors here
+                        console.error('Error getting new data:', error);
+                    }
+                });
+                
+                
                 gewog_features.eachLayer(function (layer) {
                     // Check if the layer's feature id matches the provided featureId
                     if (layer.feature.properties.id === id) {
@@ -1453,9 +1516,58 @@
             document.getElementById("selectDzongkhag").innerHTML = option;
             if (option.toLowerCase() === "all dzongkhags") {
                 $("#gewoglist").hide();
+                 createTable({
+                     "active": "Bhutan",
+                    "admin_level": "Dzongkhag",
+                    "data": get_formatted_data(full_data)
+                });
                 gewog_features.clearLayers();
+                buildChart('paddy_gain', 'Paddy Gain/Loss', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
+                    name: 'Paddy Gain',
+                    data: full_data["paddy_gain"].map(function (data) {
+                            return data.val;
+                        })
+                }, {
+                    name: 'Paddy Loss',
+                    data: full_data["paddy_loss"].map(function (data) {
+                            return data.val;
+                        })
+                }], ['rgb(90,254,44)', 'rgb(255,38,0)']);
                 map.fitBounds(dzongkhagLayer.getBounds());
             } else {
+                $.ajax({
+                    url: '/get-dzongkhag-data/' + dzongkhagID, // Adjust the URL as per your Django API endpoint
+                    method: 'GET',
+                    success: function (dzongkhag_data) {
+
+                        const tabledata = {
+                            "active": getFeatureByDzongkhagID(dzongkhagID).feature.properties.name,
+                            "admin_level": "Gewog",
+                            "data": get_formatted_data(dzongkhag_data)
+                        }
+                        
+                         buildChart('paddy_gain', 'Paddy Gain/Loss', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
+                            name: 'Paddy Gain',
+                            data: dzongkhag_data["paddy_gain"].map(function (data) {
+                                return data.val;
+                            })
+                        }, {
+                            name: 'Paddy Loss',
+                            data: dzongkhag_data["paddy_loss"].map(function (data) {
+                                return data.val;
+                            })
+                        }], ['rgb(90,254,44)', 'rgb(255,38,0)']);
+
+                        createTable(tabledata);
+                        // Clear all graphs and load with the new data
+                    },
+                    error: function (error) {
+                        // Handle errors here
+                        console.error('Error getting new data:', error);
+                    }
+                });
+
+
                 loadGewogs(option, dzongkhagID);
                 document.getElementById("selectGewog").innerHTML = "All Gewogs";
                 $("#gewoglist").show();
@@ -1498,6 +1610,9 @@
                 $("#selectedCountry").removeClass("dropdown-toggle");
                 $("#selectedCountry").removeAttr("data-bs-toggle");
                 loadDzongkhags(countryName);
+                selectedCountryBtn.addEventListener("click", function() {
+                    selectOption("All Dzongkhags");
+                });
             } else {
                 // If there are multiple countries, set the button text to "Select Country"
                 selectedCountryBtn.textContent = "Select Country";
@@ -2039,7 +2154,7 @@
                     <div class="col-sm-12 col-md-12 col-xl-12 mg-t-20 pie-slider order-sm-second"
                          style="z-index: 1002; border-bottom: solid 1px; border-left: solid 1px; border-right: solid 1px;">
                         <div class="form-group year-slider">
-                            <label for="yearSlider">Select Year:</label>
+                            <h4>Select Year:</h4>
                             <div id="yearSlider"></div>
                         </div>
                         <div id="pie_chart"></div>

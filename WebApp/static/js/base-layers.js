@@ -119,6 +119,20 @@ function getCommonBaseLayers(map) {
         }
     );
 
+    //Dark Gray layer
+var darkGrayLayer = L.tileLayer.wms('https://server.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    {
+        format: "image/jpeg",
+        transparent: true,
+        attribution:
+            'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
+            'rest/services/Reference/Specialty/DeLorme_World_Base_Map/MapServer">ArcGIS</a>',
+        opacity: 1,
+        thumb: "images/darkgray.png",
+        displayName: "Dark Gray",
+    }
+);
+
     var deLormeLayer = L.tileLayer.wms(
         "https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/{z}/{y}/{x}",
         {
@@ -140,7 +154,7 @@ function getCommonBaseLayers(map) {
     var vectorTileLayer = L.esri.Vector.vectorTileLayer(vectorTileUrl, {
         rendererFactory: L.canvas.tile, vectorTileLayerStyles: {
             // Define styles for different layers (optional)
-        }, opacity: 1, thumb: "images/world_base.png", displayName: "World Base",
+        }, opacity: 1, thumb: "images/world_base.png", displayName: "World Base", zIndex: 0
     });
 
     return {
@@ -150,6 +164,6 @@ function getCommonBaseLayers(map) {
         Topo: topoLayer,
         Terrain: terrainLayer,
         NatGeo: NatGeo_World_Map,
-        world_base: vectorTileLayer,
+        dark_gray: darkGrayLayer
     };
 }

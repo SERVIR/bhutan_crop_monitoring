@@ -1,12 +1,13 @@
 import json
+import logging
 from collections import defaultdict
 from pathlib import Path
-import geopandas as gpd
+import pandas as pd
 from django.http import JsonResponse
-from django.db.models import Sum
 from django.shortcuts import render
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
+
 from WebApp.models import *
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,20 +23,12 @@ def home(request):
     return render(request, 'WebApp/home.html', context)
 
 
-@csrf_exempt
-def map(request):
-    context = {}
-    return render(request, 'WebApp/map.html', context)
-
-
 def dashboard(request):
     dzongkhag_data = []
     try:
-        country = Country.objects.get(country_id='BT')
-        country_geometry = country.country_geometry
 
         # Query all Dzongkhags related to the specified country
-        dzongkhags = Dzongkhag.objects.filter(country='BT')
+        dzongkhags = Dzongkhag.objects.filter(country='BT').order_by('dzongkhag_name')
 
         # # Extract geometries from Dzongkhags to display in UI
 
@@ -45,61 +38,48 @@ def dashboard(request):
 
     except Country.DoesNotExist:
         # Handle the case where the specified country_id does not exist
-        country_geometry = None
+        logging.log("We only have one Country, this should never happen")
 
     data_layers = DataLayer.objects.all()
 
     # Pass the country_geometry in the context
     context = {'dzongkhags': dzongkhag_data, 'data_layers': data_layers, 'boundary': get_menu_data(),
-               'full_data': all_dzongkhag_data()}
+               'full_data': get_country_data("BT")}
 
     return render(request, 'WebApp/dashboard.html', context)
 
 
-def all_dzongkhag_data():
+def get_country_data(country_id):
+    country = Country.objects.get(country_id=country_id)
+
+    # Retrieve variable instances associated with the country
+    results = {"temperature": [{"year": temperature.year, "val": temperature.value} for temperature in
+                               Temperature.objects.filter(country=country)],
+               "precipitation": [{"year": precipitation.year, "val": precipitation.value} for precipitation in
+                                 Precipitation.objects.filter(country=country)],
+               "ndvi": [{"year": ndvi_instance.year, "val": ndvi_instance.value} for ndvi_instance in
+                        NDVI.objects.filter(country=country)],
+               "soil_moisture": [{"year": soil_moisture.year, "val": soil_moisture.value} for soil_moisture in
+                                 SoilMoisture.objects.filter(country=country)],
+               "paddy_gain": [{"year": paddy_gain.year, "val": paddy_gain.value} for paddy_gain in
+                              PaddyGain.objects.filter(country=country)],
+               "paddy_loss": [{"year": paddy_loss.year, "val": -1 * abs(paddy_loss.value)} for paddy_loss in
+                              PaddyLoss.objects.filter(country=country)]}
+    # Add Country climate variables
+
     # Get all Dzongkhags
     dzongkhags = Dzongkhag.objects.all().order_by('dzongkhag_name')
-
-    # Dictionary to store results for each Dzongkhag
-    results = {}
-    # Add Bhutan climate variables
-    results["temperature"] = [{"year": 2016, "val": 10.71}, {"year": 2017, "val": 10.66}, {"year": 2018, "val": 10.27},
-                              {"year": 2019, "val": 10.51}, {"year": 2020, "val": 10.34}, {"year": 2021, "val": 10.73},
-                              {"year": 2022, "val": 10.56}]
-    results["precipitation"] = [{"year": 2016, "val": 1861.7}, {"year": 2017, "val": 1992.03},
-                                {"year": 2018, "val": 1548.15}, {"year": 2019, "val": 1760.3},
-                                {"year": 2020, "val": 2047.88}, {"year": 2021, "val": 1594.15},
-                                {"year": 2022, "val": 1656.23}]
-    results["ndvi"] = [{"year": 2016, "val": 0.34}, {"year": 2017, "val": 0.339}, {"year": 2018, "val": 0.307},
-                       {"year": 2019, "val": 0.321}, {"year": 2020, "val": 0.302}, {"year": 2021, "val": 0.318},
-                       {"year": 2022, "val": 0.082}]
-    results["soil_moisture"] = [{"year": 2016, "val": 18.766}, {"year": 2017, "val": 18.199},
-                                {"year": 2018, "val": 18.013}, {"year": 2019, "val": 19.332},
-                                {"year": 2020, "val": 18.061}, {"year": 2021, "val": 16.431},
-                                {"year": 2022, "val": 19.448}]
 
     # Loop through each Dzongkhag
     for dzongkhag in dzongkhags:
         # Dictionary to store values for each year
         yearly_data = defaultdict(dict)
 
-        # Loop through each year from 2016 to 2022
-        for year in range(2016, 2023):
+        # Loop through each year from 2002 to 2022
+        for year in range(2002, 2023):
             # Fetch the values for each attribute for the current year
             yearly_data[year]['average_rice'] = AverageRice.objects.filter(dzongkhag=dzongkhag, year=year).values_list(
                 'value', flat=True)
-            yearly_data[year]['paddy_gain'] = PaddyGain.objects.filter(dzongkhag=dzongkhag, year=year).values_list(
-                'value', flat=True)
-            yearly_data[year]['paddy_loss'] = PaddyLoss.objects.filter(dzongkhag=dzongkhag, year=year).values_list(
-                'value', flat=True)
-            yearly_data[year]['ndvi'] = NDVI.objects.filter(dzongkhag=dzongkhag, year=year).values_list('value',
-                                                                                                        flat=True)
-            yearly_data[year]['precipitation'] = Precipitation.objects.filter(dzongkhag=dzongkhag,
-                                                                              year=year).values_list('value', flat=True)
-            yearly_data[year]['soil_moisture'] = SoilMoisture.objects.filter(dzongkhag=dzongkhag,
-                                                                             year=year).values_list('value', flat=True)
-            # yearly_data[year]['temperature'] = Temperature.objects.filter(dzongkhag=dzongkhag, year=year).values_list(
-            #     'value', flat=True)
             yearly_data[year]['rice_distribution'] = RiceDistribution.objects.filter(dzongkhag=dzongkhag,
                                                                                      year=year).values_list('value',
                                                                                                             flat=True)
@@ -110,22 +90,86 @@ def all_dzongkhag_data():
     return json.dumps(results, default=list)
 
 
+@csrf_exempt
+def get_gewog_data(self, gewog_id):
+    gewog = Gewog.objects.get(pk=gewog_id)
+
+    # Retrieve variable instances associated with the gewog
+    results = {
+        "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
+                            Temperature.objects.filter(gewog=gewog).values('year', 'value')),
+        "precipitation": list({"year": precipitation.year, "val": precipitation.value} for precipitation in
+                              Precipitation.objects.filter(gewog=gewog).values('year', 'value')),
+        "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
+                     NDVI.objects.filter(gewog=gewog).values('year', 'value')),
+        "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
+                              SoilMoisture.objects.filter(gewog=gewog).values('year', 'value')),
+        "paddy_gain": list({"year": paddy_gain['year'], "val": paddy_gain['value']} for paddy_gain in
+                           PaddyGain.objects.filter(gewog=gewog).values('year', 'value')),
+        "paddy_loss": list({"year": paddy_loss['year'], "val": -1 * abs(paddy_loss['value'])} for paddy_loss in
+                           PaddyLoss.objects.filter(gewog=gewog).values('year', 'value'))
+    }
+
+    return JsonResponse(results)
+
+
+@csrf_exempt
+def get_dzongkhag_data(self, dzongkhag_id):
+
+    # Get the dzongkhag instance
+    dzongkhag = Dzongkhag.objects.get(dzongkhag_id=dzongkhag_id)
+
+    # Retrieve variable instances associated with the dzongkhag
+    results = {
+        "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
+                             Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "precipitation": list({"year": precipitation.year, "val": precipitation.value} for precipitation in
+                               Precipitation.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
+                     NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
+                               SoilMoisture.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "paddy_gain": list({"year": paddy_gain['year'], "val": paddy_gain['value']} for paddy_gain in
+                            PaddyGain.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "paddy_loss": list({"year": paddy_loss['year'], "val": -1 * abs(paddy_loss['value'])} for paddy_loss in
+                            PaddyLoss.objects.filter(dzongkhag=dzongkhag).values('year', 'value'))
+    }
+
+    # Add gewog-wise data
+    gewogs = Gewog.objects.filter(dzongkhag__dzongkhag_id=dzongkhag_id).order_by('gewog_name')
+
+    # Loop through each gewog
+    for gewog in gewogs:
+        yearly_data = {}
+
+        # Loop through each year from 2016 to 2022
+        for year in range(2016, 2023):
+            # Fetch the values for each attribute for the current year
+            yearly_data[year] = {
+                'average_rice': list(AverageRice.objects.filter(gewog=gewog, year=year).values_list('value', flat=True)),
+                'rice_distribution': list(RiceDistribution.objects.filter(gewog=gewog, year=year).values_list('value',
+                                                                                                                  flat=True))
+            }
+
+        results[gewog.gewog_name] = yearly_data
+
+    return JsonResponse(results)
+
+
 def get_menu_data():
     menu_data = {'Countries': {}}
 
     # Query all countries
     countries = Country.objects.all()
     for country in countries:
-        country_data = {}
-        country_data['name'] = country.country_name
-        country_data['country_id'] = country.country_id
+        country_data = {'name': country.country_name, 'country_id': country.country_id}
 
         # Query all dzongkhags for the current country
         dzongkhags = Dzongkhag.objects.filter(country=country).order_by('dzongkhag_name')
         dzongkhag_data = {}
         for dzongkhag in dzongkhags:
             dzongkhag_data[dzongkhag.dzongkhag_name] = {'name': dzongkhag.dzongkhag_name,
-                'dzongkhag_id': dzongkhag.dzongkhag_id, 'gewogs': []}
+                                                        'dzongkhag_id': dzongkhag.dzongkhag_id, 'gewogs': []}
 
             # Query all gewogs for the current dzongkhag
             gewogs = Gewog.objects.filter(dzongkhag=dzongkhag).order_by('gewog_name')
@@ -153,6 +197,33 @@ def get_gewog_by_dzongkhag_id(request, dzongkhag_id):
     except Gewog.DoesNotExist:
         return JsonResponse({'error': 'No gewogs found for the provided dzongkhag_id'},
                             status=404)  # Handle other exceptions if needed
+
+
+def load_data(request):
+    # Load the Excel file
+    df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data.xlsx")
+
+    # Iterate over rows
+    for index, row in df.iterrows():
+        year = row['Year']
+        obs_rice_area = row['Obs_Rice_Area (Acres)']
+        dzongkhag_name = row['District']
+
+        # Find the Dzongkhag object by name
+        dzongkhag = Dzongkhag.objects.get(dzongkhag_name=dzongkhag_name)
+
+        # Update or create AverageRice object
+        average_rice, created = AverageRice.objects.update_or_create(
+            dzongkhag=dzongkhag,
+            year=year,
+            defaults={'value': obs_rice_area}
+        )
+
+        if created:
+            print(f'AverageRice entry created for {dzongkhag_name} in {year}')
+        else:
+            print(f'AverageRice entry updated for {dzongkhag_name} in {year}')
+
 
 
 def about(request):

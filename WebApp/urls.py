@@ -7,11 +7,13 @@ import WebApp.views as views
 
 urlpatterns = [
     path('', views.home, name='home'),
-    path('map/', views.map, name='map'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('about/', views.about, name='about'),
     path('feedback/', views.feedback, name='feedback'),
-    path('get-gewog-by-dzongkhag-id/<str:dzongkhag_id>', views.get_gewog_by_dzongkhag_id, name='get_gewog_by_dzongkhag_id')
+    path('get-gewog-by-dzongkhag-id/<str:dzongkhag_id>', views.get_gewog_by_dzongkhag_id, name='get_gewog_by_dzongkhag_id'),
+    path('get-dzongkhag-data/<str:dzongkhag_id>', views.get_dzongkhag_data, name='get_dzongkhag_data'),
+    path('get-gewog-data/<str:gewog_id>', views.get_gewog_data, name='get_gewog_data'),
+    path('load-data', views.load_data, name='load_data')
 
 
 ]

@@ -6,6 +6,7 @@ class AverageRice(models.Model):
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class PaddyGain(models.Model):
@@ -13,6 +14,7 @@ class PaddyGain(models.Model):
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class PaddyLoss(models.Model):
@@ -20,6 +22,7 @@ class PaddyLoss(models.Model):
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class NDVI(models.Model):
@@ -27,6 +30,7 @@ class NDVI(models.Model):
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Precipitation(models.Model):
@@ -34,6 +38,7 @@ class Precipitation(models.Model):
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class SoilMoisture(models.Model):
@@ -41,6 +46,7 @@ class SoilMoisture(models.Model):
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Temperature(models.Model):
@@ -48,6 +54,7 @@ class Temperature(models.Model):
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class RiceDistribution(models.Model):
@@ -55,6 +62,7 @@ class RiceDistribution(models.Model):
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
+    country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
 class Country(models.Model):
