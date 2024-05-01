@@ -94,15 +94,15 @@ class AverageRiceInline(admin.TabularInline):
         return formset
 
 
-class PaddyGainForm(BaseForm):
+class PaddyChangeFrom2008Form(BaseForm):
     class Meta:
-        model = PaddyGain
+        model = PaddyChangeFrom2008
         fields = '__all__'
 
 
-class PaddyGainInline(admin.TabularInline):
-    model = PaddyGain
-    form = PaddyGainForm
+class PaddyChangeFrom2008FormInline(admin.TabularInline):
+    model = PaddyChangeFrom2008
+    form = PaddyChangeFrom2008Form
     extra = 0
 
     def get_formset(self, request, obj=None, **kwargs):
@@ -126,15 +126,15 @@ class PaddyGainInline(admin.TabularInline):
         return formset
 
 
-class PaddyLossForm(BaseForm):
+class PaddyChangeFrom2020Form(BaseForm):
     class Meta:
-        model = PaddyLoss
+        model = PaddyChangeFrom2020
         fields = '__all__'
 
 
-class PaddyLossInline(admin.TabularInline):
-    model = PaddyLoss
-    form = PaddyLossForm
+class PaddyChangeFrom2020Inline(admin.TabularInline):
+    model = PaddyChangeFrom2020
+    form = PaddyChangeFrom2020Form
     extra = 0
 
     def get_formset(self, request, obj=None, **kwargs):
@@ -289,7 +289,7 @@ class RiceDistributionInline(admin.TabularInline):
 @admin.register(Country)
 class CountryAdmin(ImportExportModelAdmin, admin.ModelAdmin):
     list_display = ('country_id', 'country_name')  # list of fields to display
-    inlines = [AverageRiceInline, PaddyGainInline, PaddyLossInline, NDVIInline, PrecipitationInline, SoilMoistureInline,
+    inlines = [AverageRiceInline, PaddyChangeFrom2008FormInline, PaddyChangeFrom2020Inline, NDVIInline, PrecipitationInline, SoilMoistureInline,
                TemperatureInline, RiceDistributionInline, ]
     search_fields = ('country_name',)  # search by station name
 
@@ -297,7 +297,7 @@ class CountryAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 @admin.register(Dzongkhag)
 class DzongkhagAdmin(admin.ModelAdmin):
     list_display = ('dzongkhag_id', 'dzongkhag_name', 'country')
-    inlines = [AverageRiceInline, PaddyGainInline, PaddyLossInline, NDVIInline, PrecipitationInline, SoilMoistureInline,
+    inlines = [AverageRiceInline, PaddyChangeFrom2008FormInline, PaddyChangeFrom2020Inline, NDVIInline, PrecipitationInline, SoilMoistureInline,
         TemperatureInline, RiceDistributionInline, ]
     list_filter = ('country',)  # Filter by Country
     search_fields = ('dzongkhag_name', 'country__country_name')  # Search by dzongkhag_name or Country
@@ -307,7 +307,7 @@ class DzongkhagAdmin(admin.ModelAdmin):
 class GewogAdmin(admin.ModelAdmin):
     list_display = ('gewog_id', 'gewog_name', 'get_dzongkhag_country', 'get_dzongkhag_name')
     list_filter = ('dzongkhag__country', 'dzongkhag')  # Filter by country or Dzongkhag
-    inlines = [AverageRiceInline, PaddyGainInline, PaddyLossInline, NDVIInline, PrecipitationInline, SoilMoistureInline,
+    inlines = [AverageRiceInline, PaddyChangeFrom2008FormInline, PaddyChangeFrom2020Inline, NDVIInline, PrecipitationInline, SoilMoistureInline,
         TemperatureInline, RiceDistributionInline, ]
     search_fields = ('gewog_name', 'dzongkhag__dzongkhag_name',
                      'dzongkhag__country__country_name')  # Search by gewog_name, Dzongkhag, or Country

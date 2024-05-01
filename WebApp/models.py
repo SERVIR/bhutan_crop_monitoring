@@ -9,7 +9,7 @@ class AverageRice(models.Model):
     country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
-class PaddyGain(models.Model):
+class PaddyChangeFrom2008(models.Model):
     value = models.FloatField()
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
@@ -17,7 +17,7 @@ class PaddyGain(models.Model):
     country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
-class PaddyLoss(models.Model):
+class PaddyChangeFrom2020(models.Model):
     value = models.FloatField()
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
