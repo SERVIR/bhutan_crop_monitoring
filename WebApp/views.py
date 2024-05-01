@@ -205,8 +205,8 @@ def get_gewog_by_dzongkhag_id(request, dzongkhag_id):
 
 def load_data(request):
     # Load the Excel file
-    df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data.xlsx")
-
+    df = pd.read_excel("/servir_apps/Bhutan_Obs_Pred_variable_data.xlsx")
+    # df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data.xlsx")
     # Iterate over rows
     for index, row in df.iterrows():
         year = row['Year']
@@ -232,7 +232,8 @@ def load_data(request):
 
 
     # Load the Excel file
-    df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data_Gewog.xlsx")
+    df = pd.read_excel("/servir_apps/Bhutan_Obs_Pred_variable_data_Gewog.xlsx")
+    # df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data_Gewog.xlsx")
 
     # Iterate over rows
     for index, row in df.iterrows():

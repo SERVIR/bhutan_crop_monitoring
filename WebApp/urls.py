@@ -14,7 +14,7 @@ urlpatterns = [
     path('get-dzongkhag-data/<str:dzongkhag_id>', views.get_dzongkhag_data, name='get_dzongkhag_data'),
     path('get-gewog-data/<str:gewog_id>', views.get_gewog_data, name='get_gewog_data'),
     path('load-data/', views.load_data, name='load_data'),
-    path('fix-shapefile/', views.fix_shapefile, name='fix_shapefile')
+    # path('fix-shapefile/', views.fix_shapefile, name='fix_shapefile')
 
 
 ]
