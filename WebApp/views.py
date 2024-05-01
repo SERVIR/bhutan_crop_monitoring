@@ -204,19 +204,19 @@ def get_gewog_by_dzongkhag_id(request, dzongkhag_id):
 
 
 def load_data(request):
-    load_ObservedChangeRiceArea()
+    # load_ObservedChangeRiceArea()
     # Load the Excel file
     # df = pd.read_excel("/servir_apps/Bhutan_Obs_Pred_variable_data.xlsx")
     # df = pd.read_excel("D:\\Dzongkhas_variables.xlsx")
     df = pd.read_excel("/servir_apps/Dzongkhas_variables.xlsx")
     # Iterate over rows
-    grouped_df = df.groupby('Year')['ObservedChangeRiceArea_afterCOVID'].sum()
+    grouped_df = df.groupby('Year')['PredictedChangeRiceYield_afterConstitution'].sum()
 
     # Iterate over the groups
     for year, summed_value in grouped_df.items():
         # Add or update PaddyChangeFrom2020 for the country with country_id 'BT'
         country = Country.objects.get(country_id='BT')
-        average_rice, created = PaddyChangeFrom2020.objects.update_or_create(
+        average_rice, created = PaddyChangeFrom2008.objects.update_or_create(
             country=country,
             year=year,
             defaults={'value': summed_value}
