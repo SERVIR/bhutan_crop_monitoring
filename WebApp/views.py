@@ -3,10 +3,14 @@ import logging
 from collections import defaultdict
 from pathlib import Path
 import pandas as pd
+import geopandas as gpd
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
+from numpy import isnan
+
+# from django.contrib.postgres.geos import GEOSGeometry
 
 from WebApp.models import *
 
@@ -209,6 +213,8 @@ def load_data(request):
         obs_rice_area = row['Obs_Rice_Area (Acres)']
         dzongkhag_name = row['District']
 
+        obs_rice_area = 0 if isnan(obs_rice_area) else obs_rice_area
+
         # Find the Dzongkhag object by name
         dzongkhag = Dzongkhag.objects.get(dzongkhag_name=dzongkhag_name)
 
@@ -223,6 +229,150 @@ def load_data(request):
             print(f'AverageRice entry created for {dzongkhag_name} in {year}')
         else:
             print(f'AverageRice entry updated for {dzongkhag_name} in {year}')
+
+
+    # Load the Excel file
+    df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data_Gewog.xlsx")
+
+    # Iterate over rows
+    for index, row in df.iterrows():
+        try:
+            year = row['Year']
+            obs_rice_area = row['Obs_Rice_Area (acres)']
+            dzongkhag_name = row['NAME_1']
+            gewog_name = row['NAME_2']
+
+            print("dzongkhag_name: " + dzongkhag_name)
+
+            print("gewog_name: " + gewog_name)
+
+            # Find the Dzongkhag and Gewog objects by name
+            dzongkhag = Dzongkhag.objects.get(dzongkhag_name__iexact=dzongkhag_name)
+            gewog = Gewog.objects.get(gewog_name__iexact=gewog_name, dzongkhag=dzongkhag)
+
+            # Convert NaN to 0
+            obs_rice_area = 0 if isnan(obs_rice_area) else obs_rice_area
+
+            # Update or create AverageRice object
+            average_rice, created = AverageRice.objects.update_or_create(
+                gewog=gewog,
+                year=year,
+                defaults={'value': obs_rice_area}
+            )
+
+            if created:
+                print(f'AverageRice entry created for {gewog_name} in {year}')
+            else:
+                print(f'AverageRice entry updated for {gewog_name} in {year}')
+        except:
+            print('Failed for: ', dzongkhag_name, gewog_name, year)
+
+
+
+    # Load the Excel file
+    # df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data.xlsx")
+    #
+    # # Iterate over rows
+    # for index, row in df.iterrows():
+    #     year = row['Year']
+    #     obs_rice_area = row['Obs_Rice_Area (Acres)']
+    #     dzongkhag_name = row['District']
+    #
+    #     obs_rice_area = 0 if isnan(obs_rice_area) else obs_rice_area
+    #
+    #     # Find the Dzongkhag object by name
+    #     dzongkhag = Dzongkhag.objects.get(dzongkhag_name=dzongkhag_name)
+    #
+    #     # Update or create AverageRice object
+    #     average_rice, created = AverageRice.objects.update_or_create(
+    #         dzongkhag=dzongkhag,
+    #         year=year,
+    #         defaults={'value': obs_rice_area}
+    #     )
+    #
+    #     if created:
+    #         print(f'AverageRice entry created for {dzongkhag_name} in {year}')
+    #     else:
+    #         print(f'AverageRice entry updated for {dzongkhag_name} in {year}')
+
+def fix_shapefile(request):
+    # Path to the shapefile
+    shapefile_path = '/servir_apps/temp_shp/Bhutan_districts.shp'
+    # shapefile_path = 'C:\\Users\\washmall\\Documents\\bhutan_shapes\\Bhutan_districts.shp'
+
+    # Country ID
+    country_id = 'BT'
+
+    # Read the shapefile using geopandas
+    gdf = gpd.read_file(shapefile_path)
+
+    # Iterate over each feature in the GeoDataFrame
+    for index, row in gdf.iterrows():
+        # Extract the relevant fields (ADM1_PCODE and ADM1_EN)
+        dzongkhag_id = row['GID_1']
+        dzongkhag_id = dzongkhag_id.split('.')[0][:2] + dzongkhag_id.split('.')[1].split('_')[0].zfill(3)
+        dzongkhag_name = row['NAME_1']
+
+        # Create or get the country object
+        country, created = Country.objects.get_or_create(country_id=country_id)
+
+        # Convert geometry to GeoJSON format
+        geometry_json = row.geometry.__geo_interface__
+
+        # Create a new Dzongkhag object
+        dzongkhag, created = Dzongkhag.objects.get_or_create(
+            dzongkhag_id=dzongkhag_id,
+            defaults={'dzongkhag_name': dzongkhag_name, 'country': country, 'dzongkhag_geometry': geometry_json}
+        )
+
+
+
+    # this is for the Gewogs
+    # Path to the new shapefile
+    new_shapefile_path = '/servir_apps/temp_shp/Bhutan_gewog.shp'
+    # new_shapefile_path = 'C:\\Users\\washmall\\Documents\\bhutan_shapes\\Gewog_Final\\Bhutan_gewog.shp'
+
+    # Read the new shapefile using geopandas
+    new_gdf = gpd.read_file(new_shapefile_path)
+
+    # Iterate over each feature in the new GeoDataFrame
+    for index, row in new_gdf.iterrows():
+        # Extract the relevant fields (GID_2 and Name_2) from the new shapefile
+        gewog_id = row['GID_2']
+        gewog_name = row['NAME_2']
+
+        # Extract the Dzongkhag ID from the new shapefile (GID_1)
+        dzongkhag_id = row['GID_1']
+
+        # Translate gewog_id to the desired format (BT00309)
+        gewog_id = gewog_id.split('.')[0][:2] + gewog_id.split('.')[1].zfill(3) + gewog_id.split('.')[2].split('_')[0].zfill(2)
+
+        # Translate dzongkhag_id to the desired format (BT003)
+        dzongkhag_id = dzongkhag_id.split('.')[0][:2] + dzongkhag_id.split('.')[1].split('_')[0].zfill(3)
+
+        # Find corresponding Dzongkhag using dzongkhag_id
+        try:
+            dzongkhag = Dzongkhag.objects.get(dzongkhag_id=dzongkhag_id)
+        except Dzongkhag.DoesNotExist:
+            # Handle case where Dzongkhag is not found
+            continue
+
+        # Convert geometry to GeoJSON format
+        geometry_json = row.geometry.__geo_interface__
+
+        # Try to find the Gewog with the same gewog_id in the database
+        try:
+            gewog = Gewog.objects.get(gewog_id=gewog_id)
+
+            # Update existing Gewog
+            gewog.gewog_name = gewog_name
+            gewog.dzongkhag = dzongkhag
+            gewog.gewog_geometry = geometry_json
+            gewog.save()
+        except Gewog.DoesNotExist:
+            # Create new Gewog if it doesn't exist
+            Gewog.objects.create(gewog_id=gewog_id, gewog_name=gewog_name, dzongkhag=dzongkhag,
+                                 gewog_geometry=geometry_json)
 
 
 
