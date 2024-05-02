@@ -6,6 +6,10 @@ body{
     overflow: hidden;
 }
 
+ .sidebar-scroller{
+        max-height: calc(100vh - 170px);
+    }
+
 img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     /* work-around from here: https://github.com/Leaflet/Leaflet/issues/161 */
     outline: 1px solid transparent;
@@ -683,6 +687,12 @@ input[type='range']::-webkit-slider-thumb:hover {
 }
 
 @media (max-width: 1200px) {
+    body{
+    overflow: auto;
+}
+    .sidebar-scroller{
+        max-height: unset;
+    }
     .pie-slider {
         border-top: solid 1px #0D3309;
         border-left: solid 1px #0D3309;
