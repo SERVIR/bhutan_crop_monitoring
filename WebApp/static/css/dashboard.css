@@ -2,6 +2,9 @@
 /*  width: 257px !important;*/
 /*  height: 257px !important;*/
 /*}*/
+body{
+    overflow: hidden;
+}
 
 img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     /* work-around from here: https://github.com/Leaflet/Leaflet/issues/161 */

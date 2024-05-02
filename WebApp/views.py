@@ -1,3 +1,4 @@
+import datetime
 import json
 import logging
 from collections import defaultdict
@@ -59,7 +60,7 @@ def get_country_data(country_id):
     # Retrieve variable instances associated with the country
     results = {"temperature": [{"year": temperature.year, "val": temperature.value} for temperature in
                                Temperature.objects.filter(country=country)],
-               "precipitation": [{"year": precipitation.year, "val": precipitation.value} for precipitation in
+               "precipitation": [{"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)), "val": precipitation.value} for precipitation in
                                  Precipitation.objects.filter(country=country)],
                "ndvi": [{"year": ndvi_instance.year, "val": ndvi_instance.value} for ndvi_instance in
                         NDVI.objects.filter(country=country)],
@@ -102,7 +103,7 @@ def get_gewog_data(self, gewog_id):
     results = {
         "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
                             Temperature.objects.filter(gewog=gewog).values('year', 'value')),
-        "precipitation": list({"year": precipitation.year, "val": precipitation.value} for precipitation in
+        "precipitation": list({"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)), "val": precipitation.value} for precipitation in
                               Precipitation.objects.filter(gewog=gewog).values('year', 'value')),
         "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
                      NDVI.objects.filter(gewog=gewog).values('year', 'value')),
@@ -117,6 +118,12 @@ def get_gewog_data(self, gewog_id):
     return JsonResponse(results)
 
 
+def convert_to_milliseconds(date_str):
+    date_obj = datetime.datetime.strptime(date_str, "%Y/%m")
+
+    # Convert the datetime object to milliseconds since the UNIX epoch
+    return int(date_obj.timestamp() * 1000)
+
 @csrf_exempt
 def get_dzongkhag_data(self, dzongkhag_id):
     # Get the dzongkhag instance
@@ -126,7 +133,7 @@ def get_dzongkhag_data(self, dzongkhag_id):
     results = {
         "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
                             Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
-        "precipitation": list({"year": precipitation.year, "val": precipitation.value} for precipitation in
+        "precipitation": list({"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)), "val": precipitation.value} for precipitation in
                               Precipitation.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
         "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
                      NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),

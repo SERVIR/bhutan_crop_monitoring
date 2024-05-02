@@ -36,6 +36,7 @@ class NDVI(models.Model):
 class Precipitation(models.Model):
     value = models.FloatField()
     year = models.PositiveSmallIntegerField()
+    month = models.PositiveSmallIntegerField(default=1, null=True, blank=True)
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
     country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)

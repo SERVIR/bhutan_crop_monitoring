@@ -363,13 +363,31 @@
         }
 
         function createSparklineChart(container, data) {
+            console.log(container);
+            console.log(data);
             var units = ['NDVI', 'mm', 'mm', '&deg;C'];
+
+            const isArrayData = data.data[0] instanceof Array;
+
+            xaxisObj = {
+                 visible: false,
+            }
+            if(isArrayData){
+                console.log("adding datatime");
+                xaxisObj.type = 'datetime';
+            } else{
+                console.log("categories");
+                xaxisObj.categories = ['2016', '2017', '2018', '2019', '2020', '2021', '2022'];
+            }
             Highcharts.chart(container, {
                 chart: {
                     type: 'line',
+                    zoomType: 'xy',
                     backgroundColor: null,
                     borderWidth: 0,
-                    margin: [2, 0, 2, 0],
+                    {#margin: [22, 22, 22, 22],#}
+                    {# marginLeft: 22,#}
+                    {#marginRight: 22,#}
                     style: {
                         overflow: 'visible'
                     }
@@ -380,10 +398,7 @@
                 credits: {
                     enabled: false
                 },
-                xAxis: {
-                    visible: false,
-                    categories: ['2016', '2017', '2018', '2019', '2020', '2021', '2022']
-                },
+                xAxis: xaxisObj,
                 yAxis: {
                     visible: false
                 },
@@ -392,11 +407,26 @@
                 },
                 tooltip: {
                     formatter: function () {
-                        var pointIndex = this.point.index;
-                        var series = this.series.chart.series[this.series.index];
-                        var unit = series.userOptions.unit;
-                        return '<b>' + Highcharts.dateFormat('%Y', this.x) + '</b><br/>' +
-                            Highcharts.numberFormat(this.y, 2) + ' ' + unit;
+                        if(isArrayData) {
+                            var date = new Date(this.x);
+
+                            // Format the date as desired (e.g., 'January 2016')
+                            var formattedDate = Highcharts.dateFormat('%B %Y', date);
+
+                            var pointIndex = this.point.index;
+                            var series = this.series.chart.series[this.series.index];
+                            var unit = series.userOptions.unit;
+
+                            // Return the formatted tooltip
+                            return '<b>' + formattedDate + '</b><br/>' +
+                                Highcharts.numberFormat(this.y, 2) + ' ' + unit;
+                        }else{
+                            var pointIndex = this.point.index;
+                            var series = this.series.chart.series[this.series.index];
+                            var unit = series.userOptions.unit;
+                            return '<b>' + Highcharts.dateFormat('%Y', this.x) + '</b><br/>' +
+                                Highcharts.numberFormat(this.y, 2) + ' ' + unit;
+                        }
                     }
                 },
                 plotOptions: {
@@ -488,7 +518,7 @@
                     {
                         name: 'Precipitation',
                         data: full_data["precipitation"].map(function (data) {
-                            return data.val;
+                            return  [data.x, data.val];
                         }),
                         unit: 'mm'
                     },
@@ -581,9 +611,9 @@
                             {#map.fitBounds(bounds);#}
                             // Call the loadGewogs function passing the ID from the clicked feature
                             selectGewogOption(feature.properties.name, feature.properties.id);
-                            
-                            
-                            
+
+
+
                             if (feature.properties.id != "-999") {
                                 L.DomEvent.stopPropagation(e);
                                 L.DomEvent.preventDefault(e);
@@ -1475,7 +1505,7 @@
                     url: '/get-gewog-data/' + id, // Adjust the URL as per your Django API endpoint
                     method: 'GET',
                     success: function (gewog_data) {
-                        
+
                         // Clear all graphs and load with the new data
                         buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                             name: 'Base 2008',
@@ -1489,16 +1519,16 @@
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
 
-                        
-                        
+
+
                     },
                     error: function (error) {
                         // Handle errors here
                         console.error('Error getting new data:', error);
                     }
                 });
-                
-                
+
+
                 gewog_features.eachLayer(function (layer) {
                     // Check if the layer's feature id matches the provided featureId
                     if (layer.feature.properties.id === id) {
@@ -1546,7 +1576,7 @@
                             "admin_level": "Gewog",
                             "data": get_formatted_data(dzongkhag_data)
                         }
-                        
+
                          buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                             name: 'Base 2008',
                             data: dzongkhag_data["paddy_gain"].map(function (data) {
@@ -1905,12 +1935,8 @@
 {% block content %}
 
     <div class="container-fluid p-0  bg-white">
-
-        <div class="row" style="z-index: 1050; position: relative;">
-
-        </div>
-        <div class="row row-sm">
-            <div class="col-xl-9 mg-t-20" style="padding-left: 0; z-index: 1006;">
+        <div class="row row-sm" style="max-height: calc(100vh - 170px)">
+            <div class="col-xl-9 mg-t-20" style="padding-left: 0; z-index: 1006; max-height: calc(100vh - 170px)">
                 <div class="col-12 d-flex justify-content-center"
                      style="background-color: #909d6b94; position: absolute; z-index: 1000; width: 99%;">
                     <div class="row row-sm justify-content-center align-items-center"
@@ -2126,7 +2152,7 @@
             </div>
 
 
-            <div class="col-sm-12  col-xl-3 mg-t-20">
+            <div class="col-sm-12  col-xl-3 mg-t-20" style="max-height: calc(100vh - 170px); overflow-y: scroll">
                 <div class="row">
                     <div class="col-sm-12  col-xl-12 mg-t-20" id="riceAreaHolder" style="z-index: 1005;">
                         <div id="rice_area" class="chart-holder">
