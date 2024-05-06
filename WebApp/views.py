@@ -70,9 +70,9 @@ def get_country_data(country_id):
                "soil_moisture": [{"x": convert_to_milliseconds(str(soil_moisture.year) + "/" + str(soil_moisture.month).zfill(2)),
                     "val": soil_moisture.value} for soil_moisture in
                                  SoilMoisture.objects.filter(country=country)],
-               "paddy_gain": [{"year": paddy_gain.year, "val": paddy_gain.value} for paddy_gain in
+               "paddy_gain": [{"year": convert_to_milliseconds(str(paddy_gain.year)), "val": paddy_gain.value} for paddy_gain in
                               PaddyChangeFrom2008.objects.filter(country=country)],
-               "paddy_loss": [{"year": paddy_loss.year, "val": -1 * abs(paddy_loss.value)} for paddy_loss in
+               "paddy_loss": [{"year": convert_to_milliseconds(str(paddy_loss.year)), "val": -1 * abs(paddy_loss.value)} for paddy_loss in
                               PaddyChangeFrom2020.objects.filter(country=country)]}
     # Add Country climate variables
 
@@ -115,9 +115,9 @@ def get_gewog_data(self, gewog_id):
                      NDVI.objects.filter(gewog=gewog).values('year', 'value')),
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
                               SoilMoisture.objects.filter(gewog=gewog).values('year', 'value')),
-        "paddy_gain": list({"year": paddy_gain['year'], "val": paddy_gain['value']} for paddy_gain in
+        "paddy_gain": list({"year": convert_to_milliseconds(str(paddy_gain['year'])), "val": paddy_gain['value']} for paddy_gain in
                            PaddyChangeFrom2008.objects.filter(gewog=gewog).values('year', 'value')),
-        "paddy_loss": list({"year": paddy_loss['year'], "val": paddy_loss['value']} for paddy_loss in
+        "paddy_loss": list({"year": convert_to_milliseconds(str(paddy_loss['year'])), "val": paddy_loss['value']} for paddy_loss in
                            PaddyChangeFrom2020.objects.filter(gewog=gewog).values('year', 'value'))
     }
 
@@ -125,8 +125,10 @@ def get_gewog_data(self, gewog_id):
 
 
 def convert_to_milliseconds(date_str):
-    date_obj = datetime.datetime.strptime(date_str, "%Y/%m")
-
+    if len(date_str) > 4:
+        date_obj = datetime.datetime.strptime(date_str, "%Y/%m")
+    else:
+        date_obj = datetime.datetime.strptime(date_str, "%Y")
     # Convert the datetime object to milliseconds since the UNIX epoch
     return int(date_obj.timestamp() * 1000)
 
@@ -148,21 +150,23 @@ def get_dzongkhag_data(self, dzongkhag_id):
                      NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
                               SoilMoisture.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
-        "paddy_gain": list({"year": paddy_gain['year'], "val": paddy_gain['value']} for paddy_gain in
+        "paddy_gain": list({"year": convert_to_milliseconds(str(paddy_gain['year'])), "val": paddy_gain['value']} for paddy_gain in
                            PaddyChangeFrom2008.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
-        "paddy_loss": list({"year": paddy_loss['year'], "val": paddy_loss['value']} for paddy_loss in
+        "paddy_loss": list({"year": convert_to_milliseconds(str(paddy_loss['year'])), "val": paddy_loss['value']} for paddy_loss in
                            PaddyChangeFrom2020.objects.filter(dzongkhag=dzongkhag).values('year', 'value'))
     }
 
     # Add gewog-wise data
     gewogs = Gewog.objects.filter(dzongkhag__dzongkhag_id=dzongkhag_id).order_by('gewog_name')
 
+    available_years = AverageRice.objects.filter(gewog__dzongkhag=dzongkhag).values_list('year', flat=True).distinct()
+
     # Loop through each gewog
     for gewog in gewogs:
         yearly_data = {}
 
         # Loop through each year from 2016 to 2022
-        for year in range(2016, 2023):
+        for year in available_years:
             # Fetch the values for each attribute for the current year
             yearly_data[year] = {
                 'average_rice': list(
@@ -223,8 +227,8 @@ def load_data(request):
     print("hello")
     # load_PaddyChangeRiceArea()
     # load_Dzongkhags_precipitation()
-    load_gewog_precipitation()
-    load_Dzongkhags_precipitation()
+    # load_gewog_precipitation()
+    # load_Dzongkhags_precipitation()
     return dashboard(request)
 
 

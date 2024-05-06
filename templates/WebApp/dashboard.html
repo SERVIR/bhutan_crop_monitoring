@@ -518,12 +518,12 @@
                 buildChart('paddy_gain', 'Paddy change since base year', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                     name: 'Base 2008',
                     data: full_data["paddy_gain"].map(function (data) {
-                            return data.val;
+                            return [data.year, data.val];
                         })
                 }, {
                     name: 'Base 2020',
                     data: full_data["paddy_loss"].map(function (data) {
-                            return data.val;
+                            return [data.year, data.val];
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
 
@@ -1527,12 +1527,12 @@
                         buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                             name: 'Base 2008',
                             data: gewog_data["paddy_gain"].map(function (data) {
-                                return data.val;
+                                return  [data.year, data.val];
                             })
                         }, {
                             name: 'Base 2020',
                             data: gewog_data["paddy_loss"].map(function (data) {
-                                return data.val;
+                                return [data.year, data.val];
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
                         
@@ -1586,12 +1586,12 @@ var debug_dzongkhag_data;
                 buildChart('paddy_gain', 'Paddy change since base year', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                     name: 'Base 2008',
                     data: full_data["paddy_gain"].map(function (data) {
-                            return data.val;
+                            return [data.year, data.val];
                         })
                 }, {
                     name: 'Base 2020',
                     data: full_data["paddy_loss"].map(function (data) {
-                            return data.val;
+                            return [data.year, data.val];
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
                 map.fitBounds(dzongkhagLayer.getBounds());
@@ -1610,12 +1610,12 @@ var debug_dzongkhag_data;
                          buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                             name: 'Base 2008',
                             data: dzongkhag_data["paddy_gain"].map(function (data) {
-                                return data.val;
+                                return [data.year, data.val];
                             })
                         }, {
                             name: 'Base 2020',
                             data: dzongkhag_data["paddy_loss"].map(function (data) {
-                                return data.val;
+                                return [data.year, data.val];
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
 
