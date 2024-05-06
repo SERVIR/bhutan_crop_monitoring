@@ -221,13 +221,15 @@ def get_gewog_by_dzongkhag_id(request, dzongkhag_id):
 
 def load_data(request):
     print("hello")
-    load_PaddyChangeRiceArea()
+    # load_PaddyChangeRiceArea()
     # load_Dzongkhags_precipitation()
+    load_gewog_precipitation()
+    load_Dzongkhags_precipitation()
     return dashboard(request)
 
 
 def load_gewog_precipitation():
-    df = pd.read_excel("D:\\gewog_climo_2000_2023.xlsx")
+    df = pd.read_excel("/servir_apps/gewog_climo_2000_2023.xlsx")
     for index, row in df.iterrows():
         dzongkhag_name = row['NAME_1']
         gewog_name = row['NAME_2']
@@ -249,7 +251,7 @@ def load_gewog_precipitation():
 
 
 def load_Dzongkhags_precipitation():
-    df = pd.read_excel("D:\\district_climo_2000_2023.xlsx")
+    df = pd.read_excel("/servir_apps/district_climo_2000_2023.xlsx")
     for index, row in df.iterrows():
         dzongkhag_name = row['NAME_1']
         precipitation_value = row['Precipitation(m)']
@@ -309,47 +311,47 @@ def load_Dzongkhags_precipitation():
 
 def load_PaddyChangeRiceArea():
     # Remove PaddyChangeFrom2008 instances for each Dzongkhag
-    # dzongkhags = Dzongkhag.objects.all()
-    # for dzongkhag in dzongkhags:
-    #     PaddyChangeFrom2008.objects.filter(dzongkhag=dzongkhag).delete()
-    #
-    # # Remove PaddyChangeFrom2020 instances for each Dzongkhag
-    # for dzongkhag in dzongkhags:
-    #     PaddyChangeFrom2020.objects.filter(dzongkhag=dzongkhag).delete()
-    # # df = pd.read_excel("D:\\Dzongkhas_variables.xlsx")
-    # df = pd.read_excel("/servir_apps/Dzongkhas_variables.xlsx")
-    # # Iterate over rows
-    # for index, row in df.iterrows():
-    #     year = row['Year']
-    #     # obs_rice_area = row['Obs_Rice_Area (Acres)']
-    #     before_covid = row['ObservedChangeRiceArea_afterConstitution']
-    #     after_covid = row['ObservedChangeRiceArea_afterCOVID']
-    #     dzongkhag_name = row['District']
-    #
-    #     after_covid = 0 if isnan(after_covid) else after_covid
-    #     before_covid = 0 if isnan(before_covid) else before_covid
-    #
-    #     # Find the Dzongkhag object by name
-    #     dzongkhag = Dzongkhag.objects.get(dzongkhag_name=dzongkhag_name)
-    #
-    #     # Update or create AverageRice object
-    #     average_rice, created = PaddyChangeFrom2020.objects.update_or_create(
-    #         dzongkhag=dzongkhag,
-    #         year=year,
-    #         defaults={'value': after_covid}
-    #     )
-    #
-    #     # Update or create AverageRice object
-    #     average_rice, created = PaddyChangeFrom2008.objects.update_or_create(
-    #         dzongkhag=dzongkhag,
-    #         year=year,
-    #         defaults={'value': before_covid}
-    #     )
-    #
-    #     if created:
-    #         print(f'PaddyChangeFrom2008 entry created for {dzongkhag_name} in {year}')
-    #     else:
-    #         print(f'PaddyChangeFrom2008 entry updated for {dzongkhag_name} in {year}')
+    dzongkhags = Dzongkhag.objects.all()
+    for dzongkhag in dzongkhags:
+        PaddyChangeFrom2008.objects.filter(dzongkhag=dzongkhag).delete()
+
+    # Remove PaddyChangeFrom2020 instances for each Dzongkhag
+    for dzongkhag in dzongkhags:
+        PaddyChangeFrom2020.objects.filter(dzongkhag=dzongkhag).delete()
+    # df = pd.read_excel("D:\\Dzongkhas_variables.xlsx")
+    df = pd.read_excel("/servir_apps/Dzongkhas_variables.xlsx")
+    # Iterate over rows
+    for index, row in df.iterrows():
+        year = row['Year']
+        # obs_rice_area = row['Obs_Rice_Area (Acres)']
+        before_covid = row['ObservedChangeRiceArea_afterConstitution']
+        after_covid = row['ObservedChangeRiceArea_afterCOVID']
+        dzongkhag_name = row['District']
+
+        after_covid = 0 if isnan(after_covid) else after_covid
+        before_covid = 0 if isnan(before_covid) else before_covid
+
+        # Find the Dzongkhag object by name
+        dzongkhag = Dzongkhag.objects.get(dzongkhag_name=dzongkhag_name)
+
+        # Update or create AverageRice object
+        average_rice, created = PaddyChangeFrom2020.objects.update_or_create(
+            dzongkhag=dzongkhag,
+            year=year,
+            defaults={'value': after_covid}
+        )
+
+        # Update or create AverageRice object
+        average_rice, created = PaddyChangeFrom2008.objects.update_or_create(
+            dzongkhag=dzongkhag,
+            year=year,
+            defaults={'value': before_covid}
+        )
+
+        if created:
+            print(f'PaddyChangeFrom2008 entry created for {dzongkhag_name} in {year}')
+        else:
+            print(f'PaddyChangeFrom2008 entry updated for {dzongkhag_name} in {year}')
     gewogs = Gewog.objects.all()
     for gewog in gewogs:
         PaddyChangeFrom2008.objects.filter(gewog=gewog).delete()
