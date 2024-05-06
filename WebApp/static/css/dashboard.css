@@ -8,6 +8,22 @@ body{
 .sparkline-chart{
     max-height: 300px;
 }
+
+.noUi-value.noUi-value-horizontal.noUi-value-sub {
+    rotate: 90deg;
+    transform: translate(50%, 80%);
+}
+
+.noUi-marker-horizontal.noUi-marker-large{
+    height:10px
+}
+.noUi-value.noUi-value-horizontal.noUi-value-large {
+    rotate: 90deg;
+    transform: translate(50%, 80%);
+}
+
+
+
 .tab-button{
     min-width:100px;
     background-color: rgb(13 51 9 / 26%);
