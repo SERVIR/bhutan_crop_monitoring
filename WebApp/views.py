@@ -5,13 +5,12 @@ from collections import defaultdict
 from pathlib import Path
 import pandas as pd
 import geopandas as gpd
+from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import csrf_exempt
 from numpy import isnan
-
-# from django.contrib.postgres.geos import GEOSGeometry
 
 from WebApp.models import *
 
@@ -58,13 +57,18 @@ def get_country_data(country_id):
     country = Country.objects.get(country_id=country_id)
 
     # Retrieve variable instances associated with the country
-    results = {"temperature": [{"year": temperature.year, "val": temperature.value} for temperature in
+    results = {"temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
+                    "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
                                Temperature.objects.filter(country=country)],
-               "precipitation": [{"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)), "val": precipitation.value} for precipitation in
-                                 Precipitation.objects.filter(country=country)],
-               "ndvi": [{"year": ndvi_instance.year, "val": ndvi_instance.value} for ndvi_instance in
+               "precipitation": [
+                   {"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)),
+                    "val": precipitation.value} for precipitation in
+                   Precipitation.objects.filter(country=country)],
+               "ndvi": [ {"x": convert_to_milliseconds(str(ndvi_instance.year) + "/" + str(ndvi_instance.month).zfill(2)),
+                    "val": ndvi_instance.value}  for ndvi_instance in
                         NDVI.objects.filter(country=country)],
-               "soil_moisture": [{"year": soil_moisture.year, "val": soil_moisture.value} for soil_moisture in
+               "soil_moisture": [{"x": convert_to_milliseconds(str(soil_moisture.year) + "/" + str(soil_moisture.month).zfill(2)),
+                    "val": soil_moisture.value} for soil_moisture in
                                  SoilMoisture.objects.filter(country=country)],
                "paddy_gain": [{"year": paddy_gain.year, "val": paddy_gain.value} for paddy_gain in
                               PaddyChangeFrom2008.objects.filter(country=country)],
@@ -103,8 +107,10 @@ def get_gewog_data(self, gewog_id):
     results = {
         "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
                             Temperature.objects.filter(gewog=gewog).values('year', 'value')),
-        "precipitation": list({"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)), "val": precipitation.value} for precipitation in
-                              Precipitation.objects.filter(gewog=gewog).values('year', 'value')),
+        "precipitation": [
+            {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
+             "val": precipitation["value"]} for precipitation in
+            Precipitation.objects.filter(gewog=gewog).values('year', 'month', 'value')],
         "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
                      NDVI.objects.filter(gewog=gewog).values('year', 'value')),
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
@@ -124,6 +130,7 @@ def convert_to_milliseconds(date_str):
     # Convert the datetime object to milliseconds since the UNIX epoch
     return int(date_obj.timestamp() * 1000)
 
+
 @csrf_exempt
 def get_dzongkhag_data(self, dzongkhag_id):
     # Get the dzongkhag instance
@@ -133,8 +140,10 @@ def get_dzongkhag_data(self, dzongkhag_id):
     results = {
         "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
                             Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
-        "precipitation": list({"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)), "val": precipitation.value} for precipitation in
-                              Precipitation.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "precipitation": [
+                   {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
+                    "val": precipitation["value"]} for precipitation in
+            Precipitation.objects.filter(dzongkhag=dzongkhag).values('year', 'month', 'value')],
         "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
                      NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
@@ -211,87 +220,92 @@ def get_gewog_by_dzongkhag_id(request, dzongkhag_id):
 
 
 def load_data(request):
-    # load_ObservedChangeRiceArea()
-    # Load the Excel file
-    # df = pd.read_excel("/servir_apps/Bhutan_Obs_Pred_variable_data.xlsx")
-    # df = pd.read_excel("D:\\Dzongkhas_variables.xlsx")
-    df = pd.read_excel("/servir_apps/Dzongkhas_variables.xlsx")
-    # Iterate over rows
-    grouped_df = df.groupby('Year')['PredictedChangeRiceYield_afterConstitution'].sum()
+    print("hello")
+    load_Dzongkhags_precipitation()
+    return dashboard(request)
 
-    # Iterate over the groups
-    for year, summed_value in grouped_df.items():
-        # Add or update PaddyChangeFrom2020 for the country with country_id 'BT'
-        country = Country.objects.get(country_id='BT')
-        average_rice, created = PaddyChangeFrom2008.objects.update_or_create(
-            country=country,
+
+def load_gewog_precipitation():
+    df = pd.read_excel("D:\\gewog_climo_2000_2023.xlsx")
+    for index, row in df.iterrows():
+        dzongkhag_name = row['NAME_1']
+        gewog_name = row['NAME_2']
+        precipitation_value = row['Precipitation']
+        year = row['Year']
+        month = row['Month']
+
+        dzongkhag = Dzongkhag.objects.get(dzongkhag_name=dzongkhag_name)
+        gewog, _ = Gewog.objects.get_or_create(gewog_name=gewog_name, dzongkhag=dzongkhag)
+
+        # Create or update Precipitation instance
+        precipitation, _ = Precipitation.objects.update_or_create(
             year=year,
-            defaults={'value': summed_value}
+            month=month,
+            gewog=gewog,
+            value=precipitation_value
         )
 
-    #
-    # # Load the Excel file
-    # df = pd.read_excel("/servir_apps/Bhutan_Obs_Pred_variable_data_Gewog.xlsx")
-    # # df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data_Gewog.xlsx")
-    #
-    # # Iterate over rows
-    # for index, row in df.iterrows():
-    #     try:
-    #         year = row['Year']
-    #         obs_rice_area = row['Obs_Rice_Area (acres)']
-    #         dzongkhag_name = row['NAME_1']
-    #         gewog_name = row['NAME_2']
-    #
-    #         print("dzongkhag_name: " + dzongkhag_name)
-    #
-    #         print("gewog_name: " + gewog_name)
-    #
-    #         # Find the Dzongkhag and Gewog objects by name
-    #         dzongkhag = Dzongkhag.objects.get(dzongkhag_name__iexact=dzongkhag_name)
-    #         gewog = Gewog.objects.get(gewog_name__iexact=gewog_name, dzongkhag=dzongkhag)
-    #
-    #         # Convert NaN to 0
-    #         obs_rice_area = 0 if isnan(obs_rice_area) else obs_rice_area
-    #
-    #         # Update or create AverageRice object
-    #         average_rice, created = AverageRice.objects.update_or_create(
-    #             gewog=gewog,
-    #             year=year,
-    #             defaults={'value': obs_rice_area}
-    #         )
-    #
-    #         if created:
-    #             print(f'AverageRice entry created for {gewog_name} in {year}')
-    #         else:
-    #             print(f'AverageRice entry updated for {gewog_name} in {year}')
-    #     except:
-    #         print('Failed for: ', dzongkhag_name, gewog_name, year)
 
-    # Load the Excel file
-    # df = pd.read_excel("C:\\Users\\washmall\\Documents\\websites\\bhutan_crop_monitoring\\WebApp\\Bhutan_Obs_Pred_variable_data.xlsx")
+
+def load_Dzongkhags_precipitation():
+    df = pd.read_excel("D:\\district_climo_2000_2023.xlsx")
+    for index, row in df.iterrows():
+        dzongkhag_name = row['NAME_1']
+        precipitation_value = row['Precipitation(m)']
+        year = row['Year']
+        month = row['Month']
+
+        dzongkhag = Dzongkhag.objects.get(dzongkhag_name=dzongkhag_name)
+
+        # Check if Precipitation instance already exists for this year, month, and dzongkhag
+        try:
+            precipitation = Precipitation.objects.get(year=year, month=month, dzongkhag=dzongkhag)
+            # Update the existing Precipitation instance
+            precipitation.value = precipitation_value
+            precipitation.save()
+        except Precipitation.DoesNotExist:
+            # Create a new Precipitation instance
+            precipitation = Precipitation.objects.create(
+                year=year,
+                month=month,
+                dzongkhag=dzongkhag,
+                value=precipitation_value
+            )
+
+
+
+    # # Iterate over each Dzongkhag
+    # for dzongkhag in dzongkhags:
+    #     # Fetch all associated Gewogs for the current Dzongkhag
+    #     gewogs = dzongkhag.gewog_set.all()
     #
-    # # Iterate over rows
-    # for index, row in df.iterrows():
-    #     year = row['Year']
-    #     obs_rice_area = row['Obs_Rice_Area (Acres)']
-    #     dzongkhag_name = row['District']
+    #     # Dictionary to store the sum of Precipitation values for each year and month
+    #     precipitation_sum = defaultdict(float)
     #
-    #     obs_rice_area = 0 if isnan(obs_rice_area) else obs_rice_area
+    #     # Iterate over each Gewog
+    #     for gewog in gewogs:
+    #         # Fetch Precipitation entries associated with the current Gewog
+    #         precipitation_entries = Precipitation.objects.filter(gewog=gewog)
     #
-    #     # Find the Dzongkhag object by name
-    #     dzongkhag = Dzongkhag.objects.get(dzongkhag_name=dzongkhag_name)
+    #         # Calculate the sum of Precipitation values for each year and month
+    #         for entry in precipitation_entries:
+    #             precipitation_sum[(entry.year, entry.month)] += entry.value
     #
-    #     # Update or create AverageRice object
-    #     average_rice, created = AverageRice.objects.update_or_create(
-    #         dzongkhag=dzongkhag,
-    #         year=year,
-    #         defaults={'value': obs_rice_area}
-    #     )
+    #     # Update the Precipitation entry for the current Dzongkhag with the calculated sum
+    #     for (year, month), sum_value in precipitation_sum.items():
+    #         # Check if the Precipitation entry already exists for the current year and month
+    #         existing_entry = Precipitation.objects.filter(dzongkhag=dzongkhag, year=year, month=month).first()
     #
-    #     if created:
-    #         print(f'AverageRice entry created for {dzongkhag_name} in {year}')
-    #     else:
-    #         print(f'AverageRice entry updated for {dzongkhag_name} in {year}')
+    #         if existing_entry:
+    #             # Update the existing entry
+    #             existing_entry.value = sum_value
+    #             existing_entry.save()
+    #         else:
+    #             # Create a new entry if it doesn't exist
+    #             Precipitation.objects.create(dzongkhag=dzongkhag, year=year, month=month, value=sum_value)
+
+
+
 
 
 def load_ObservedChangeRiceArea():

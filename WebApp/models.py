@@ -28,6 +28,7 @@ class PaddyChangeFrom2020(models.Model):
 class NDVI(models.Model):
     value = models.FloatField()
     year = models.PositiveSmallIntegerField()
+    month = models.PositiveSmallIntegerField(default=1, null=True, blank=True)
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
     country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
@@ -45,6 +46,7 @@ class Precipitation(models.Model):
 class SoilMoisture(models.Model):
     value = models.FloatField()
     year = models.PositiveSmallIntegerField()
+    month = models.PositiveSmallIntegerField(default=1, null=True, blank=True)
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
     country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
@@ -52,7 +54,10 @@ class SoilMoisture(models.Model):
 
 class Temperature(models.Model):
     value = models.FloatField()
+    min = models.FloatField(default=0, null=True, blank=True)
+    max = models.FloatField(default=0, null=True, blank=True)
     year = models.PositiveSmallIntegerField()
+    month = models.PositiveSmallIntegerField(default=1, null=True, blank=True)
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)
     country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)

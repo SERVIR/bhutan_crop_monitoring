@@ -1,16 +1,15 @@
-name: bhutan_crop_monitoring
+name: bhutan_crop_monitoring2
 channels:
   - defaults
   - conda-forge
 dependencies:
-  - python=3.9
+  - python=3.8
   - django=4.1
   - django-import-export
   - gdal
+  - fiona
   - netcdf4
-  - shapely
   - beautifulsoup4
-  - pip
-  - pip:
-      - climateserv==1.0.5
-prefix: C:\ProgramData\Anaconda3\envs\bhutan_crop_monitoring2
+  - geopandas
+  - rasterio
+prefix: C:\ProgramData\anaconda3\envs\bhutan_crop_monitoring2

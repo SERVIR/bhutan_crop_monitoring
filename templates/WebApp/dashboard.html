@@ -186,6 +186,19 @@
         }
 
         function buildChart(id, title, subtitle, type, pointStart, yAxisText, rangeDescription, seriesObject, color) {
+            console.log(seriesObject);
+            const isArrayData = seriesObject[0].data[0] instanceof Array;
+
+            console.log(title + ", " + isArrayData);
+
+            xaxisObj = {
+
+            }
+            if(isArrayData){
+                console.log("adding datatime");
+                xaxisObj.type = 'datetime';
+            }
+
             Highcharts.chart(id, {
                     chart: {
                         type: type,
@@ -203,11 +216,7 @@
                         }
                     },
 
-                    xAxis: {
-                        accessibility: {
-                            rangeDescription: rangeDescription
-                        }
-                    },
+                    xAxis: xaxisObj,
 
                     legend: {
                         layout: 'vertical',
@@ -220,11 +229,13 @@
                             label: {
                                 connectorAllowed: false
                             },
-                            pointStart: pointStart,
                             tooltip: {
                                 pointFormatter: function () {
-                                    return this.y + " " + yAxisText;
-
+                                    if (Number.isInteger(this.y)) {
+                                        return this.y + " " + yAxisText;
+                                    }else {
+                                        return Highcharts.numberFormat(this.y, 2) + " " + yAxisText;
+                                    }
                                 }
                             },
                         }
@@ -363,7 +374,7 @@
         }
 
         function createSparklineChart(container, data) {
-            console.log(container);
+
             console.log(data);
             var units = ['NDVI', 'mm', 'mm', '&deg;C'];
 
@@ -379,6 +390,11 @@
                 console.log("categories");
                 xaxisObj.categories = ['2016', '2017', '2018', '2019', '2020', '2021', '2022'];
             }
+            Highcharts.setOptions({
+                lang: {
+                    thousandsSep: ','
+                }
+            });
             Highcharts.chart(container, {
                 chart: {
                     type: 'line',
@@ -433,6 +449,9 @@
                     series: {
                         animation: false,
                         color: 'white'
+                    },
+                    lang: {
+                        thousandsSep: ','
                     }
                 },
                 exporting: {
@@ -490,6 +509,7 @@
 
             return formatted_data;
         }
+        var debug_me;
 
         $(function () {
                 // Initial call to set aspect ratio on page load
@@ -511,7 +531,7 @@
                     {
                         name: 'NDVI',
                         data: full_data["ndvi"].map(function (data) {
-                            return data.val;
+                            return [data.x, data.val];
                         }),
                         unit: 'NDVI'
                     },
@@ -525,32 +545,29 @@
                     {
                         name: 'Soil Moisture',
                         data: full_data["soil_moisture"].map(function (data) {
-                            return data.val;
+                            return [data.x, data.val];
                         }),
                         unit: 'mm'
                     },
                     {
                         name: 'Temperature',
                         data: full_data["temperature"].map(function (data) {
-                            return data.val;
+                            return [data.x, data.val];
                         }),
                         unit: '&deg;C'
                     }
                 ];
 
-                var tableBody = $('#sparklineTable tbody');
+                debug_me = seriesData.find(data => data.name === 'Precipitation');
+                
+                
+                buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[seriesData.find(data => data.name === 'NDVI')],  ['rgb(0,93,14)']);
 
-                seriesData.forEach(function (series) {
-                    var row = $('<tr></tr>');
-                    var parameterCell = $('<td></td>').text(series.name);
-                    var sparklineCell = $('<td></td>').addClass('sparkline-chart');
 
-                    row.append(parameterCell);
-                    row.append(sparklineCell);
-                    tableBody.append(row);
-
-                    createSparklineChart(sparklineCell[0], series);
-                });
+                buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Precipitation')],  ['rgb(0,93,14)']);
+                
+                buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Soil Moisture')],  ['rgb(0,93,14)']);
+                buildChart('temperature-spark', 'Soil Moisture', '', 'line', '', '&deg;C', '',[seriesData.find(data => data.name === 'Temperature')],  ['rgb(0,93,14)']);
 
                 buildPie();
 
@@ -1518,6 +1535,19 @@
                                 return data.val;
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
+                        
+                        var precip_data = {
+                            name: 'Precipitation',
+                            data: gewog_data["precipitation"].map(function (data) {
+                                return  [data.x, data.val];
+                            }),
+                            unit: 'mm'
+                        }
+
+
+
+
+                         buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[precip_data],  ['rgb(0,93,14)']);
 
 
 
@@ -1540,7 +1570,7 @@
 
             console.log("Ajax to get and update values for gewog");
         }
-
+var debug_dzongkhag_data;
         function selectOption(option, dzongkhagID) {
 
             // Update the label of the second dropdown
@@ -1588,6 +1618,21 @@
                                 return data.val;
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
+
+                        var precip_data = {
+                            name: 'Precipitation',
+                            data: dzongkhag_data["precipitation"].map(function (data) {
+                                return  [data.x, data.val];
+                            }),
+                            unit: 'mm'
+                        }
+                        debug_dzongkhag_data = dzongkhag_data;
+
+
+
+
+                         buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[precip_data],  ['rgb(0,93,14)']);
+
 
                         createTable(tabledata);
                         // Clear all graphs and load with the new data
@@ -2163,21 +2208,50 @@
                          style="z-index: 1004;">
                         <div id="paddy_gain" class="chart-holder"></div>
                     </div>
-                    <div class="col-sm-12 col-md-12  col-xl-12 mg-t-20 " id="sparkLineHolder" style="z-index: 1003;">
+{#                    <div class="col-sm-12 col-md-12  col-xl-12 mg-t-20 " id="sparkLineHolder" style="z-index: 1003; background-color: #758055">#}
+{#                        <div id="sparklineChart" class="chart-holder">#}
+{#                            <table id="sparklineTable" style="width:100%">#}
+{#                                <thead>#}
+{#                                <tr>#}
+{#                                    <th>Parameter</th>#}
+{#                                    <th>Annual Pattern</th>#}
+{#                                </tr>#}
+{#                                </thead>#}
+{#                                <tbody>#}
+{#                                <!-- Table rows will be dynamically added here -->#}
+{#                                </tbody>#}
+{#                            </table>#}
+{#                        </div>#}
+{#                    </div>#}
                         <div id="sparklineChart" class="chart-holder">
-                            <table id="sparklineTable" style="width:100%">
-                                <thead>
-                                <tr>
-                                    <th>Parameter</th>
-                                    <th>Annual Pattern</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <!-- Table rows will be dynamically added here -->
-                                </tbody>
-                            </table>
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" ><button data-bs-target="#ndvi-tab" aria-controls="ndvi-tab"
+                                                                          role="tab" data-bs-toggle="tab" class="tab-button active">NDVI</button></li>
+                                <li role="presentation"><button data-bs-target="#precipitation-tab" aria-controls="precipitation-tab"
+                                                           role="tab" data-bs-toggle="tab" class="tab-button">Precipitation</button></li>
+                                <li role="presentation"><button data-bs-target="#soil-moisture-tab" aria-controls="soil-moisture-tab"
+                                                           role="tab" data-bs-toggle="tab" class="tab-button">Soil Moisture</button></li>
+                                <li role="presentation"><button data-bs-target="#temperature-tab" aria-controls="temperature-tab"
+                                                           role="tab" data-bs-toggle="tab" class="tab-button">Temperature</button></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="ndvi-tab">
+                                    <div class="sparkline-chart" id="ndvi-spark"></div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="precipitation-tab">
+                                    <div class="sparkline-chart" id="precipitation-spark"></div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="soil-moisture-tab">
+                                    <div class="sparkline-chart" id="soil-moisture-spark"></div>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="temperature-tab">
+                                    <div class="sparkline-chart" id="temperature-spark"></div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
                     <div class="col-sm-12 col-md-12 col-xl-12 mg-t-20 pie-slider order-sm-second"
                          style="z-index: 1002; border-bottom: solid 1px; border-left: solid 1px; border-right: solid 1px;">
                         <div class="form-group year-slider">

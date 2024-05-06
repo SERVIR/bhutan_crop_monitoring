@@ -5,6 +5,25 @@
 body{
     overflow: hidden;
 }
+.sparkline-chart{
+    max-height: 300px;
+}
+.tab-button{
+    min-width:100px;
+    background-color: rgb(13 51 9 / 26%);
+    color: white;
+    padding: 10px 3px;
+    border: 1px solid #758057;
+    border-top-left-radius: 5px; /* Rounded top-left corner */
+    border-top-right-radius: 5px; /* Rounded top-right corner */
+}
+
+.tab-button.active{
+    mix-width:100px;
+    background-color: #0D3309;
+    color: white;
+    padding: 10px 3px;
+}
 
  .sidebar-scroller{
         max-height: calc(100vh - 170px);
