@@ -559,13 +559,13 @@
                 ];
 
                 debug_me = seriesData.find(data => data.name === 'Precipitation');
-                
-                
+
+
                 buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[seriesData.find(data => data.name === 'NDVI')],  ['rgb(0,93,14)']);
 
 
                 buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Precipitation')],  ['rgb(0,93,14)']);
-                
+
                 buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Soil Moisture')],  ['rgb(0,93,14)']);
                 buildChart('temperature-spark', 'Soil Moisture', '', 'line', '', '&deg;C', '',[seriesData.find(data => data.name === 'Temperature')],  ['rgb(0,93,14)']);
 
@@ -1524,7 +1524,8 @@
                     success: function (gewog_data) {
 
                         // Clear all graphs and load with the new data
-                        buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
+                        /*
+                          buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                             name: 'Base 2008',
                             data: gewog_data["paddy_gain"].map(function (data) {
                                 return  [data.year, data.val];
@@ -1535,7 +1536,14 @@
                                 return [data.year, data.val];
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
-                        
+                         */
+                        buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
+                            name: 'Base 2020',
+                            data: gewog_data["paddy_loss"].map(function (data) {
+                                return [data.year, data.val];
+                            })
+                        }], [ 'rgb(0,93,14)']);
+
                         var precip_data = {
                             name: 'Precipitation',
                             data: gewog_data["precipitation"].map(function (data) {

@@ -360,7 +360,7 @@ def load_PaddyChangeRiceArea():
     for gewog in gewogs:
         PaddyChangeFrom2008.objects.filter(gewog=gewog).delete()
 
-    df = pd.read_excel("/servir_apps/Gewog_variables.xlsx")
+    df = pd.read_excel("D:\\Gewog_variables.xlsx")
     # Iterate over rows
     for index, row in df.iterrows():
         year = row['Year']
