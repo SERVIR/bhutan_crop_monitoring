@@ -239,10 +239,10 @@ def load_data(request):
     # load_Dzongkhags_precipitation()
     # load_gewog_precipitation()
     # load_Dzongkhags_precipitation()
-    # load_ndvi_country()
+    load_ndvi_country()
     # load_country_precipitation()
     # load_smap_country()
-    load_country_temp()
+    # load_country_temp()
     return dashboard(request)
 
 
@@ -259,7 +259,7 @@ def add_ndvi_values(data):
 
     # Save the averaged NDVI values to the database
     for (month, year), value in averaged_ndvi.items():
-        ndvi_obj, created = SoilMoisture.objects.get_or_create(
+        ndvi_obj, created = NDVI.objects.get_or_create(
             year=year,
             month=month,
             country_id="BT",  # Assuming "BT" is the country ID for Bhutan
@@ -326,7 +326,7 @@ def load_smap_country():
 
 
 def load_ndvi_country():
-    submit_data_request(2002, 2024, 2)
+    submit_data_request(2002, 2024, 28)
     print("loadNDVICountry")
 
 
