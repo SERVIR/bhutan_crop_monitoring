@@ -232,7 +232,8 @@ def load_data(request):
     # load_gewog_precipitation()
     # load_Dzongkhags_precipitation()
     # load_ndvi_country()
-    load_country_precipitation()
+    # load_country_precipitation()
+    load_smap_country()
     return dashboard(request)
 
 
@@ -249,7 +250,7 @@ def add_ndvi_values(data):
 
     # Save the averaged NDVI values to the database
     for (month, year), value in averaged_ndvi.items():
-        ndvi_obj, created = NDVI.objects.get_or_create(
+        ndvi_obj, created = SoilMoisture.objects.get_or_create(
             year=year,
             month=month,
             country_id="BT",  # Assuming "BT" is the country ID for Bhutan
@@ -260,7 +261,7 @@ def add_ndvi_values(data):
             ndvi_obj.save()
 
 
-def submit_data_request(begin_year, end_year):
+def submit_data_request(begin_year, end_year, data_id):
     base_url = "https://climateserv.servirglobal.net/api/"
     submit_url = base_url + "submitDataRequest/"
     progress_url = base_url + "getDataRequestProgress/"
@@ -270,7 +271,7 @@ def submit_data_request(begin_year, end_year):
     for year in range(begin_year, end_year + 1):
         # Prepare parameters for the data request
         params = {
-            "datatype": 2,  # NDVI datatype
+            "datatype": data_id,  # 38,  # soil moisture #2,  # NDVI datatype
             "ensemble": False,
             "begintime": f"01/01/{year}",
             "endtime": f"12/31/{year}",
@@ -310,8 +311,13 @@ def submit_data_request(begin_year, end_year):
         # Save NDVI data to database (implement this part according to your Django models)
 
 
+def load_smap_country():
+    submit_data_request(2015, 2022, 38)
+    print("loadNDVICountry")
+
+
 def load_ndvi_country():
-    submit_data_request(2002, 2024)
+    submit_data_request(2002, 2024, 2)
     print("loadNDVICountry")
 
 def load_gewog_precipitation():
