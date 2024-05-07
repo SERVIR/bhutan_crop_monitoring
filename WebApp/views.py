@@ -154,8 +154,9 @@ def get_dzongkhag_data(self, dzongkhag_id):
             {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
              "val": precipitation["value"]} for precipitation in
             Precipitation.objects.filter(dzongkhag=dzongkhag).values('year', 'month', 'value')],
-        "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
-                     NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "ndvi": [{"x": convert_to_milliseconds(str(ndvi_instance["year"]) + "/" + str(ndvi_instance["month"]).zfill(2)),
+                  "val": ndvi_instance['value']} for ndvi_instance in
+                     NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'month', 'value')],
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
                               SoilMoisture.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
         "paddy_gain": list(
@@ -243,6 +244,7 @@ def load_data(request):
     # load_country_precipitation()
     # load_smap_country()
     # load_country_temp()
+    load_dzongkhag_ndvi()
     return dashboard(request)
 
 
@@ -269,6 +271,88 @@ def add_ndvi_values(data):
             ndvi_obj.value = value
             ndvi_obj.save()
 
+def add_dzongkhag_ndvi_values(data, dzongkhag):
+    monthly_ndvi = defaultdict(list)
+
+    # Iterate through the NDVI data and group values by month
+    for entry in data['data']:
+        month_year = (entry['month'], entry['year'])
+        monthly_ndvi[month_year].append(entry['value']['avg'])
+
+    # Calculate the average NDVI value for each month
+    averaged_ndvi = {month_year: sum(values) / len(values) for month_year, values in monthly_ndvi.items()}
+
+    # Save the averaged NDVI values to the database
+    for (month, year), value in averaged_ndvi.items():
+        ndvi_obj, created = NDVI.objects.get_or_create(
+            year=year,
+            month=month,
+            dzongkhag=dzongkhag,  # Assuming "BT" is the country ID for Bhutan
+            defaults={'value': value}
+        )
+        if not created:
+            ndvi_obj.value = value
+            ndvi_obj.save()
+
+
+def submit_dzongkhag_data_request(begin_year, end_year, data_id, dzongkhag):
+    base_url = "https://climateserv.servirglobal.net/api/"
+    submit_url = base_url + "submitDataRequest/"
+    progress_url = base_url + "getDataRequestProgress/"
+    data_url = base_url + "getDataFromRequest/"
+
+    # Loop through each year
+    for year in range(begin_year, end_year + 1):
+        # Prepare parameters for the data request
+        print(dzongkhag.dzongkhag_geometry)
+        params = {
+            "datatype": data_id,  # 38,  # soil moisture #28,  # NDVI datatype
+            "ensemble": False,
+            "begintime": f"01/01/{year}",
+            "endtime": f"12/31/{year}",
+            "intervaltype": 0,
+            "operationtype": 5,
+            "dateType_Category": "default",
+            "isZip_CurrentDataType": False,
+            "geometry": str(json.dumps({"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry": dzongkhag.dzongkhag_geometry}]})).replace(" ", "")
+        }
+
+        print(str(params))
+
+        # Make the POST request to submit the data request
+        response = requests.post(submit_url, data=params)
+        print("past")
+        if response.status_code == 200:
+            # Handle the response data
+            data = response.json()
+            print(data)
+        else:
+            # Handle the error
+            print('ErrorRRRRRRRRRR:', response.status_code)
+        print("response")
+        request_id = json.loads(response.text)[0]  # Extract the request ID
+        print(f"Data request submitted for {year}. Request ID: {request_id}")
+
+        # Check the progress of the data request
+        while True:
+            progress_response = requests.get(progress_url, params={"id": request_id})
+            progress = json.loads(progress_response.text)[0]
+
+            if progress == 100:  # Request is complete
+                print(f"Data request for {year} is complete.")
+                break
+            elif progress == -1:  # Error occurred
+                print(f"Error occurred while processing data request for {year}.")
+                break
+
+            time.sleep(10)  # Wait for 10 seconds before checking progress again
+
+        # Retrieve the NDVI data
+        data_response = requests.get(data_url, params={"id": request_id})
+        ndvi_data = json.loads(data_response.text)
+        add_dzongkhag_ndvi_values(ndvi_data, dzongkhag)
+        print(f"NDVI data retrieved for {year}: {ndvi_data}")
+
 
 def submit_data_request(begin_year, end_year, data_id):
     base_url = "https://climateserv.servirglobal.net/api/"
@@ -280,7 +364,7 @@ def submit_data_request(begin_year, end_year, data_id):
     for year in range(begin_year, end_year + 1):
         # Prepare parameters for the data request
         params = {
-            "datatype": data_id,  # 38,  # soil moisture #2,  # NDVI datatype
+            "datatype": data_id,  # 38,  # soil moisture #28,  # NDVI datatype
             "ensemble": False,
             "begintime": f"01/01/{year}",
             "endtime": f"12/31/{year}",
@@ -328,6 +412,12 @@ def load_smap_country():
 def load_ndvi_country():
     submit_data_request(2002, 2024, 28)
     print("loadNDVICountry")
+
+
+def load_dzongkhag_ndvi():
+    dzongkhags = Dzongkhag.objects.all().order_by('dzongkhag_name')
+    for dzongkhag in dzongkhags:
+        submit_dzongkhag_data_request(2003, 2022, 28, dzongkhag)
 
 
 def load_gewog_precipitation():

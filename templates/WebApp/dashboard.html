@@ -1498,6 +1498,14 @@ var debug_dzongkhag_data;
                             }),
                             unit: 'mm'
                         }
+                        
+                        var ndvi_data = {
+                            name: 'NDVI',
+                            data: dzongkhag_data["ndvi"].map(function (data) {
+                                return  [data.x, data.val];
+                            }),
+                            unit: 'mm'
+                        }
                         debug_dzongkhag_data = dzongkhag_data;
 
 
@@ -1505,7 +1513,7 @@ var debug_dzongkhag_data;
 
                         setPieYear(2018);
 
-                        //get_formatted_data(debug_dzongkhag_data)
+                        buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[ndvi_data],  ['rgb(0,93,14)']);
 
 
                          buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[precip_data],  ['rgb(0,93,14)']);
