@@ -352,8 +352,8 @@ def load_gewog_precipitation():
 
 
 def load_country_temp():
-    # df = pd.read_excel("/servir_apps/country_climo_2000_2023.xlsx")
-    df = pd.read_excel("d:\\country_climo_2000_2023.xlsx")
+    df = pd.read_excel("/servir_apps/country_climo_2000_2023.xlsx")
+    # df = pd.read_excel("d:\\country_climo_2000_2023.xlsx")
     country = Country.objects.get(country_id="BT")
     for index, row in df.iterrows():
 
