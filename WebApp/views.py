@@ -69,7 +69,7 @@ def get_country_data(country_id):
             Precipitation.objects.filter(country=country).order_by('year', 'month')],
         "ndvi": [{"x": convert_to_milliseconds(str(ndvi_instance.year) + "/" + str(ndvi_instance.month).zfill(2)),
                   "val": ndvi_instance.value} for ndvi_instance in
-                 NDVI.objects.filter(country=country)],
+                 NDVI.objects.filter(country=country).order_by('year', 'month')],
         "soil_moisture": [
             {"x": convert_to_milliseconds(str(soil_moisture.year) + "/" + str(soil_moisture.month).zfill(2)),
              "val": soil_moisture.value} for soil_moisture in
@@ -239,7 +239,7 @@ def load_data(request):
     # load_Dzongkhags_precipitation()
     # load_gewog_precipitation()
     # load_Dzongkhags_precipitation()
-    load_ndvi_country()
+    # load_ndvi_country()
     # load_country_precipitation()
     # load_smap_country()
     # load_country_temp()
