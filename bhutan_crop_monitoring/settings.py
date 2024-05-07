@@ -33,6 +33,8 @@ ALLOWED_HOSTS = data['ALLOWED_HOSTS']
 
 CSRF_TRUSTED_ORIGINS = data['CSRF_TRUSTED_ORIGINS']
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240 # higher than the count of fields
+
 # Application definition
 
 INSTALLED_APPS = [

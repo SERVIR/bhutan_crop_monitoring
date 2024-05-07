@@ -310,7 +310,7 @@ def submit_data_request(begin_year, end_year):
 
 
 def load_ndvi_country():
-    submit_data_request(2002, 2024)
+    # submit_data_request(2002, 2024)
     print("loadNDVICountry")
 
 def load_gewog_precipitation():
