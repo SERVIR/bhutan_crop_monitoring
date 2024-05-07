@@ -59,23 +59,27 @@ def get_country_data(country_id):
     country = Country.objects.get(country_id=country_id)
 
     # Retrieve variable instances associated with the country
-    results = {"temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
-                    "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
-                               Temperature.objects.filter(country=country).order_by('year', 'month')],
-               "precipitation": [
-                   {"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)),
-                    "val": precipitation.value} for precipitation in
-                   Precipitation.objects.filter(country=country).order_by('year', 'month')],
-               "ndvi": [ {"x": convert_to_milliseconds(str(ndvi_instance.year) + "/" + str(ndvi_instance.month).zfill(2)),
-                    "val": ndvi_instance.value}  for ndvi_instance in
-                        NDVI.objects.filter(country=country)],
-               "soil_moisture": [{"x": convert_to_milliseconds(str(soil_moisture.year) + "/" + str(soil_moisture.month).zfill(2)),
-                    "val": soil_moisture.value} for soil_moisture in
-                                 SoilMoisture.objects.filter(country=country).order_by('year', 'month')],
-               "paddy_gain": [{"year": convert_to_milliseconds(str(paddy_gain.year)), "val": paddy_gain.value} for paddy_gain in
-                              PaddyChangeFrom2008.objects.filter(country=country).order_by('year')],
-               "paddy_loss": [{"year": convert_to_milliseconds(str(paddy_loss.year)), "val": -1 * abs(paddy_loss.value)} for paddy_loss in
-                              PaddyChangeFrom2020.objects.filter(country=country).order_by('year')]}
+    results = {
+        "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
+                         "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
+                        Temperature.objects.filter(country=country).order_by('year', 'month')],
+        "precipitation": [
+            {"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)),
+             "val": precipitation.value} for precipitation in
+            Precipitation.objects.filter(country=country).order_by('year', 'month')],
+        "ndvi": [{"x": convert_to_milliseconds(str(ndvi_instance.year) + "/" + str(ndvi_instance.month).zfill(2)),
+                  "val": ndvi_instance.value} for ndvi_instance in
+                 NDVI.objects.filter(country=country)],
+        "soil_moisture": [
+            {"x": convert_to_milliseconds(str(soil_moisture.year) + "/" + str(soil_moisture.month).zfill(2)),
+             "val": soil_moisture.value} for soil_moisture in
+            SoilMoisture.objects.filter(country=country).order_by('year', 'month')],
+        "paddy_gain": [{"year": convert_to_milliseconds(str(paddy_gain.year)), "val": paddy_gain.value} for paddy_gain
+                       in
+                       PaddyChangeFrom2008.objects.filter(country=country).order_by('year')],
+        "paddy_loss": [{"year": convert_to_milliseconds(str(paddy_loss.year)), "val": -1 * abs(paddy_loss.value)} for
+                       paddy_loss in
+                       PaddyChangeFrom2020.objects.filter(country=country).order_by('year')]}
     # Add Country climate variables
 
     # Get all Dzongkhags
@@ -117,10 +121,12 @@ def get_gewog_data(self, gewog_id):
                      NDVI.objects.filter(gewog=gewog).values('year', 'value')),
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
                               SoilMoisture.objects.filter(gewog=gewog).values('year', 'value')),
-        "paddy_gain": list({"year": convert_to_milliseconds(str(paddy_gain['year'])), "val": paddy_gain['value']} for paddy_gain in
-                           PaddyChangeFrom2008.objects.filter(gewog=gewog).values('year', 'value')),
-        "paddy_loss": list({"year": convert_to_milliseconds(str(paddy_loss['year'])), "val": paddy_loss['value']} for paddy_loss in
-                           PaddyChangeFrom2020.objects.filter(gewog=gewog).values('year', 'value'))
+        "paddy_gain": list(
+            {"year": convert_to_milliseconds(str(paddy_gain['year'])), "val": paddy_gain['value']} for paddy_gain in
+            PaddyChangeFrom2008.objects.filter(gewog=gewog).values('year', 'value')),
+        "paddy_loss": list(
+            {"year": convert_to_milliseconds(str(paddy_loss['year'])), "val": paddy_loss['value']} for paddy_loss in
+            PaddyChangeFrom2020.objects.filter(gewog=gewog).values('year', 'value'))
     }
 
     return JsonResponse(results)
@@ -145,17 +151,19 @@ def get_dzongkhag_data(self, dzongkhag_id):
         "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
                             Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
         "precipitation": [
-                   {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
-                    "val": precipitation["value"]} for precipitation in
+            {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
+             "val": precipitation["value"]} for precipitation in
             Precipitation.objects.filter(dzongkhag=dzongkhag).values('year', 'month', 'value')],
         "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
                      NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
                               SoilMoisture.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
-        "paddy_gain": list({"year": convert_to_milliseconds(str(paddy_gain['year'])), "val": paddy_gain['value']} for paddy_gain in
-                           PaddyChangeFrom2008.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
-        "paddy_loss": list({"year": convert_to_milliseconds(str(paddy_loss['year'])), "val": paddy_loss['value']} for paddy_loss in
-                           PaddyChangeFrom2020.objects.filter(dzongkhag=dzongkhag).values('year', 'value'))
+        "paddy_gain": list(
+            {"year": convert_to_milliseconds(str(paddy_gain['year'])), "val": paddy_gain['value']} for paddy_gain in
+            PaddyChangeFrom2008.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "paddy_loss": list(
+            {"year": convert_to_milliseconds(str(paddy_loss['year'])), "val": paddy_loss['value']} for paddy_loss in
+            PaddyChangeFrom2020.objects.filter(dzongkhag=dzongkhag).values('year', 'value'))
     }
 
     # Add gewog-wise data
@@ -233,7 +241,8 @@ def load_data(request):
     # load_Dzongkhags_precipitation()
     # load_ndvi_country()
     # load_country_precipitation()
-    load_smap_country()
+    # load_smap_country()
+    load_country_temp()
     return dashboard(request)
 
 
@@ -320,6 +329,7 @@ def load_ndvi_country():
     submit_data_request(2002, 2024, 2)
     print("loadNDVICountry")
 
+
 def load_gewog_precipitation():
     df = pd.read_excel("/servir_apps/gewog_climo_2000_2023.xlsx")
     for index, row in df.iterrows():
@@ -340,6 +350,34 @@ def load_gewog_precipitation():
             value=precipitation_value
         )
 
+
+def load_country_temp():
+    # df = pd.read_excel("/servir_apps/country_climo_2000_2023.xlsx")
+    df = pd.read_excel("d:\\country_climo_2000_2023.xlsx")
+    country = Country.objects.get(country_id="BT")
+    for index, row in df.iterrows():
+
+        Tmax = row['Tmax']
+        Tmin = row['Tmin']
+        year = row['Year']
+        month = row['Month']
+
+        # Check if Precipitation instance already exists for this year, month, and dzongkhag
+        try:
+            temperature = Temperature.objects.get(year=year, month=month, country=country)
+            # Update the existing Precipitation instance
+            temperature.min = Tmin
+            temperature.max = Tmax
+            temperature.save()
+        except Temperature.DoesNotExist:
+            # Create a new Precipitation instance
+            temperature = Temperature.objects.create(
+                year=year,
+                month=month,
+                country=country,
+                min=Tmin,
+                max=Tmax
+            )
 
 
 def load_country_precipitation():
@@ -393,8 +431,6 @@ def load_Dzongkhags_precipitation():
                 value=precipitation_value
             )
 
-
-
     # # Iterate over each Dzongkhag
     # for dzongkhag in dzongkhags:
     #     # Fetch all associated Gewogs for the current Dzongkhag
@@ -424,7 +460,6 @@ def load_Dzongkhags_precipitation():
     #         else:
     #             # Create a new entry if it doesn't exist
     #             Precipitation.objects.create(dzongkhag=dzongkhag, year=year, month=month, value=sum_value)
-
 
 
 def load_PaddyChangeRiceArea():
@@ -508,7 +543,6 @@ def load_PaddyChangeRiceArea():
             print(f'PaddyChangeFrom2008 entry created for {dzongkhag_name} in {year}')
         else:
             print(f'PaddyChangeFrom2008 entry updated for {dzongkhag_name} in {year}')
-
 
 
 def load_ObservedChangeRiceArea():

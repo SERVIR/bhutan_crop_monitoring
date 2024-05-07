@@ -53,7 +53,7 @@ class SoilMoisture(models.Model):
 
 
 class Temperature(models.Model):
-    value = models.FloatField()
+    value = models.FloatField(default=0, null=True, blank=True)
     min = models.FloatField(default=0, null=True, blank=True)
     max = models.FloatField(default=0, null=True, blank=True)
     year = models.PositiveSmallIntegerField()

@@ -206,11 +206,23 @@
                             tooltip: {
                                  xDateFormat: '%m/%Y',
                                 pointFormatter: function () {
-                                    if (Number.isInteger(this.y)) {
+                                     
+                                    var tooltip = '<span style="color:' + this.series.color + '">\u25CF</span> ' + this.series.name + ': <b>' + this.y + '</b><br/>';
+        
+                                    // Loop through other series to add their values to the tooltip
+                                    this.series.chart.series.forEach(function(series) {
+                                        if (series !== this.series) {
+                                            var point = series.points[this.index];
+                                            tooltip += '<span style="color:' + series.color + '">\u25CF</span> ' + series.name + ': <b>' + point.y + '</b><br/>';
+                                        }
+                                    }, this);
+                            
+                                    return tooltip;
+                                  /*  if (Number.isInteger(this.y)) {
                                         return this.y + " " + yAxisText;
                                     }else {
                                         return Highcharts.numberFormat(this.y, 2) + " " + yAxisText;
-                                    }
+                                    } */
                                 }
                             },
                         }
@@ -520,6 +532,7 @@
             return formatted_data;
         }
         var debug_me;
+        var debug_me2;
 
         $(function () {
                 // Initial call to set aspect ratio on page load
@@ -560,15 +573,23 @@
                         unit: 'mm'
                     },
                     {
-                        name: 'Temperature',
+                        name: 'Temperature Min',
                         data: full_data["temperature"].map(function (data) {
-                            return [data.x, data.val];
+                            return [data.x, data.min];
+                        }),
+                        unit: '&deg;C'
+                    },
+                    {
+                        name: 'Temperature Max',
+                        data: full_data["temperature"].map(function (data) {
+                            return [data.x, data.max];
                         }),
                         unit: '&deg;C'
                     }
                 ];
 
-                debug_me = seriesData.find(data => data.name === 'Precipitation');
+                debug_me = seriesData.find(data => data.name === 'Temperature');
+                debug_me2 = seriesData.find(data => data.name === 'Precipitation');
 
 
                 buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[seriesData.find(data => data.name === 'NDVI')],  ['rgb(0,93,14)']);
@@ -577,7 +598,7 @@
                 buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Precipitation')],  ['rgb(0,93,14)']);
 
                 buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Soil Moisture')],  ['rgb(0,93,14)']);
-                buildChart('temperature-spark', 'Soil Moisture', '', 'line', '', '&deg;C', '',[seriesData.find(data => data.name === 'Temperature')],  ['rgb(0,93,14)']);
+                buildChart('temperature-spark', 'Soil Moisture', '', 'line', '', '&deg;C', '',[seriesData.find(data => data.name === 'Temperature Min'), seriesData.find(data => data.name === 'Temperature Max')],  ['#8AAFFF', '#FF0200']);
 
                 buildPie();
 
