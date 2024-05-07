@@ -61,21 +61,21 @@ def get_country_data(country_id):
     # Retrieve variable instances associated with the country
     results = {"temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
                     "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
-                               Temperature.objects.filter(country=country)],
+                               Temperature.objects.filter(country=country).order_by('year', 'month')],
                "precipitation": [
                    {"x": convert_to_milliseconds(str(precipitation.year) + "/" + str(precipitation.month).zfill(2)),
                     "val": precipitation.value} for precipitation in
-                   Precipitation.objects.filter(country=country)],
+                   Precipitation.objects.filter(country=country).order_by('year', 'month')],
                "ndvi": [ {"x": convert_to_milliseconds(str(ndvi_instance.year) + "/" + str(ndvi_instance.month).zfill(2)),
                     "val": ndvi_instance.value}  for ndvi_instance in
                         NDVI.objects.filter(country=country)],
                "soil_moisture": [{"x": convert_to_milliseconds(str(soil_moisture.year) + "/" + str(soil_moisture.month).zfill(2)),
                     "val": soil_moisture.value} for soil_moisture in
-                                 SoilMoisture.objects.filter(country=country)],
+                                 SoilMoisture.objects.filter(country=country).order_by('year', 'month')],
                "paddy_gain": [{"year": convert_to_milliseconds(str(paddy_gain.year)), "val": paddy_gain.value} for paddy_gain in
-                              PaddyChangeFrom2008.objects.filter(country=country)],
+                              PaddyChangeFrom2008.objects.filter(country=country).order_by('year')],
                "paddy_loss": [{"year": convert_to_milliseconds(str(paddy_loss.year)), "val": -1 * abs(paddy_loss.value)} for paddy_loss in
-                              PaddyChangeFrom2020.objects.filter(country=country)]}
+                              PaddyChangeFrom2020.objects.filter(country=country).order_by('year')]}
     # Add Country climate variables
 
     # Get all Dzongkhags
@@ -231,7 +231,8 @@ def load_data(request):
     # load_Dzongkhags_precipitation()
     # load_gewog_precipitation()
     # load_Dzongkhags_precipitation()
-    load_ndvi_country()
+    # load_ndvi_country()
+    load_country_precipitation()
     return dashboard(request)
 
 
@@ -310,7 +311,7 @@ def submit_data_request(begin_year, end_year):
 
 
 def load_ndvi_country():
-    # submit_data_request(2002, 2024)
+    submit_data_request(2002, 2024)
     print("loadNDVICountry")
 
 def load_gewog_precipitation():
@@ -333,6 +334,32 @@ def load_gewog_precipitation():
             value=precipitation_value
         )
 
+
+
+def load_country_precipitation():
+    df = pd.read_excel("/servir_apps/country_climo_2000_2023.xlsx")
+    # df = pd.read_excel("d:\\country_climo_2000_2023.xlsx")
+    country = Country.objects.get(country_id="BT")
+    for index, row in df.iterrows():
+
+        precipitation_value = row['Precipitation']
+        year = row['Year']
+        month = row['Month']
+
+        # Check if Precipitation instance already exists for this year, month, and dzongkhag
+        try:
+            precipitation = Precipitation.objects.get(year=year, month=month, country=country)
+            # Update the existing Precipitation instance
+            precipitation.value = precipitation_value
+            precipitation.save()
+        except Precipitation.DoesNotExist:
+            # Create a new Precipitation instance
+            precipitation = Precipitation.objects.create(
+                year=year,
+                month=month,
+                country=country,
+                value=precipitation_value
+            )
 
 
 def load_Dzongkhags_precipitation():
