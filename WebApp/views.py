@@ -1,5 +1,7 @@
 import datetime
+import requests
 import json
+import time
 import logging
 from collections import defaultdict
 from pathlib import Path
@@ -229,8 +231,87 @@ def load_data(request):
     # load_Dzongkhags_precipitation()
     # load_gewog_precipitation()
     # load_Dzongkhags_precipitation()
+    load_ndvi_country()
     return dashboard(request)
 
+
+def add_ndvi_values(data):
+    monthly_ndvi = defaultdict(list)
+
+    # Iterate through the NDVI data and group values by month
+    for entry in data['data']:
+        month_year = (entry['month'], entry['year'])
+        monthly_ndvi[month_year].append(entry['value']['avg'])
+
+    # Calculate the average NDVI value for each month
+    averaged_ndvi = {month_year: sum(values) / len(values) for month_year, values in monthly_ndvi.items()}
+
+    # Save the averaged NDVI values to the database
+    for (month, year), value in averaged_ndvi.items():
+        ndvi_obj, created = NDVI.objects.get_or_create(
+            year=year,
+            month=month,
+            country_id="BT",  # Assuming "BT" is the country ID for Bhutan
+            defaults={'value': value}
+        )
+        if not created:
+            ndvi_obj.value = value
+            ndvi_obj.save()
+
+
+def submit_data_request(begin_year, end_year):
+    base_url = "https://climateserv.servirglobal.net/api/"
+    submit_url = base_url + "submitDataRequest/"
+    progress_url = base_url + "getDataRequestProgress/"
+    data_url = base_url + "getDataFromRequest/"
+
+    # Loop through each year
+    for year in range(begin_year, end_year + 1):
+        # Prepare parameters for the data request
+        params = {
+            "datatype": 2,  # NDVI datatype
+            "ensemble": False,
+            "begintime": f"01/01/{year}",
+            "endtime": f"12/31/{year}",
+            "intervaltype": 0,
+            "operationtype": 5,
+            "dateType_Category": "default",
+            "isZip_CurrentDataType": False,
+            "layerid": "country",
+            "featureids": "30"  # Country ID for Bhutan
+        }
+
+        # Make the POST request to submit the data request
+        response = requests.post(submit_url, params=params)
+        request_id = json.loads(response.text)[0]  # Extract the request ID
+        print(f"Data request submitted for {year}. Request ID: {request_id}")
+
+        # Check the progress of the data request
+        while True:
+            progress_response = requests.get(progress_url, params={"id": request_id})
+            progress = json.loads(progress_response.text)[0]
+
+            if progress == 100:  # Request is complete
+                print(f"Data request for {year} is complete.")
+                break
+            elif progress == -1:  # Error occurred
+                print(f"Error occurred while processing data request for {year}.")
+                break
+
+            time.sleep(10)  # Wait for 10 seconds before checking progress again
+
+        # Retrieve the NDVI data
+        data_response = requests.get(data_url, params={"id": request_id})
+        ndvi_data = json.loads(data_response.text)
+        add_ndvi_values(ndvi_data)
+        print(f"NDVI data retrieved for {year}: {ndvi_data}")
+
+        # Save NDVI data to database (implement this part according to your Django models)
+
+
+def load_ndvi_country():
+    submit_data_request(2002, 2024)
+    print("loadNDVICountry")
 
 def load_gewog_precipitation():
     df = pd.read_excel("/servir_apps/gewog_climo_2000_2023.xlsx")
