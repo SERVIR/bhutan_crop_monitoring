@@ -117,8 +117,9 @@ def get_gewog_data(self, gewog_id):
             {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
              "val": precipitation["value"]} for precipitation in
             Precipitation.objects.filter(gewog=gewog).values('year', 'month', 'value')],
-        "ndvi": list({"year": ndvi_instance['year'], "val": ndvi_instance['value']} for ndvi_instance in
-                     NDVI.objects.filter(gewog=gewog).values('year', 'value')),
+        "ndvi": [{"x": convert_to_milliseconds(str(ndvi_instance["year"]) + "/" + str(ndvi_instance["month"]).zfill(2)),
+                  "val": ndvi_instance["value"]} for ndvi_instance in
+                     NDVI.objects.filter(gewog=gewog).values('year', 'month', 'value')],
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
                               SoilMoisture.objects.filter(gewog=gewog).values('year', 'value')),
         "paddy_gain": list(
