@@ -7,9 +7,9 @@ import time
 
 
 class Command(BaseCommand):
-    help = 'Load Dzongkhag NDVI data'
+    help = 'Load Gewogg NDVI data'
 
-    def add_dzongkhag_ndvi_values(self, data, dzongkhag):
+    def add_gewog_ndvi_values(self, data, gewog):
         monthly_ndvi = defaultdict(list)
 
         # Iterate through the NDVI data and group values by month
@@ -25,7 +25,7 @@ class Command(BaseCommand):
             ndvi_obj, created = NDVI.objects.get_or_create(
                 year=year,
                 month=month,
-                dzongkhag=dzongkhag,  # Assuming "BT" is the country ID for Bhutan
+                gewog=gewog,  # Assuming "BT" is the country ID for Bhutan
                 defaults={'value': value}
             )
             if not created:
@@ -33,17 +33,17 @@ class Command(BaseCommand):
                 ndvi_obj.save()
 
     def handle(self, *args, **kwargs):
-        # Your logic to load Dzongkhag NDVI data
+        # Your logic to load Gewog NDVI data
         # Access Django DB, fetch data, and update entries for NDVI
         # Example:
-        for i in range(11, 21):  # Loop from 11 to 20
-            dzongkhag_id = f'BT0{i}'
-            self.submit_dzongkhag_data_request(2002, 2022, 28, Dzongkhag.objects.get(dzongkhag_id=dzongkhag_id))
-            self.stdout.write(self.style.SUCCESS('Completed Dzongkhag: {}'.format(dzongkhag_id)))
+        gewogs = Gewog.objects.all().order_by('gewog_name')
+        for gewog in gewogs:
+            self.submit_gewog_data_request(2002, 2022, 28, gewog)
+            self.stdout.write(self.style.SUCCESS('Completed Gewog: {}'.format(gewog.gewog_id)))
 
-        self.stdout.write(self.style.SUCCESS('Dzongkhag NDVI data loaded successfully!'))
+        self.stdout.write(self.style.SUCCESS('Gewog NDVI data loaded successfully!'))
 
-    def submit_dzongkhag_data_request(self, begin_year, end_year, data_id, dzongkhag):
+    def submit_gewog_data_request(self, begin_year, end_year, data_id, gewog):
         base_url = "https://climateserv.servirglobal.net/api/"
         submit_url = base_url + "submitDataRequest/"
         progress_url = base_url + "getDataRequestProgress/"
@@ -62,7 +62,7 @@ class Command(BaseCommand):
                 "dateType_Category": "default",
                 "isZip_CurrentDataType": False,
                 "geometry": str(json.dumps({"type": "FeatureCollection", "features": [
-                    {"type": "Feature", "properties": {}, "geometry": dzongkhag.dzongkhag_geometry}]})).replace(" ", "")
+                    {"type": "Feature", "properties": {}, "geometry": gewog.gewog_geometry}]})).replace(" ", "")
             }
 
             # Make the POST request to submit the data request
@@ -96,5 +96,5 @@ class Command(BaseCommand):
             # Retrieve the NDVI data
             data_response = requests.get(data_url, params={"id": request_id})
             ndvi_data = json.loads(data_response.text)
-            self.add_dzongkhag_ndvi_values(ndvi_data, dzongkhag)
+            self.add_gewog_ndvi_values(ndvi_data, gewog)
             print(f"NDVI data retrieved for {year}: {ndvi_data}")

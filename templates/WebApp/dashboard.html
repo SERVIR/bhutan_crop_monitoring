@@ -595,7 +595,9 @@
                 ];
 
                 debug_me = seriesData.find(data => data.name === 'Temperature');
-                debug_me2 = seriesData.find(data => data.name === 'Precipitation');
+                debug_me2 = [seriesData.find(data => data.name === 'NDVI')];
+                
+                
 
 
                 buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[seriesData.find(data => data.name === 'NDVI')],  ['rgb(0,93,14)']);
@@ -1441,6 +1443,7 @@ var yearSlider;
             console.log("Ajax to get and update values for gewog");
         }
 var debug_dzongkhag_data;
+        var debug_me3;
         function selectOption(option, dzongkhagID) {
 
             // Update the label of the second dropdown
@@ -1465,11 +1468,19 @@ var debug_dzongkhag_data;
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
                 /* This is incorrect, not sure what is going wrong, but need to debug please */
+                
+                debug_me3 = [{
+                        name: 'NDVI',
+                        data: full_data["ndvi"].map(function (data) {
+                            return [data.x, data.val];
+                        }),
+                        unit: 'NDVI'
+                    }];
                 buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[{
                         name: 'NDVI',
-                        data: [full_data["ndvi"].map(function (data) {
+                        data: full_data["ndvi"].map(function (data) {
                             return [data.x, data.val];
-                        })],
+                        }),
                         unit: 'NDVI'
                     }],  ['rgb(0,93,14)']);
 

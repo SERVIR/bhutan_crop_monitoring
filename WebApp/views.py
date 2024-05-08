@@ -244,7 +244,7 @@ def load_data(request):
     # load_country_precipitation()
     # load_smap_country()
     # load_country_temp()
-    load_dzongkhag_ndvi()
+    # load_dzongkhag_ndvi()
     return dashboard(request)
 
 
