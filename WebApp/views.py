@@ -418,7 +418,7 @@ def load_dzongkhag_ndvi():
     # dzongkhags = Dzongkhag.objects.all().order_by('dzongkhag_name')
     # for dzongkhag in dzongkhags:
     #     submit_dzongkhag_data_request(2003, 2022, 28, dzongkhag)
-    submit_dzongkhag_data_request(2002, 2022, 28, Dzongkhag.objects.get(dzongkhag_id="BT008"))
+    submit_dzongkhag_data_request(2002, 2022, 28, Dzongkhag.objects.get(dzongkhag_id="BT009"))
 
 
 def load_gewog_precipitation():
