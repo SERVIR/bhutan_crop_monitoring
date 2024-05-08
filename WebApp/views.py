@@ -415,9 +415,9 @@ def load_ndvi_country():
 
 
 def load_dzongkhag_ndvi():
-    dzongkhags = Dzongkhag.objects.all().order_by('dzongkhag_name')
+    dzongkhags = Dzongkhag.objects.get(dzongkhag_id="BT003").order_by('dzongkhag_name')
     for dzongkhag in dzongkhags:
-        submit_dzongkhag_data_request(2003, 2022, 28, dzongkhag)
+        submit_dzongkhag_data_request(2013, 2022, 28, dzongkhag)
 
 
 def load_gewog_precipitation():

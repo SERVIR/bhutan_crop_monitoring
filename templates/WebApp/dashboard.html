@@ -1464,6 +1464,17 @@ var debug_dzongkhag_data;
                             return [data.year, data.val];
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
+                /* This is incorrect, not sure what is going wrong, but need to debug please */
+                buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[{
+                        name: 'NDVI',
+                        data: [full_data["ndvi"].map(function (data) {
+                            return [data.x, data.val];
+                        })],
+                        unit: 'NDVI'
+                    }],  ['rgb(0,93,14)']);
+
+
+                
                 map.fitBounds(dzongkhagLayer.getBounds());
                 all_active = true;
                 setPieYear(2016);
