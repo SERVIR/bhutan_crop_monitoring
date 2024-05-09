@@ -36,7 +36,7 @@ body{
 }
 
 .tab-button.active{
-    mix-width:100px;
+    min-width:100px;
     background-color: #0D3309;
     color: white;
     padding: 10px 3px;
@@ -556,33 +556,89 @@ input[type='range'] {
 }
 
 /* Style the thumb (handle) of the input range slider */
-input[type='range']::-webkit-slider-thumb {
+.slider.opacity-control::-webkit-slider-thumb {
     -webkit-appearance: none; /* Remove default styles */
-    width: 20px; /* Set width */
-    height: 16px; /* Set height */
-    background: #fff; /* Set background color */
-    background-image: url('/static/images/handle_lines.png');
-    background-size: contain;
-    border: 2px solid #0D3309; /* Set border */
-    border-radius: 0; /* Set border radius to 0 to make it square */
+    width: 30px; /* Set width */
+    height: 30px; /* Set height */
+    background: rgb(192, 200, 191); /* Set background color */
+    border: 1px solid #0D3309;
+    background-image: url(range-icon.png);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 30px 30px;
+    border-radius: 20px; /* Set border radius to 0 to make it square */
     cursor: pointer; /* Set cursor */
     position: relative; /* Set position to relative for absolute positioning of pseudo-element */
 }
 
-input[type='range']::-webkit-slider-thumb:hover {
-    -webkit-appearance: none; /* Remove default styles */
-    width: 20px; /* Set width */
-    height: 16px; /* Set height */
-    background: #0D3309; /* Set background color */
-    background-image: url('/static/images/handle_lines_hover.png');
-    background-size: contain;
-    border: 2px solid #0D3309; /* Set border */
-    border-radius: 0; /* Set border radius to 0 to make it square */
-    cursor: pointer; /* Set cursor */
-    position: relative; /* Set position to relative for absolute positioning of pseudo-element */
+.input-container {
+  display: flex;
+  align-items: center;
 }
 
+.compare-container {
+  position: relative;
+  border: 1px solid #000;
+        padding: 20px 0 0 2px;
+}
 
+.box-connector {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  background: rgb(192, 200, 191);
+  border: 1px solid #0D3309;
+  border-radius: 20px;
+  cursor: default;
+  z-index: 1; /* Ensure the connector is above the boxes */
+    background-image: url(range-icon.png);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: 30px 30px;
+}
+
+.buffer {
+    margin-top: 12px;
+}
+
+.compare-text {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #fdfdfc;
+  padding: 0 10px;
+}
+
+.box {
+  width: 49%;
+  height: 100px;
+  display: inline-block;
+  border: 0;
+    padding-left: 3px;
+}
+
+#left_compare_date + *, #right_compare_date + * {
+  left: 0 !important;
+}
+
+.slider.opacity-control::-webkit-slider-thumb:hover {
+        cursor: ew-resize;
+}
+
+.no-list-type{
+    list-style-type: none;
+}
+
+.wizard-button{
+    min-width: 100px;
+    background-color: #0D3309;
+    color: white;
+    padding: 10px 3px;
+}
 
 
 .leaflet-sbs-range {
@@ -599,16 +655,17 @@ input[type='range']::-webkit-slider-thumb:hover {
     left: 50%;
     margin-left: -2px;
     width: 4px;
-    background-color: #fff;
+    background-color: rgb(192, 200, 191);
     pointer-events: none;
     z-index: 999;
+    border: 1px solid #0D3309;
 }
 
 .leaflet-sbs-range {
     -webkit-appearance: none;
     display: inline-block !important;
     vertical-align: middle;
-    height: 0;
+    height: 0!important;
     padding: 0;
     margin: 0;
     border: 0;
@@ -644,7 +701,9 @@ input[type='range']::-webkit-slider-thumb:hover {
 
 /* For whatever reason, these need to be defined
  * on their own so dont group them */
-
+.leaflet-control-container{
+    z-index: 2000;
+}
 .slider-container{
         margin: 5px 0;
 }
@@ -653,13 +712,13 @@ input[type='range']::-webkit-slider-thumb:hover {
     -webkit-appearance: none;
     margin: 0;
     padding: 0;
-    background: #fff;
+    background: rgb(192, 200, 191);
     height: 40px;
     width: 40px;
     border-radius: 20px;
     cursor: ew-resize;
     pointer-events: auto;
-    border: 1px solid #ddd;
+    border: 1px solid #0D3309;
     background-image: url(range-icon.png);
     background-position: 50% 50%;
     background-repeat: no-repeat;
@@ -687,7 +746,7 @@ input[type='range']::-webkit-slider-thumb:hover {
     right: 0;
     background: #fff;
     height: 40px;
-    width: 40px;
+    width: 80px;
     border-radius: 20px;
     cursor: ew-resize;
     pointer-events: auto;
@@ -695,7 +754,7 @@ input[type='range']::-webkit-slider-thumb:hover {
     background-image: url(range-icon.png);
     background-position: 50% 50%;
     background-repeat: no-repeat;
-    background-size: 40px 40px;
+    background-size: cover;
 }
 
 .leaflet-sbs-range:disabled::-moz-range-thumb {

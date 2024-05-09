@@ -208,9 +208,9 @@
                             tooltip: {
                                  xDateFormat: '%m/%Y',
                                 pointFormatter: function () {
-                                     
+
                                     var tooltip = '<span style="color:' + this.series.color + '">\u25CF</span> ' + this.series.name + ': <b>' + this.y + '</b><br/>';
-        
+
                                     // Loop through other series to add their values to the tooltip
                                     this.series.chart.series.forEach(function(series) {
                                         if (series !== this.series) {
@@ -218,7 +218,7 @@
                                             tooltip += '<span style="color:' + series.color + '">\u25CF</span> ' + series.name + ': <b>' + point.y + '</b><br/>';
                                         }
                                     }, this);
-                            
+
                                     return tooltip;
                                   /*  if (Number.isInteger(this.y)) {
                                         return this.y + " " + yAxisText;
@@ -363,7 +363,7 @@
         }
 
         function createSparklineChart(container, data) {
-            
+
             var units = ['NDVI', 'mm', 'mm', '&deg;C'];
 
             const isArrayData = data.data[0] instanceof Array;
@@ -589,8 +589,8 @@
 
                 debug_me = seriesData.find(data => data.name === 'Temperature');
                 debug_me2 = [seriesData.find(data => data.name === 'NDVI')];
-                
-                
+
+
 
 
                 buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[seriesData.find(data => data.name === 'NDVI')],  ['rgb(0,93,14)']);
@@ -1003,8 +1003,8 @@
                     autoclose: true,
                     container: container,
                     orientation: 'auto',
-                    startDate: "01-2016", // Set the start date to January 2016
-                    endDate: "12-2022", // Set the end date to December 2022
+                    startDate: "01-2002", // Set the start date to January 2016
+                    endDate: "12-2023", // Set the end date to December 2022
                     defaultViewDate: {year: 2016, month: 0}
                 }).on('show', function (event) {
                     positionDatepicker($(this));
@@ -1034,7 +1034,7 @@
                     var currentYear = $(this).datepicker('getDate').getFullYear();
 
                     var startYear = 2016;
-                    var endYear = 2022;
+                    var endYear = 2023;
                     var numYears = endYear - startYear + 1;
 
 
@@ -1375,7 +1375,7 @@ var yearSlider;
                     url: '/get-gewog-data/' + id, // Adjust the URL as per your Django API endpoint
                     method: 'GET',
                     success: function (gewog_data) {
-                        
+
                         buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                             name: 'Base 2020',
                             data: gewog_data["paddy_loss"].map(function (data) {
@@ -1390,9 +1390,9 @@ var yearSlider;
                             }),
                             unit: 'mm'
                         }
-                        
+
                         console.log("ndvi_data:");
-                       
+
                         var ndvi_data = {
                             name: 'NDVI',
                             data: gewog_data["ndvi"].map(function (data) {
@@ -1455,7 +1455,7 @@ var debug_dzongkhag_data;
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
                 /* This is incorrect, not sure what is going wrong, but need to debug please */
-                
+
                 debug_me3 = [{
                         name: 'NDVI',
                         data: full_data["ndvi"].map(function (data) {
@@ -1472,7 +1472,7 @@ var debug_dzongkhag_data;
                     }],  ['rgb(0,93,14)']);
 
 
-                
+
                 map.fitBounds(dzongkhagLayer.getBounds());
                 all_active = true;
                 setPieYear(2016);
@@ -1507,8 +1507,8 @@ var debug_dzongkhag_data;
                             }),
                             unit: 'mm'
                         }
-                        
-                       
+
+
                         debug_dzongkhag_data = dzongkhag_data;
 
 
@@ -1612,6 +1612,8 @@ var debug_dzongkhag_data;
         }
 
         let paddy_layer;
+        // Initialize a variable to track the status of compare_control
+        let compareControlAdded = false;
         let compare_control;
 
         function add_paddy_wms(year) {
@@ -1696,6 +1698,7 @@ var debug_dzongkhag_data;
             });
             map.addLayer(paddy_layer20_compare);
             compare_control = L.control.sideBySide([paddy_layer16, paddy_layer20_compare], [paddy_layer20, paddy_layer16_compare]).addTo(map);
+
 
             document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('min', '-0.01');
             document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('max', '1.01');
@@ -1866,6 +1869,96 @@ var debug_dzongkhag_data;
 
         }
 
+        // Variables to keep track of current step
+        var currentStep = 1;
+
+        // Function to show the next step
+        function nextStep() {
+            var nextStepId = "compareStep" + (currentStep + 1);
+            var currentStepId = "compareStep" + currentStep;
+            var nextStepDiv = document.getElementById(nextStepId);
+            var currentStepDiv = document.getElementById(currentStepId);
+            if (nextStepDiv) {
+                currentStepDiv.style.display = "none";
+                nextStepDiv.style.display = "block";
+                currentStep++;
+            }
+        }
+
+        // Function to show the previous step
+        function prevStep() {
+            var prevStepId = "compareStep" + (currentStep - 1);
+            var currentStepId = "compareStep" + currentStep;
+            var prevStepDiv = document.getElementById(prevStepId);
+            var currentStepDiv = document.getElementById(currentStepId);
+            if (prevStepDiv) {
+                currentStepDiv.style.display = "none";
+                prevStepDiv.style.display = "block";
+                currentStep--;
+            }
+        }
+
+        // Function to handle user's selection of layers
+        function proceedToStep3() {
+            // Add logic here to handle layer selection
+            // For now, just move to the next step
+            nextStep();
+        }
+
+        // Function to handle user's selection of dates
+        function proceedToStep4() {
+            // Add logic here to handle date selection
+            // For now, just move to the next step
+            nextStep();
+        }
+
+        // Function to handle user's confirmation and visualization
+        function performComparison() {
+            // Add logic here to perform comparison and visualize the results
+            // For now, just alert the user and reset to the first step
+            testCompare();
+            compareControlAdded = true;
+
+        }
+
+        function removeComparison(){
+            if(compareControlAdded) {
+                if(map.hasLayer(paddy_layer16_compare)){
+                     map.removeLayer(paddy_layer16_compare)
+                }
+                if(map.hasLayer(paddy_layer20)){
+                     map.removeLayer(paddy_layer20)
+                }
+                if(map.hasLayer(paddy_layer20_compare)){
+                     map.removeLayer(paddy_layer20_compare)
+                }
+                if(map.hasLayer(paddy_layer16)){
+                     map.removeLayer(paddy_layer16)
+                }
+                map.removeControl(compare_control);
+                compareControlAdded = false;
+            }
+        }
+
+        // Function to reset to the first step
+        function resetToStep1() {
+            currentStep = 1;
+            for (var i = 2; i <= 4; i++) {
+                var stepId = "compareStep" + i;
+                var stepDiv = document.getElementById(stepId);
+                if (stepDiv) {
+                    stepDiv.style.display = "none";
+                }
+            }
+            var step1Div = document.getElementById("compareStep1");
+            if (step1Div) {
+                step1Div.style.display = "block";
+            }
+        }
+function selectcompare(which){
+            console.log("do something about:");
+            console.log(this);
+}
 
     </script>
 
@@ -1930,10 +2023,10 @@ var debug_dzongkhag_data;
                             </li>
                         </ul>
                         <ul role="tablist">
-                            <li id="tour_box_blink" class="tour_box_blink">
-                                <a role="tab" id="tour_link" onclick="open_tour()" title="Open interactive tour"><i
-                                        id="tour_icon" class="fas fa-info-circle tour_icon_blink"></i></a>
-                            </li>
+{#                            <li id="tour_box_blink" class="tour_box_blink">#}
+{#                                <a role="tab" id="tour_link" onclick="open_tour()" title="Open interactive tour"><i#}
+{#                                        id="tour_icon" class="fas fa-info-circle tour_icon_blink"></i></a>#}
+{#                            </li>#}
                         </ul>
                     </div>
 
@@ -1947,7 +2040,202 @@ var debug_dzongkhag_data;
                               <i class="fas fa-caret-left"></i>
                             </span>
                                 </h1>
-                                <h2 class="step-marker">Choose layers to compare</h2>
+                               <!-- Step 1: Introduction and Instructions -->
+                                <div id="compareStep1" style="display: none;">
+                                    <h2 class="step-marker">Introduction</h2>
+                                    <p>Welcome to the Layer Comparison Tool. This tool empowers you to explore and
+                                        compare various layers of data on a map, facilitating insightful analysis of
+                                        changes over time or across different variables.</p>
+
+                                    <p>
+                                        If you already have layers enabled on the map, the comparison tool will
+                                        seamlessly overlay the selected layers for comparative analysis. However, to
+                                        avoid confusion, we recommend disabling any similar layers that you intend to
+                                        compare with the layers loaded through the comparison tool. This ensures clarity
+                                        in distinguishing between layers managed through the layer manager and those
+                                        displayed via the comparison tool.
+                                    </p>
+
+
+                                    <p>Here's how it works:</p>
+                                    <ol style="padding-left: 1rem;">
+                                        <li>Choose Layers and Dates:
+                                            <ul>
+                                                <li>On the left side of the map, select a dominant layer and its
+                                                    corresponding date for comparison.
+                                                </li>
+                                                <li>On the right side of the map, select another dominant layer and its
+                                                    corresponding date for comparison.
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>Comparison Display:
+                                            <ul>
+                                                <li>The map will display both selected layers on each side, with the
+                                                    dominant layer loaded on top to highlight the differences.
+                                                </li>
+                                                <li>This visualization helps you to identify changes, trends, or
+                                                    disparities between the selected layers.
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>Interact and Analyze:
+                                            <ul>
+                                                <li>Use the comparison slider to adjust the visibility of each layer and
+                                                    analyze the differences more effectively.
+                                                </li>
+                                                <li>Explore the map, zoom in/out, and interact with the layers to gain
+                                                    insights into the data.
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ol>
+                                    <p>Ready to start comparing layers? Click on the "Next" button to begin the layer
+                                        selection process.</p>
+                                    <p style="text-align: right;">
+                                        <button onclick="nextStep()" class="wizard-button">Next</button>
+                                    </p>
+                                </div>
+
+                                <!-- Step 2: Layer Selection -->
+                                <div id="compareStep2" >
+                                    <h2 class="step-marker">Choose Layers to Compare</h2>
+
+                                    <div id="layer-selection">
+                                        <!-- Layer selection options will be populated here -->
+                                        <p>This is only for demo purposes currently. Selecting different
+                                        layers and years is not functional yet, it will be coming soon.</p>
+                                    There are layers in the background hard coded for the demo.<br><br>
+                                    <p>
+                                        If you have layers already on the map that you intend to compare,
+                                        we recommend disabling them from the layer panel prior to adding them to
+                                        this tool to avoid having duplicate and possibly misleading layers visible.
+                                    </p>
+
+                                        <div class="compare-container">
+                                            <div class="compare-text">Compare</div>
+                                            <div class="box" style="border-right: 1px solid #0D3309">
+                                                <select>
+                                                    {% for layer in data_layers %}
+                                                        {% if layer.hasVisualization %}
+                                                            <option>{{ layer.title }}</option>
+
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="buffer "
+                                                     style="position: relative;">
+                                                    <input type="text"
+                                                           class="yearpicker ignore-elements"
+                                                           size="4"
+                                                           id="left_compare_date"
+                                                           onclick="openPicker(this)"
+                                                           onchange="selectcompare(this);"
+
+                                                           value="2022"
+                                                    />
+                                                </div>
+
+                                            </div>
+                                        <div class="box-connector"></div>
+                                            <div class="box" style="border-left: 1px solid #0D3309">
+                                                <select>
+                                                    {% for layer in data_layers %}
+                                                        {% if layer.hasVisualization %}
+                                                            <option>{{ layer.title }}</option>
+
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </select>
+                                                <div class="buffer "
+                                                     style="position: relative;">
+                                                    <input type="text"
+                                                           class="yearpicker ignore-elements"
+                                                           size="4"
+                                                           id="right_compare_date"
+                                                           onclick="openPicker(this)"
+                                                           onchange="selectcompare(this);"
+
+                                                           value="2023"
+                                                    />
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <p style="text-align: right;">
+
+
+                                         <ul style="padding-left: 1rem;">
+                                        <li class="no-list-type">
+                                            <button onclick="performComparison()" class="wizard-button">Compare</button>
+                                            <p>Click this button to activate or update the layer comparison tool with the selected
+                                                parameters.</p>
+                                        </li>
+                                        <li class="no-list-type">
+                                            <button onclick="removeComparison()" class="wizard-button">Exit Tool
+                                            </button>
+                                            <p>Click this button to remove the layer comparison tool from the UI. The
+                                                comparison tool will remain displayed until this button is clicked, even
+                                                if you navigate to a different panel tab.</p>
+                                        </li>
+                                        <li class="no-list-type">
+                                            <button onclick="resetToStep1()" class="wizard-button">More Info</button>
+                                            <p>Click this button to get more info about the compare tool.</p>
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+
+                                <!-- Step 3: Date Selection (Optional) -->
+                                <div id="notneededstep3" style="display: none;">
+                                    <h2 class="step-marker">Select Date for Comparison</h2>
+                                    <div id="date-selection">
+                                        <!-- Date selection options will be populated here -->
+                                    </div>
+                                    <p style="text-align: right;">
+                                    <button onclick="prevStep()" class="wizard-button">Back</button>
+                                    <button onclick="nextStep()" class="wizard-button">Next</button>
+                                    </p>
+                                </div>
+
+                                <!-- Step 4: Confirmation and Visualization -->
+                                <div id="step3" style="display: none;">
+                                    <h2 class="step-marker">Confirmation and Visualization</h2>
+                                     <p>Finalize your layer comparison setup and control its display using the buttons below:</p>
+   
+                                    <p>Selected Layers:</p>
+                                    <ul id="selected-layers">
+                                        <!-- Selected layers will be displayed here -->
+                                    </ul>
+                                    <p>Comparison Visualization:</p>
+                                    <div id="comparison-visualization">
+                                        <!-- Visualization of the comparison will be displayed here -->
+                                    </div>
+                                    <p style="text-align: right;">
+                                    <ul style="padding-left: 1rem;">
+                                        <li class="no-list-type">
+                                            <button onclick="performComparison()" class="wizard-button">Compare</button>
+                                            <p>Click this button to activate the layer comparison tool with the selected
+                                                parameters.</p>
+                                        </li>
+                                        <li class="no-list-type">
+                                            <button onclick="removeComparison()" class="wizard-button">Exit Tool
+                                            </button>
+                                            <p>Click this button to remove the layer comparison tool from the UI. The
+                                                comparison tool will remain displayed until this button is clicked, even
+                                                if you navigate to a different panel tab.</p>
+                                        </li>
+                                        <li class="no-list-type">
+                                            <button onclick="resetToStep1()" class="wizard-button">Reset</button>
+                                            <p>Click this button to reset the parameters and return to Step 1. Note that
+                                                this will not remove the layer comparison tool from the UI.</p>
+                                        </li>
+                                    </ul>
+                                    </p>
+                                </div>
+
                             </div>
                         </div>
                         <div class="sidebar-pane" id="chart2">
@@ -2026,17 +2314,13 @@ var debug_dzongkhag_data;
                                   </span>
                                                                     <div class="ignore-elements "
                                                                          style="position: relative;">
-                                                                        <i id="legend_{{ layer.ui_id }}TimeLayer "
-                                                                           class="fas fa-list legend-btn"
-                                                                           onclick="openLegend('{{ layer.ui_id }}TimeLayer')"
-                                                                           style="float: right; margin: 0 0 15px 15px;">
+{#                                                                    <div class="input-container">#}
 
-                                                                        </i>
-                                                                        <i class="fas fa-cog settings-btn"
-                                                                           onclick="openSettings('{{ layer.ui_id }}TimeLayer')"
-                                                                           style="float: right; margin: 0 0 15px 15px;">
-
-                                                                        </i>
+{#                                                                        <i class="fas fa-cog settings-btn"#}
+{#                                                                           onclick="openSettings('{{ layer.ui_id }}TimeLayer')"#}
+{#                                                                           style="float: right; margin: 0 0 15px 15px;">#}
+{##}
+{#                                                                        </i>#}
 
                                                                         <input type="text"
                                                                                class="{% if layer.default_month %}monthlypicker {% else %}yearpicker {% endif %} ignore-elements  {% if not layer.default_on %}
@@ -2049,8 +2333,20 @@ var debug_dzongkhag_data;
                                                                                disabled {% endif %}
                                                                                value="{% if layer.default_month %}{{ layer.default_month }}-{% endif %}{{ layer.default_year }}"
                                                                         />
+{##}
+{#                                                                        <div class="container">#}
+{#                                                                            <div class="compare-text">Compare</div>#}
+{#                                                                            <div class="box"></div>#}
+{#                                                                            <div class="box"></div>#}
+{#                                                                        </div>#}
+                                                                    <i id="legend_{{ layer.ui_id }}TimeLayer "
+                                                                           class="fas fa-list legend-btn"
+                                                                           onclick="openLegend('{{ layer.ui_id }}TimeLayer')"
+                                                                           style="float: right; margin: 0 15px 15px 15px;">
 
+                                                                        </i>
 
+{#</div>#}
                                                                     </div>
                                                                     <div class="slider-container opacity-control">
                                                                         <input type="range" min="0" max="100"
