@@ -50,7 +50,7 @@ def dashboard(request):
 
     # Pass the country_geometry in the context
     context = {'dzongkhags': dzongkhag_data, 'data_layers': data_layers, 'boundary': get_menu_data(),
-               'full_data': get_country_data("BT")}
+               'full_data': get_country_data("BT"), 'version': 1.01}
 
     return render(request, 'WebApp/dashboard.html', context)
 
