@@ -76,6 +76,10 @@
         let overlayMaps = {};
         let piechart;
         let client_layers = [];
+        let compare_left_dom;
+        let compare_left_pass;
+        let compare_right_dom;
+        let compare_right_pass;
         var the_picker;
         var dzongkhagLayer;
         var gewog_features;
@@ -1027,13 +1031,13 @@
                     autoclose: true,
                     container: container,
                     orientation: 'auto',
-                    startDate: new Date(2016, 0, 1)
+                    startDate: new Date(2002, 0, 1)
                 }).on('show', function (event) {
 
 
                     var currentYear = $(this).datepicker('getDate').getFullYear();
 
-                    var startYear = 2016;
+                    var startYear = 2002;
                     var endYear = 2023;
                     var numYears = endYear - startYear + 1;
 
@@ -1057,42 +1061,6 @@
             });
         }
 
-        function setupYearPickerold() {
-            $('.yearpicker').yearpicker({
-
-                // Initial Year
-                year: 2016,
-
-                // Start Year
-                startYear: 2016,
-
-                // End Year
-                endYear: 2022,
-
-                // Element tag
-                itemTag: 'li',
-
-                // Default CSS classes
-                selectedClass: 'selected',
-                disabledClass: 'disabled',
-                hideClass: 'hide',
-
-                // Custom template
-                template: `<div class="yearpicker-container">
-              <div class="yearpicker-header">
-                  <div class="yearpicker-prev" data-view="yearpicker-prev">&lsaquo;</div>
-                  <div class="yearpicker-current" data-view="yearpicker-current">SelectedYear</div>
-                  <div class="yearpicker-next" data-view="yearpicker-next">&rsaquo;</div>
-              </div>
-              <div class="yearpicker-body">
-                  <ul class="yearpicker-year" data-view="years">
-                  </ul>
-              </div>
-          </div>
-  `,
-
-            });
-        }
 var yearSlider;
             function makeSlider() {
                 // Initialize noUiSlider
@@ -1391,7 +1359,7 @@ var yearSlider;
                             unit: 'mm'
                         }
 
-                        console.log("ndvi_data:");
+                 
 
                         var ndvi_data = {
                             name: 'NDVI',
@@ -1400,7 +1368,7 @@ var yearSlider;
                             }),
                             unit: 'mm'
                         };
-                         console.log(ndvi_data);
+
 
                         buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[ndvi_data],  ['rgb(0,93,14)']);
 
@@ -1723,7 +1691,8 @@ var debug_dzongkhag_data;
         }
 
         function createLayer(item) {
-            overlayMaps[item.id] = L.tileLayer.wms(item.url + "&crs=EPSG%3A3857", {
+
+            const layer_obj = {
                 layers: item.layers,
                 format: "image/png",
                 transparent: true,
@@ -1735,7 +1704,15 @@ var debug_dzongkhag_data;
                 tileSize: 256,
                 version: "1.3.0",
                 time: item.default_year + "-01-01T00:00:00.000Z"
-            });
+            }
+            if(item.pane){
+                layer_obj.pane = item.pane;
+            }
+            if(item.time){
+                layer_obj.time = item.time;
+            }
+
+            overlayMaps[item.id] = L.tileLayer.wms(item.url + "&crs=EPSG%3A3857", layer_obj);
             if (item.default_on === "True") {
                 toggleLayer(item.id);
             }
@@ -1912,29 +1889,129 @@ var debug_dzongkhag_data;
             nextStep();
         }
 
+        function removeCompareLayers() {
+            overlayMaps = Object.keys(overlayMaps).filter(objKey =>
+                !objKey.includes("compare")).reduce((newObj, key) => {
+                newObj[key] = overlayMaps[key];
+                return newObj;
+            }, {});
+        }
+
+        function clear_compare_variables(){
+             if(compare_left_dom && map.hasLayer(compare_left_dom)){
+
+                map.removeLayer(compare_left_dom);
+            }
+            if(compare_left_pass && map.hasLayer(compare_left_pass)){
+                map.removeLayer(compare_left_pass);
+            }
+            if(compare_right_dom && map.hasLayer(compare_right_dom)){
+                map.removeLayer(compare_right_dom);
+
+            }
+            if(compare_right_pass && map.hasLayer(compare_right_pass)){
+                map.removeLayer(compare_right_pass);
+
+            }
+            compare_left_dom = null;
+            compare_left_pass = null;
+            compare_right_dom = null;
+            compare_right_pass = null;
+             removeCompareLayers();
+        }
+
+
         // Function to handle user's confirmation and visualization
         function performComparison() {
+            removeComparison();
+            // first removeCompareLayer for both sides if they exist
             // Add logic here to perform comparison and visualize the results
             // For now, just alert the user and reset to the first step
-            testCompare();
+            const left_base_id = $("#left_compare_layer").val();
+            const right_base_id = $("#right_compare_layer").val();
+
+            let contrast = "";
+            if (left_base_id == right_base_id) {
+                contrast = "_compare";
+            }
+
+            const left_time = $("#left_compare_date").val();
+            const right_time = $("#right_compare_date").val();
+
+           
+           
+
+            const left_string = JSON.stringify(getLayer(left_base_id));
+
+            let hold_left_dom = JSON.parse(left_string);
+
+            hold_left_dom.id = left_base_id + "compare_left_dom";
+            hold_left_dom.pane = "left";
+            hold_left_dom.time = left_time + "-01-01T00:00:00.000Z";
+            hold_left_dom.default_on = "True";
+
+
+            let hold_right_pass = JSON.parse(left_string);
+
+            hold_right_pass.id = left_base_id + "compare_right_pass";
+            
+            hold_right_pass.pane = "right";
+            hold_right_pass.time = left_time + "-01-01T00:00:00.000Z";
+            hold_right_pass.default_on = "True";
+
+
+            const right_string = JSON.stringify(getLayer(right_base_id));
+
+            let hold_right_dom = JSON.parse(right_string);
+            hold_right_dom.pane = "right";
+            hold_right_dom.time = right_time + "-01-01T00:00:00.000Z";
+            hold_right_dom.styles = hold_right_dom.styles + contrast;
+
+            hold_right_dom.id = right_base_id + "compare_right_dom";
+            hold_right_dom.default_on = "True";
+
+            let hold_left_pass = JSON.parse(right_string);
+
+            hold_left_pass.id = right_base_id + "compare_left_pass";
+            hold_left_pass.time = right_time + "-01-01T00:00:00.000Z";
+
+
+            hold_left_pass.styles = hold_left_pass.styles + contrast;
+            hold_left_pass.pane = "left";
+            hold_left_pass.default_on = "True";
+
+
+
+            createLayer(hold_left_pass);
+            createLayer(hold_left_dom);
+
+            createLayer(hold_right_pass);
+            createLayer(hold_right_dom);
+
+            compare_left_dom = overlayMaps[left_base_id + "compare_left_dom"];
+            compare_left_pass = overlayMaps[right_base_id + "compare_left_pass"];
+            compare_right_dom = overlayMaps[right_base_id + "compare_right_dom"];
+            compare_right_pass = overlayMaps[left_base_id + "compare_right_pass"];
+
+            
+            compare_control = L.control.sideBySide([compare_left_dom, compare_left_pass], [compare_right_dom, compare_right_pass]).addTo(map);
+
+
+            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('min', '-0.01');
+            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('max', '1.01');
+
+            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseover', 'map.dragging.disable()')
+            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseout', 'map.dragging.enable()')
+            
             compareControlAdded = true;
+            // save the ids globally, so they can be removed as needed here as well as in the exit
 
         }
 
         function removeComparison(){
+            // implement this correctly with the dynamically created layers
             if(compareControlAdded) {
-                if(map.hasLayer(paddy_layer16_compare)){
-                     map.removeLayer(paddy_layer16_compare)
-                }
-                if(map.hasLayer(paddy_layer20)){
-                     map.removeLayer(paddy_layer20)
-                }
-                if(map.hasLayer(paddy_layer20_compare)){
-                     map.removeLayer(paddy_layer20_compare)
-                }
-                if(map.hasLayer(paddy_layer16)){
-                     map.removeLayer(paddy_layer16)
-                }
+                clear_compare_variables();
                 map.removeControl(compare_control);
                 compareControlAdded = false;
             }
@@ -2074,6 +2151,10 @@ function selectcompare(which){
                                                 <li>The map will display both selected layers on each side, with the
                                                     dominant layer loaded on top to highlight the differences.
                                                 </li>
+                                                <li>If the layers are the same data type the left side dominant / right 
+                                                    side compare will retain the original layer color scheme however, 
+                                                    the left side compare and the right side dominant will receive a 
+                                                contrasting color scheme.</li>
                                                 <li>This visualization helps you to identify changes, trends, or
                                                     disparities between the selected layers.
                                                 </li>
@@ -2115,10 +2196,10 @@ function selectcompare(which){
                                         <div class="compare-container">
                                             <div class="compare-text">Compare</div>
                                             <div class="box" style="border-right: 1px solid #0D3309">
-                                                <select>
+                                                <select id="left_compare_layer">
                                                     {% for layer in data_layers %}
-                                                        {% if layer.hasVisualization %}
-                                                            <option>{{ layer.title }}</option>
+                                                        {% if layer.hasVisualization and layer.compare_enabled %}
+                                                            <option value="{{ layer.ui_id }}" data="{{ layer.url }}">{{ layer.title }}</option>
 
                                                         {% endif %}
                                                     {% endfor %}
@@ -2139,11 +2220,10 @@ function selectcompare(which){
                                             </div>
                                         <div class="box-connector"></div>
                                             <div class="box" style="border-left: 1px solid #0D3309">
-                                                <select>
+                                                <select id="right_compare_layer">
                                                     {% for layer in data_layers %}
-                                                        {% if layer.hasVisualization %}
-                                                            <option>{{ layer.title }}</option>
-
+                                                        {% if layer.hasVisualization and layer.compare_enabled %}
+                                                           <option value="{{ layer.ui_id }}" data="{{ layer.url }}">{{ layer.title }}</option>
                                                         {% endif %}
                                                     {% endfor %}
                                                 </select>

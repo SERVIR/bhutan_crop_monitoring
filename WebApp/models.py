@@ -115,6 +115,7 @@ class DataLayer(models.Model):
     default_year = models.CharField(max_length=4)
     default_month = models.CharField(max_length=2, null=True, blank=True)
     default_on = models.BooleanField(default=True)
+    compare_enabled = models.BooleanField(default=True)
 
     def __str__(self):
         return self.title
