@@ -1456,7 +1456,7 @@ var debug_dzongkhag_data;
                             "data": get_formatted_data(dzongkhag_data)
                         }
 
-                         buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
+                        buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
                             name: 'Base 2008',
                             data: dzongkhag_data["paddy_gain"].map(function (data) {
                                 return [data.year, data.val];
@@ -1468,14 +1468,6 @@ var debug_dzongkhag_data;
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
 
-                        var precip_data = {
-                            name: 'Precipitation',
-                            data: dzongkhag_data["precipitation"].map(function (data) {
-                                return  [data.x, data.val];
-                            }),
-                            unit: 'mm'
-                        }
-
 
                         debug_dzongkhag_data = dzongkhag_data;
 
@@ -1483,18 +1475,60 @@ var debug_dzongkhag_data;
                         all_active = false;
 
                         setPieYear(2018);
-                         var ndvi_data = {
+                        const ndvi_data = {
                             name: 'NDVI',
                             data: dzongkhag_data["ndvi"].map(function (data) {
-                                return  [data.x, data.val];
+                                return [data.x, data.val];
                             }),
                             unit: 'mm'
                         }
 
-                        buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[ndvi_data],  ['rgb(0,93,14)']);
+                        buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '', [ndvi_data], ['rgb(0,93,14)']);
+
+                        const precip_data = {
+                            name: 'Precipitation',
+                            data: dzongkhag_data["precipitation"].map(function (data) {
+                                return [data.x, data.val];
+                            }),
+                            unit: 'mm'
+                        }
+
+                        buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '', [precip_data], ['rgb(0,93,14)']);
+
+                        // adding soil-moisture-spark
+
+                        const sm_data = {
+                            name: 'Soil Moisture',
+                            data: dzongkhag_data["soil_moisture"].map(function (data) {
+                                return [data.x, data.val];
+                            }),
+                            unit: 'mm'
+                        }
 
 
-                         buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[precip_data],  ['rgb(0,93,14)']);
+                        buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '', [sm_data], ['rgb(0,93,14)']);
+
+                        // adding temperature-spark
+
+
+                        const temp_min = {
+                            name: 'Temperature Min',
+                            data: dzongkhag_data["temperature"].map(function (data) {
+                                return [data.x, data.min];
+                            }),
+                            unit: '&deg;C'
+                        };
+
+                        const temp_max = {
+                            name: 'Temperature Max',
+                            data: dzongkhag_data["temperature"].map(function (data) {
+                                return [data.x, data.max];
+                            }),
+                            unit: '&deg;C'
+                        };
+
+                        // uncomment this line when temp data for Dzongkhags is loaded
+                       // buildChart('temperature-spark', 'Soil Moisture', '', 'line', '', '&deg;C', '', [temp_min, temp_max], ['#8AAFFF', '#FF0200']);
 
 
                         createTable(tabledata);

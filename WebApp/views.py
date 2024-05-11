@@ -111,8 +111,9 @@ def get_gewog_data(self, gewog_id):
 
     # Retrieve variable instances associated with the gewog
     results = {
-        "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
-                            Temperature.objects.filter(gewog=gewog).values('year', 'value')),
+        "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
+                         "val": temperature.value, "min": temperature.min, "max": temperature.max}  for temperature in
+                            Temperature.objects.filter(gewog=gewog).values('year', 'value')],
         "precipitation": [
             {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
              "val": precipitation["value"]} for precipitation in
@@ -149,8 +150,9 @@ def get_dzongkhag_data(self, dzongkhag_id):
 
     # Retrieve variable instances associated with the dzongkhag
     results = {
-        "temperature": list({"year": temperature.year, "val": temperature.value} for temperature in
-                            Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
+                         "val": temperature.value, "min": temperature.min, "max": temperature.max}  for temperature in
+                            Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')],
         "precipitation": [
             {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
              "val": precipitation["value"]} for precipitation in
