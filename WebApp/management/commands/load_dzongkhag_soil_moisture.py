@@ -38,7 +38,7 @@ class Command(BaseCommand):
         # Example:
         for i in range(11, 21):  # Loop from 11 to 20
             dzongkhag_id = f'BT0{i}'
-            self.submit_dzongkhag_data_request(2002, 2022, 38, Dzongkhag.objects.get(dzongkhag_id=dzongkhag_id))
+            self.submit_dzongkhag_data_request(2015, 2022, 38, Dzongkhag.objects.get(dzongkhag_id=dzongkhag_id))
             self.stdout.write(self.style.SUCCESS('Completed Dzongkhag: {}'.format(dzongkhag_id)))
 
         self.stdout.write(self.style.SUCCESS('Dzongkhag NDVI data loaded successfully!'))
@@ -97,4 +97,4 @@ class Command(BaseCommand):
             data_response = requests.get(data_url, params={"id": request_id})
             soil_moisture_data = json.loads(data_response.text)
             self.add_dzongkhag_soil_moisture_values(soil_moisture_data, dzongkhag)
-            print(f"NDVI data retrieved for {year}: {soil_moisture_data}")
+            print(f"NDVI data retrieved for {year}: {dzongkhag.dzongkhag_id}")
