@@ -36,10 +36,10 @@ class Command(BaseCommand):
         # Your logic to load Dzongkhag NDVI data
         # Access Django DB, fetch data, and update entries for NDVI
         # Example:
-        for i in range(11, 21):  # Loop from 11 to 20
-            dzongkhag_id = f'BT0{i}'
-            self.submit_dzongkhag_data_request(2015, 2022, 38, Dzongkhag.objects.get(dzongkhag_id=dzongkhag_id))
-            self.stdout.write(self.style.SUCCESS('Completed Dzongkhag: {}'.format(dzongkhag_id)))
+        dzongkhags = Dzongkhag.objects.all().order_by('dzongkhag_name')
+        for dzongkhag in dzongkhags:
+            self.submit_dzongkhag_data_request(2015, 2022, 38, dzongkhag)
+            self.stdout.write(self.style.SUCCESS('Completed Dzongkhag: {}'.format(dzongkhag.dzongkhag_id)))
 
         self.stdout.write(self.style.SUCCESS('Dzongkhag NDVI data loaded successfully!'))
 
@@ -85,7 +85,7 @@ class Command(BaseCommand):
                 progress = json.loads(progress_response.text)[0]
 
                 if progress == 100:  # Request is complete
-                    print(f"Data request for {year} is complete.")
+                    print(f"{ dzongkhag.dzongkhag_id } , {dzongkhag.dzongkhag_name} Data request for {year} complete.")
                     break
                 elif progress == -1:  # Error occurred
                     print(f"Error occurred while processing data request for {year}.")
@@ -97,4 +97,4 @@ class Command(BaseCommand):
             data_response = requests.get(data_url, params={"id": request_id})
             soil_moisture_data = json.loads(data_response.text)
             self.add_dzongkhag_soil_moisture_values(soil_moisture_data, dzongkhag)
-            print(f"NDVI data retrieved for {year}: {dzongkhag.dzongkhag_id}")
+            print(f"Soil Moisture data retrieved for {year}: {dzongkhag.dzongkhag_id}")
