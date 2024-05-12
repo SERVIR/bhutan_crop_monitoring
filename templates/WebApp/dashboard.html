@@ -1371,6 +1371,17 @@ var yearSlider;
 
 
                         buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[ndvi_data],  ['rgb(0,93,14)']);
+                        
+                        const sm_data = {
+                            name: 'Soil Moisture',
+                            data: gewog_data["soil_moisture"].map(function (data) {
+                                return [data.x, data.val];
+                            }),
+                            unit: 'mm'
+                        }
+
+
+                        buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '', [sm_data], ['rgb(0,93,14)']);
 
 
 
