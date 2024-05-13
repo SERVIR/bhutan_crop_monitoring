@@ -163,7 +163,7 @@
                 });
         }
 
-        function buildChart(id, title, subtitle, type, pointStart, yAxisText, rangeDescription, seriesObject, color) {
+        function buildChart(id, title, subtitle, type, pointStart, yAxisText, rangeDescription, seriesObject, color, isYearly) {
             const isArrayData = seriesObject[0].data[0] instanceof Array;
 
             xaxisObj = {
@@ -210,7 +210,7 @@
                                 connectorAllowed: false
                             },
                             tooltip: {
-                                 xDateFormat: '%m/%Y',
+                                 xDateFormat: isYearly ? '%Y':'%m/%Y',
                                 pointFormatter: function () {
 
                                     var tooltip = '<span style="color:' + this.series.color + '">\u25CF</span> ' + this.series.name + ': <b>' + this.y + '</b><br/>';
@@ -483,7 +483,7 @@
 
         function get_formatted_data(data) {
             const formatted_data = [];
-            const excluded = ["temperature", "precipitation", "ndvi", "soil_moisture", "paddy_gain", "paddy_loss"];
+            const excluded = ["temperature", "precipitation", "ndvi", "soil_moisture", "paddy_gain", "paddy_loss", "yield"];
             var holdmin = minYear;
             var holdmax = maxYear;
             minYear = Infinity;
@@ -588,8 +588,40 @@
                             return [data.x, data.max];
                         }),
                         unit: '&deg;C'
+                    },
+                    {
+                        name: 'Rice Yield',
+                        data: full_data["yield"].map(function (data) {
+                            return [data.x, data.yield];
+                        }),
+                        unit: 'Kg/acres'
+                    },
+                    {
+                        name: 'Predicted Rice Yield',
+                        data: full_data["yield"].map(function (data) {
+                            return [data.x, data.predicted];
+                        }),
+                        unit: 'Kg/acres'
                     }
                 ];
+                
+                
+                
+                
+                buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
+                    name: 'Yield',
+                    data: full_data["yield"].map(function (data) {
+                            return [data.x, data.yield];
+                        })
+                }, {
+                    name: 'Predicted',
+                    data: full_data["yield"].map(function (data) {
+                            return [data.x, data.predicted];
+                        })
+                }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
+
+                
+                 
 
                 debug_me = seriesData.find(data => data.name === 'Temperature');
                 debug_me2 = [seriesData.find(data => data.name === 'NDVI')];
@@ -1350,6 +1382,19 @@ var yearSlider;
                                 return [data.year, data.val];
                             })
                         }], [ 'rgb(0,93,14)']);
+                        
+                        
+                         buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
+                            name: 'Yield',
+                            data: gewog_data["yield"].map(function (data) {
+                                return [data.x, data.yield];
+                            })
+                        }, {
+                            name: 'Predicted',
+                            data: gewog_data["yield"].map(function (data) {
+                                return [data.x, data.predicted];
+                            })
+                        }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
 
                         var precip_data = {
                             name: 'Precipitation',
@@ -1434,6 +1479,18 @@ var debug_dzongkhag_data;
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
                 /* This is incorrect, not sure what is going wrong, but need to debug please */
+                
+                 buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
+                    name: 'Yield',
+                    data: full_data["yield"].map(function (data) {
+                            return [data.x, data.yield];
+                        })
+                }, {
+                    name: 'Predicted',
+                    data: full_data["yield"].map(function (data) {
+                            return [data.x, data.predicted];
+                        })
+                }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
 
                 debug_me3 = [{
                         name: 'NDVI',
@@ -1482,6 +1539,18 @@ var debug_dzongkhag_data;
 
                         debug_dzongkhag_data = dzongkhag_data;
 
+                        buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
+                            name: 'Yield',
+                            data: dzongkhag_data["yield"].map(function (data) {
+                                return [data.x, data.yield];
+                            })
+                        }, {
+                            name: 'Predicted',
+                            data: dzongkhag_data["yield"].map(function (data) {
+                                return [data.x, data.predicted];
+                            })
+                        }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
+
 
                         all_active = false;
 
@@ -1506,7 +1575,7 @@ var debug_dzongkhag_data;
 
                         buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '', [precip_data], ['rgb(0,93,14)']);
 
-                        // adding soil-moisture-spark
+                        // adding yield
 
                         const sm_data = {
                             name: 'Soil Moisture',
@@ -2027,7 +2096,7 @@ var debug_dzongkhag_data;
 
 
 
-            createLayer(hold_left_pass);
+            {#createLayer(hold_left_pass);#}
             createLayer(hold_left_dom);
 
             createLayer(hold_right_pass);
@@ -2039,7 +2108,8 @@ var debug_dzongkhag_data;
             compare_right_pass = overlayMaps[left_base_id + "compare_right_pass"];
 
             
-            compare_control = L.control.sideBySide([compare_left_dom, compare_left_pass], [compare_right_dom, compare_right_pass]).addTo(map);
+            compare_control = L.control.sideBySide([compare_left_dom], [compare_right_dom, compare_right_pass]).addTo(map);
+            //compare_control = L.control.sideBySide([compare_left_dom, compare_left_pass], [compare_right_dom, compare_right_pass]).addTo(map);
 
 
             document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('min', '-0.01');
@@ -2524,21 +2594,12 @@ function selectcompare(which){
                          style="z-index: 1004;">
                         <div id="paddy_gain" class="chart-holder"></div>
                     </div>
-{#                    <div class="col-sm-12 col-md-12  col-xl-12 mg-t-20 " id="sparkLineHolder" style="z-index: 1003; background-color: #758055">#}
-{#                        <div id="sparklineChart" class="chart-holder">#}
-{#                            <table id="sparklineTable" style="width:100%">#}
-{#                                <thead>#}
-{#                                <tr>#}
-{#                                    <th>Parameter</th>#}
-{#                                    <th>Annual Pattern</th>#}
-{#                                </tr>#}
-{#                                </thead>#}
-{#                                <tbody>#}
-{#                                <!-- Table rows will be dynamically added here -->#}
-{#                                </tbody>#}
-{#                            </table>#}
-{#                        </div>#}
-{#                    </div>#}
+                    <div class="col-sm-12  col-xl-12 mg-t-20 aspect-ratio-container" id="yieldHolder"
+                         style="z-index: 1004;">
+                        <div id="rice_yield" class="chart-holder"></div>
+                    </div>
+
+                    
                         <div id="sparklineChart" class="chart-holder">
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" role="tablist">

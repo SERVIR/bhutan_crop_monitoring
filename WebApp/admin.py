@@ -256,12 +256,12 @@ class TemperatureInline(admin.TabularInline):
 
 class RiceDistributionForm(BaseForm):
     class Meta:
-        model = RiceDistribution
+        model = RiceYield
         fields = '__all__'
 
 
 class RiceDistributionInline(admin.TabularInline):
-    model = RiceDistribution
+    model = RiceYield
     form = RiceDistributionForm
     extra = 0
 

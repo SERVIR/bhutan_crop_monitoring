@@ -63,8 +63,9 @@ class Temperature(models.Model):
     country = models.ForeignKey('Country', on_delete=models.CASCADE, null=True, blank=True)
 
 
-class RiceDistribution(models.Model):
+class RiceYield(models.Model):
     value = models.FloatField()
+    predicted = models.FloatField(default=0, null=True, blank=True)
     year = models.PositiveSmallIntegerField()
     gewog = models.ForeignKey('Gewog', on_delete=models.CASCADE, null=True, blank=True)
     dzongkhag = models.ForeignKey('Dzongkhag', on_delete=models.CASCADE, null=True, blank=True)

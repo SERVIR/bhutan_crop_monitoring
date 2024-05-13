@@ -79,7 +79,11 @@ def get_country_data(country_id):
                        PaddyChangeFrom2008.objects.filter(country=country).order_by('year')],
         "paddy_loss": [{"year": convert_to_milliseconds(str(paddy_loss.year)), "val": -1 * abs(paddy_loss.value)} for
                        paddy_loss in
-                       PaddyChangeFrom2020.objects.filter(country=country).order_by('year')]}
+                       PaddyChangeFrom2020.objects.filter(country=country).order_by('year')],
+        "yield": [{"x": convert_to_milliseconds(str(rice_yield.year)),
+                   "yield": rice_yield.value, "predicted": rice_yield.predicted} for rice_yield in
+                  RiceYield.objects.filter(country=country).order_by('year')]
+    }
     # Add Country climate variables
 
     # Get all Dzongkhags
@@ -95,9 +99,12 @@ def get_country_data(country_id):
             # Fetch the values for each attribute for the current year
             yearly_data[year]['average_rice'] = AverageRice.objects.filter(dzongkhag=dzongkhag, year=year).values_list(
                 'value', flat=True)
-            yearly_data[year]['rice_distribution'] = RiceDistribution.objects.filter(dzongkhag=dzongkhag,
-                                                                                     year=year).values_list('value',
-                                                                                                            flat=True)
+            yearly_data[year]['rice_yield'] = RiceYield.objects.filter(dzongkhag=dzongkhag,
+                                                                       year=year).values_list('value',
+                                                                                              flat=True)
+            yearly_data[year]['rice_predicted'] = RiceYield.objects.filter(dzongkhag=dzongkhag,
+                                                                           year=year).values_list('predicted',
+                                                                                                  flat=True)
 
             # Store the yearly data for the current Dzongkhag
         results[dzongkhag.dzongkhag_name] = yearly_data
@@ -112,15 +119,15 @@ def get_gewog_data(self, gewog_id):
     # Retrieve variable instances associated with the gewog
     results = {
         "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
-                         "val": temperature.value, "min": temperature.min, "max": temperature.max}  for temperature in
-                            Temperature.objects.filter(gewog=gewog).values('year', 'value')],
+                         "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
+                        Temperature.objects.filter(gewog=gewog).values('year', 'value')],
         "precipitation": [
             {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
              "val": precipitation["value"]} for precipitation in
             Precipitation.objects.filter(gewog=gewog).values('year', 'month', 'value')],
         "ndvi": [{"x": convert_to_milliseconds(str(ndvi_instance["year"]) + "/" + str(ndvi_instance["month"]).zfill(2)),
                   "val": ndvi_instance["value"]} for ndvi_instance in
-                     NDVI.objects.filter(gewog=gewog).values('year', 'month', 'value')],
+                 NDVI.objects.filter(gewog=gewog).values('year', 'month', 'value')],
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
                               SoilMoisture.objects.filter(gewog=gewog).values('year', 'value')),
         "paddy_gain": list(
@@ -128,7 +135,12 @@ def get_gewog_data(self, gewog_id):
             PaddyChangeFrom2008.objects.filter(gewog=gewog).values('year', 'value')),
         "paddy_loss": list(
             {"year": convert_to_milliseconds(str(paddy_loss['year'])), "val": paddy_loss['value']} for paddy_loss in
-            PaddyChangeFrom2020.objects.filter(gewog=gewog).values('year', 'value'))
+            PaddyChangeFrom2020.objects.filter(gewog=gewog).values('year', 'value')),
+        "yield": [{"x": convert_to_milliseconds(str(rice_yield.year)),
+                   "yield": rice_yield.value, "predicted": rice_yield.predicted} for rice_yield in
+                  RiceYield.objects.filter(gewog=gewog).order_by('year')]
+
+
     }
 
     return JsonResponse(results)
@@ -151,15 +163,15 @@ def get_dzongkhag_data(self, dzongkhag_id):
     # Retrieve variable instances associated with the dzongkhag
     results = {
         "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
-                         "val": temperature.value, "min": temperature.min, "max": temperature.max}  for temperature in
-                            Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')],
+                         "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
+                        Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')],
         "precipitation": [
             {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
              "val": precipitation["value"]} for precipitation in
             Precipitation.objects.filter(dzongkhag=dzongkhag).values('year', 'month', 'value')],
         "ndvi": [{"x": convert_to_milliseconds(str(ndvi_instance["year"]) + "/" + str(ndvi_instance["month"]).zfill(2)),
                   "val": ndvi_instance['value']} for ndvi_instance in
-                     NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'month', 'value')],
+                 NDVI.objects.filter(dzongkhag=dzongkhag).values('year', 'month', 'value')],
         "soil_moisture": list({"year": soil_moisture['year'], "val": soil_moisture['value']} for soil_moisture in
                               SoilMoisture.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
         "paddy_gain": list(
@@ -167,7 +179,10 @@ def get_dzongkhag_data(self, dzongkhag_id):
             PaddyChangeFrom2008.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
         "paddy_loss": list(
             {"year": convert_to_milliseconds(str(paddy_loss['year'])), "val": paddy_loss['value']} for paddy_loss in
-            PaddyChangeFrom2020.objects.filter(dzongkhag=dzongkhag).values('year', 'value'))
+            PaddyChangeFrom2020.objects.filter(dzongkhag=dzongkhag).values('year', 'value')),
+        "yield": [{"x": convert_to_milliseconds(str(rice_yield.year)),
+                   "yield": rice_yield.value, "predicted": rice_yield.predicted} for rice_yield in
+                  RiceYield.objects.filter(dzongkhag=dzongkhag).order_by('year')]
     }
 
     # Add gewog-wise data
@@ -185,8 +200,10 @@ def get_dzongkhag_data(self, dzongkhag_id):
             yearly_data[year] = {
                 'average_rice': list(
                     AverageRice.objects.filter(gewog=gewog, year=year).values_list('value', flat=True)),
-                'rice_distribution': list(RiceDistribution.objects.filter(gewog=gewog, year=year).values_list('value',
-                                                                                                              flat=True))
+                'rice_yield': list(RiceYield.objects.filter(gewog=gewog, year=year).values_list('value',
+                                                                                                flat=True)),
+                'rice_predicted': list(RiceYield.objects.filter(gewog=gewog, year=year).values_list('predicted',
+                                                                                                    flat=True))
             }
 
         results[gewog.gewog_name] = yearly_data
@@ -274,6 +291,7 @@ def add_ndvi_values(data):
             ndvi_obj.value = value
             ndvi_obj.save()
 
+
 def add_dzongkhag_ndvi_values(data, dzongkhag):
     monthly_ndvi = defaultdict(list)
 
@@ -317,7 +335,8 @@ def submit_dzongkhag_data_request(begin_year, end_year, data_id, dzongkhag):
             "operationtype": 5,
             "dateType_Category": "default",
             "isZip_CurrentDataType": False,
-            "geometry": str(json.dumps({"type":"FeatureCollection","features":[{"type":"Feature","properties":{},"geometry": dzongkhag.dzongkhag_geometry}]})).replace(" ", "")
+            "geometry": str(json.dumps({"type": "FeatureCollection", "features": [
+                {"type": "Feature", "properties": {}, "geometry": dzongkhag.dzongkhag_geometry}]})).replace(" ", "")
         }
 
         print(str(params))
