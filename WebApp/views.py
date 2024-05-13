@@ -60,6 +60,9 @@ def get_country_data(country_id):
 
     # Retrieve variable instances associated with the country
     results = {
+        "rice_area": [{"x": convert_to_milliseconds(str(rice.year)),
+                       "val": rice.value} for rice in
+                      AverageRice.objects.filter(country=country).order_by('year')],
         "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
                          "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
                         Temperature.objects.filter(country=country).order_by('year', 'month')],
@@ -118,6 +121,9 @@ def get_gewog_data(self, gewog_id):
 
     # Retrieve variable instances associated with the gewog
     results = {
+        "rice_area": [{"x": convert_to_milliseconds(str(rice.year)),
+                       "val": rice.value} for rice in
+                      AverageRice.objects.filter(gewog=gewog).order_by('year')],
         "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
                          "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
                         Temperature.objects.filter(gewog=gewog).values('year', 'value')],
@@ -140,7 +146,6 @@ def get_gewog_data(self, gewog_id):
                    "yield": rice_yield.value, "predicted": rice_yield.predicted} for rice_yield in
                   RiceYield.objects.filter(gewog=gewog).order_by('year')]
 
-
     }
 
     return JsonResponse(results)
@@ -162,6 +167,9 @@ def get_dzongkhag_data(self, dzongkhag_id):
 
     # Retrieve variable instances associated with the dzongkhag
     results = {
+        "rice_area": [{"x": convert_to_milliseconds(str(rice.year)),
+                       "val": rice.value} for rice in
+                      AverageRice.objects.filter(dzongkhag=dzongkhag).order_by('year')],
         "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
                          "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
                         Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')],

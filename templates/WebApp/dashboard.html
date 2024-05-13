@@ -213,13 +213,13 @@
                                  xDateFormat: isYearly ? '%Y':'%m/%Y',
                                 pointFormatter: function () {
 
-                                    var tooltip = '<span style="color:' + this.series.color + '">\u25CF</span> ' + this.series.name + ': <b>' + this.y + '</b><br/>';
+                                    var tooltip = '<span style="color:' + this.series.color + '">\u25CF</span> ' + this.series.name + ': <b>' + this.y + ' ' + yAxisText + '</b><br/>';
 
                                     // Loop through other series to add their values to the tooltip
                                     this.series.chart.series.forEach(function(series) {
                                         if (series !== this.series) {
                                             var point = series.points[this.index];
-                                            tooltip += '<span style="color:' + series.color + '">\u25CF</span> ' + series.name + ': <b>' + point.y + '</b><br/>';
+                                            tooltip += '<span style="color:' + series.color + '">\u25CF</span> ' + series.name + ': <b>' + point.y + ' ' + yAxisText + '</b><br/>';
                                         }
                                     }, this);
 
@@ -483,7 +483,7 @@
 
         function get_formatted_data(data) {
             const formatted_data = [];
-            const excluded = ["temperature", "precipitation", "ndvi", "soil_moisture", "paddy_gain", "paddy_loss", "yield"];
+            const excluded = ["temperature", "precipitation", "ndvi", "soil_moisture", "paddy_gain", "paddy_loss", "yield", "rice_area"];
             var holdmin = minYear;
             var holdmax = maxYear;
             minYear = Infinity;
@@ -498,21 +498,23 @@
 
                     // Loop through each year's data for the current Dzongkhag
                     for (var year in data[dzongkhag_name]) {
-                        if (data[dzongkhag_name].hasOwnProperty(year)) {
-                            // Extract the average rice value for the current year
-                            var average_rice_value = data[dzongkhag_name][year]['average_rice'];
+                        try {
+                            if (data[dzongkhag_name].hasOwnProperty(year)) {
+                                // Extract the average rice value for the current year
+                                var average_rice_value = data[dzongkhag_name][year]['average_rice'];
 
-                            // Push the year and value pair to the dzongkhag_values array
-                            dzongkhag_values.push({
-                                'year': parseInt(year),
-                                'value': average_rice_value.length > 0 ? average_rice_value[0] : null
-                            });
-                            minYear = Math.min(minYear, parseInt(year));
-                            // Update minYear and maxYear
-                            maxYear = Math.max(maxYear, parseInt(year));
-                        } else{
-                            console.log("this");
-                        }
+                                // Push the year and value pair to the dzongkhag_values array
+                                dzongkhag_values.push({
+                                    'year': parseInt(year),
+                                    'value': average_rice_value.length > 0 ? average_rice_value[0] : null
+                                });
+                                minYear = Math.min(minYear, parseInt(year));
+                                // Update minYear and maxYear
+                                maxYear = Math.max(maxYear, parseInt(year));
+                            } else {
+                                console.log("this");
+                            }
+                        } catch(e){console.log('nothing to see here.');}
                     }
 
 
@@ -542,12 +544,12 @@
                 updateAspectRatio();
 
                 buildChart('paddy_gain', 'Paddy change since base year', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
-                    name: 'Base 2008',
+                    name: 'Base 2008, Transition to democracy',
                     data: full_data["paddy_gain"].map(function (data) {
                             return [data.year, data.val];
                         })
                 }, {
-                    name: 'Base 2020',
+                    name: 'Base 2020, COVID Outbreak',
                     data: full_data["paddy_loss"].map(function (data) {
                             return [data.year, data.val];
                         })
@@ -602,12 +604,19 @@
                             return [data.x, data.predicted];
                         }),
                         unit: 'Kg/acres'
+                    },
+                    {
+                        name: 'Rice Area',
+                        data: full_data["rice_area"].map(function (data) {
+                            return [data.x, data.val];
+                        }),
+                        unit: 'acres'
                     }
                 ];
-                
-                
-                
-                
+
+
+
+
                 buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
                     name: 'Yield',
                     data: full_data["yield"].map(function (data) {
@@ -620,14 +629,10 @@
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
 
-                
-                 
-
-                debug_me = seriesData.find(data => data.name === 'Temperature');
-                debug_me2 = [seriesData.find(data => data.name === 'NDVI')];
+            // rice_area
 
 
-
+                buildChart("rice_area", "Rice Area", '', 'line', '', 'Acres', '',  [seriesData.find(data => data.name === 'Rice Area')],  ['rgb(0,93,14)'])
 
                 buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[seriesData.find(data => data.name === 'NDVI')],  ['rgb(0,93,14)']);
 
@@ -635,7 +640,7 @@
                 buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Precipitation')],  ['rgb(0,93,14)']);
 
                 buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Soil Moisture')],  ['rgb(0,93,14)']);
-                buildChart('temperature-spark', 'Soil Moisture', '', 'line', '', '&deg;C', '',[seriesData.find(data => data.name === 'Temperature Min'), seriesData.find(data => data.name === 'Temperature Max')],  ['#8AAFFF', '#FF0200']);
+                buildChart('temperature-spark', 'Temperature', '', 'line', '', '&deg;C', '',[seriesData.find(data => data.name === 'Temperature Min'), seriesData.find(data => data.name === 'Temperature Max')],  ['#8AAFFF', '#FF0200']);
 
                 buildPie();
 
@@ -759,11 +764,11 @@
 
 
                 // Call the function with your JSON data
-                createTable({
-                    "active": "Bhutan",
-                    "admin_level": "Dzongkhag",
-                    "data": get_formatted_data(full_data)
-                });
+                {#createTable({#}
+                {#    "active": "Bhutan",#}
+                {#    "admin_level": "Dzongkhag",#}
+                {#    "data": get_formatted_data(full_data)#}
+                {#});#}
                 setupMenu();
                 makeSlider();
                 add_paddy_wms(2016);
@@ -1377,13 +1382,20 @@ var yearSlider;
                     success: function (gewog_data) {
 
                         buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
-                            name: 'Base 2020',
+                            name: 'Base 2020, COVID Outbreak',
                             data: gewog_data["paddy_loss"].map(function (data) {
                                 return [data.year, data.val];
                             })
                         }], [ 'rgb(0,93,14)']);
                         
-                        
+                        buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
+                            name: 'Rice Area',
+                            data: gewog_data["rice_area"].map(function (data) {
+                            return [data.x, data.val];
+                        })
+                        }], [ 'rgb(0,93,14)']);
+
+
                          buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
                             name: 'Yield',
                             data: gewog_data["yield"].map(function (data) {
@@ -1404,7 +1416,7 @@ var yearSlider;
                             unit: 'mm'
                         }
 
-                 
+
 
                         var ndvi_data = {
                             name: 'NDVI',
@@ -1416,7 +1428,7 @@ var yearSlider;
 
 
                         buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[ndvi_data],  ['rgb(0,93,14)']);
-                        
+
                         const sm_data = {
                             name: 'Soil Moisture',
                             data: gewog_data["soil_moisture"].map(function (data) {
@@ -1461,25 +1473,32 @@ var debug_dzongkhag_data;
             document.getElementById("selectDzongkhag").innerHTML = option;
             if (option.toLowerCase() === "all dzongkhags") {
                 $("#gewoglist").hide();
-                 createTable({
-                     "active": "Bhutan",
-                    "admin_level": "Dzongkhag",
-                    "data": get_formatted_data(full_data)
-                });
+                {# createTable({#}
+                {#     "active": "Bhutan",#}
+                {#    "admin_level": "Dzongkhag",#}
+                {#    "data": get_formatted_data(full_data)#}
+                {#});#}
                 gewog_features.clearLayers();
                 buildChart('paddy_gain', 'Paddy change since base year', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
-                    name: 'Base 2008',
+                    name: 'Base 2008, Transition to democracy',
                     data: full_data["paddy_gain"].map(function (data) {
                             return [data.year, data.val];
                         })
                 }, {
-                    name: 'Base 2020',
+                    name: 'Base 2020, COVID Outbreak',
                     data: full_data["paddy_loss"].map(function (data) {
                             return [data.year, data.val];
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
-                /* This is incorrect, not sure what is going wrong, but need to debug please */
                 
+                buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
+                            name: 'Rice Area',
+                            data: full_data["rice_area"].map(function (data) {
+                            return [data.x, data.val];
+                        })
+                        }], [ 'rgb(0,93,14)']);
+                /* This is incorrect, not sure what is going wrong, but need to debug please */
+
                  buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
                     name: 'Yield',
                     data: full_data["yield"].map(function (data) {
@@ -1525,16 +1544,23 @@ var debug_dzongkhag_data;
                         }
 
                         buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
-                            name: 'Base 2008',
+                            name: 'Base 2008, Transition to democracy',
                             data: dzongkhag_data["paddy_gain"].map(function (data) {
                                 return [data.year, data.val];
                             })
                         }, {
-                            name: 'Base 2020',
+                            name: 'Base 2020, COVID Outbreak',
                             data: dzongkhag_data["paddy_loss"].map(function (data) {
                                 return [data.year, data.val];
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
+                        
+                        buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
+                            name: 'Rice Area',
+                            data: dzongkhag_data["rice_area"].map(function (data) {
+                            return [data.x, data.val];
+                        })
+                        }], [ 'rgb(0,93,14)']);
 
 
                         debug_dzongkhag_data = dzongkhag_data;
@@ -1608,10 +1634,10 @@ var debug_dzongkhag_data;
                         };
 
                         // uncomment this line when temp data for Dzongkhags is loaded
-                       // buildChart('temperature-spark', 'Soil Moisture', '', 'line', '', '&deg;C', '', [temp_min, temp_max], ['#8AAFFF', '#FF0200']);
+                       // buildChart('temperature-spark', 'Temperature', '', 'line', '', '&deg;C', '', [temp_min, temp_max], ['#8AAFFF', '#FF0200']);
 
 
-                        createTable(tabledata);
+                        {#createTable(tabledata);#}
                         updateSliderRange();
                         // Clear all graphs and load with the new data
                     },
@@ -2052,8 +2078,8 @@ var debug_dzongkhag_data;
             const left_time = $("#left_compare_date").val();
             const right_time = $("#right_compare_date").val();
 
-           
-           
+
+
 
             const left_string = JSON.stringify(getLayer(left_base_id));
 
@@ -2068,7 +2094,7 @@ var debug_dzongkhag_data;
             let hold_right_pass = JSON.parse(left_string);
 
             hold_right_pass.id = left_base_id + "compare_right_pass";
-            
+
             hold_right_pass.pane = "right";
             hold_right_pass.time = left_time + "-01-01T00:00:00.000Z";
             hold_right_pass.default_on = "True";
@@ -2107,7 +2133,7 @@ var debug_dzongkhag_data;
             compare_right_dom = overlayMaps[right_base_id + "compare_right_dom"];
             compare_right_pass = overlayMaps[left_base_id + "compare_right_pass"];
 
-            
+
             compare_control = L.control.sideBySide([compare_left_dom], [compare_right_dom, compare_right_pass]).addTo(map);
             //compare_control = L.control.sideBySide([compare_left_dom, compare_left_pass], [compare_right_dom, compare_right_pass]).addTo(map);
 
@@ -2117,7 +2143,7 @@ var debug_dzongkhag_data;
 
             document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseover', 'map.dragging.disable()')
             document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseout', 'map.dragging.enable()')
-            
+
             compareControlAdded = true;
             // save the ids globally, so they can be removed as needed here as well as in the exit
 
@@ -2266,9 +2292,9 @@ function selectcompare(which){
                                                 <li>The map will display both selected layers on each side, with the
                                                     dominant layer loaded on top to highlight the differences.
                                                 </li>
-                                                <li>If the layers are the same data type the left side dominant / right 
-                                                    side compare will retain the original layer color scheme however, 
-                                                    the left side compare and the right side dominant will receive a 
+                                                <li>If the layers are the same data type the left side dominant / right
+                                                    side compare will retain the original layer color scheme however,
+                                                    the left side compare and the right side dominant will receive a
                                                 contrasting color scheme.</li>
                                                 <li>This visualization helps you to identify changes, trends, or
                                                     disparities between the selected layers.
@@ -2599,7 +2625,7 @@ function selectcompare(which){
                         <div id="rice_yield" class="chart-holder"></div>
                     </div>
 
-                    
+
                         <div id="sparklineChart" class="chart-holder">
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" role="tablist">
