@@ -10,8 +10,8 @@ class Command(BaseCommand):
     help = 'Load Dzongkhag temp data'
 
     def handle(self, *args, **kwargs):
-        # df = pd.read_excel("/servir_apps/district_climo_2000_2023.xlsx")
-        df = pd.read_excel("d:\\district_climo_2000_2023.xlsx")
+        df = pd.read_excel("/servir_apps/district_climo_2000_2023.xlsx")
+        # df = pd.read_excel("d:\\district_climo_2000_2023.xlsx")
 
         for index, row in df.iterrows():
             dzongkhag = Dzongkhag.objects.get(dzongkhag_name=row['NAME_1'])
