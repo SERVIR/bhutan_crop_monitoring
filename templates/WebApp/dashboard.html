@@ -1917,6 +1917,7 @@ var debug_dzongkhag_data;
                     if (!r_src.indexOf("_compare") > -1) {
                         console.log(r_src.indexOf("_compare"));
                         let src_split = r_src.split(".");
+                        console.log("setting src to: " + src_split[0] + "_compare." + src_split[1]);
                         right_legend.src = src_split[0] + "_compare." + src_split[1];
                     }
                 } else {
