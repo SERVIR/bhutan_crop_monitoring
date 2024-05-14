@@ -126,9 +126,9 @@ def get_gewog_data(self, gewog_id):
         "rice_area": [{"x": convert_to_milliseconds(str(rice.year)),
                        "val": rice.value} for rice in
                       AverageRice.objects.filter(gewog=gewog).order_by('year')],
-        "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
-                         "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
-                        Temperature.objects.filter(gewog=gewog).values('year', 'value')],
+        "temperature": [{"x": convert_to_milliseconds(str(temperature["year"]) + "/" + str(temperature["month"]).zfill(2)),
+                         "val": temperature["value"], "min": temperature["min"], "max": temperature["max"]} for temperature in
+                        Temperature.objects.filter(gewog=gewog).values('year', 'month', 'value', 'min', 'max')],
         "precipitation": [
             {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
              "val": precipitation["value"]} for precipitation in
