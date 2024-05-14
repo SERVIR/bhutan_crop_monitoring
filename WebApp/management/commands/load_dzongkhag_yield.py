@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # df = pd.read_excel(r'D:\Bhutan_Obs_Pred_variable_data_Dzongkhog.xlsx')
-        df = pd.read_excel(r'/servir_apps/Bhutan_Obs_Pred_variable_data_Dzongkhog.xlsx')
+        df = pd.read_excel(r'load_dzongkhag_yield.pyBhutan_Obs_Pred_variable_data_Dzongkhog.xlsx')
 
         # Iterate over each row in the DataFrame
         for index, row in df.iterrows():

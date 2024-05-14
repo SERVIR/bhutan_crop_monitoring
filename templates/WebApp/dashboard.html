@@ -1415,6 +1415,25 @@ var yearSlider;
                             }),
                             unit: 'mm'
                         }
+                        
+                          const temp_min = {
+                            name: 'Temperature Min',
+                            data: gewog_data["temperature"].map(function (data) {
+                                return [data.x, data.min];
+                            }),
+                            unit: '&deg;C'
+                        };
+
+                        const temp_max = {
+                            name: 'Temperature Max',
+                            data: gewog_data["temperature"].map(function (data) {
+                                return [data.x, data.max];
+                            }),
+                            unit: '&deg;C'
+                        };
+
+                        // uncomment this line when temp data for Dzongkhags is loaded
+                       buildChart('temperature-spark', 'Temperature', '', 'line', '', '&deg;C', '', [temp_min, temp_max], ['#8AAFFF', '#FF0200']);
 
 
 
@@ -1634,7 +1653,7 @@ var debug_dzongkhag_data;
                         };
 
                         // uncomment this line when temp data for Dzongkhags is loaded
-                       // buildChart('temperature-spark', 'Temperature', '', 'line', '', '&deg;C', '', [temp_min, temp_max], ['#8AAFFF', '#FF0200']);
+                       buildChart('temperature-spark', 'Temperature', '', 'line', '', '&deg;C', '', [temp_min, temp_max], ['#8AAFFF', '#FF0200']);
 
 
                         {#createTable(tabledata);#}

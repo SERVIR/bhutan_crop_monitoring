@@ -46,7 +46,7 @@ def dashboard(request):
         # Handle the case where the specified country_id does not exist
         logging.log("We only have one Country, this should never happen")
 
-    data_layers = DataLayer.objects.all()
+    data_layers = DataLayer.objects.all().order_by('display_order')
 
     # Pass the country_geometry in the context
     context = {'dzongkhags': dzongkhag_data, 'data_layers': data_layers, 'boundary': get_menu_data(),
@@ -170,9 +170,9 @@ def get_dzongkhag_data(self, dzongkhag_id):
         "rice_area": [{"x": convert_to_milliseconds(str(rice.year)),
                        "val": rice.value} for rice in
                       AverageRice.objects.filter(dzongkhag=dzongkhag).order_by('year')],
-        "temperature": [{"x": convert_to_milliseconds(str(temperature.year) + "/" + str(temperature.month).zfill(2)),
-                         "val": temperature.value, "min": temperature.min, "max": temperature.max} for temperature in
-                        Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'value')],
+        "temperature": [{"x": convert_to_milliseconds(str(temperature['year']) + "/" + str(temperature['month']).zfill(2)),
+                         "val": temperature['value'], "min": temperature['min'], "max": temperature['max']} for temperature in
+                        Temperature.objects.filter(dzongkhag=dzongkhag).values('year', 'month', 'value', 'min', 'max')],
         "precipitation": [
             {"x": convert_to_milliseconds(str(precipitation["year"]) + "/" + str(precipitation["month"]).zfill(2)),
              "val": precipitation["value"]} for precipitation in
