@@ -97,8 +97,10 @@ def get_country_data(country_id):
         # Dictionary to store values for each year
         yearly_data = defaultdict(dict)
 
+        years = AverageRice.objects.filter(dzongkhag=dzongkhag).values_list('year', flat=True).distinct()
+
         # Loop through each year from 2002 to 2022
-        for year in range(2002, 2023):
+        for year in years:
             # Fetch the values for each attribute for the current year
             yearly_data[year]['average_rice'] = AverageRice.objects.filter(dzongkhag=dzongkhag, year=year).values_list(
                 'value', flat=True)
