@@ -1387,7 +1387,7 @@ var yearSlider;
                                 return [data.year, data.val];
                             })
                         }], [ 'rgb(0,93,14)']);
-                        
+
                         buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
                             name: 'Rice Area',
                             data: gewog_data["rice_area"].map(function (data) {
@@ -1415,7 +1415,7 @@ var yearSlider;
                             }),
                             unit: 'mm'
                         }
-                        
+
                           const temp_min = {
                             name: 'Temperature Min',
                             data: gewog_data["temperature"].map(function (data) {
@@ -1509,7 +1509,7 @@ var debug_dzongkhag_data;
                             return [data.year, data.val];
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
-                
+
                 buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
                             name: 'Rice Area',
                             data: full_data["rice_area"].map(function (data) {
@@ -1573,7 +1573,7 @@ var debug_dzongkhag_data;
                                 return [data.year, data.val];
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
-                        
+
                         buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
                             name: 'Rice Area',
                             data: dzongkhag_data["rice_area"].map(function (data) {
@@ -1875,6 +1875,63 @@ var debug_dzongkhag_data;
             if (item.default_on === "True") {
                 toggleLayer(item.id);
             }
+        }
+
+        function removeAllLayers(){
+            // Get all elements with class "rst__rowTitle"
+            var elements = document.getElementsByClassName("rst__rowTitle");
+
+            // Iterate over each element
+            for (var i = 0; i < elements.length; i++) {
+                var input = elements[i].querySelector('input[type="checkbox"]');
+
+                // Check if the input is checked
+                if (input.checked) {
+                    $(input).click();
+                }
+            }
+        }
+
+        function updateChangeLegend(layer, side) {
+            const target = document.getElementById(side + "_legend_image");
+            const right_legend = document.getElementById("right_legend_image");
+            let layer_name = "paddy_compare.png";
+
+            switch (layer) {
+                case "rice_":
+                    layer_name = "paddy";
+                    break;
+                case "maize_":
+                    layer_name = "maize";
+                    break;
+                case "crop_land_":
+                    layer_name = "crop_land";
+                    break;
+            }
+
+            if (side === "left") {
+                console.log("is left");
+                if ($("#left_compare_layer").val() === $("#right_compare_layer").val()) {
+                    let r_src = right_legend.src;
+                    console.log(r_src);
+                    if (!r_src.indexOf("_compare") > -1) {
+                        console.log(r_src.indexOf("_compare"));
+                        let src_split = r_src.split(".");
+                        right_legend.src = src_split[0] + "_compare." + src_split[1];
+                    }
+                } else {
+                    right_legend.src = right_legend.src.replace("_compare", '');
+                }
+            } else if (side === "right") {
+
+                if ($("#left_compare_layer").val() === $("#right_compare_layer").val()) {
+                    layer_name = layer_name + "_compare";
+                } else {
+                    layer_name = layer_name;
+                }
+            }
+
+            target.src = static_url + "images/" + layer_name + ".png";
         }
 
         function updateLayer(which) {
@@ -2352,14 +2409,21 @@ function selectcompare(which){
                                         we recommend disabling them from the layer panel prior to adding them to
                                         this tool to avoid having duplicate and possibly misleading layers visible.
                                     </p>
+                                      <ul style="padding-left: 1rem;">
+                                        <li class="no-list-type">
+                                            <button onclick="removeAllLayers()" class="wizard-button">Remove</button>
+                                            <p>Removes layers managed by Layer manager that are on the map.</p>
+                                        </li>
+                                      </ul>
 
                                         <div class="compare-container">
                                             <div class="compare-text">Compare</div>
                                             <div class="box" style="border-right: 1px solid #0D3309">
-                                                <select id="left_compare_layer">
+                                                <select id="left_compare_layer" onchange="updateChangeLegend(this.value, 'left')">
                                                     {% for layer in data_layers %}
                                                         {% if layer.hasVisualization and layer.compare_enabled %}
-                                                            <option value="{{ layer.ui_id }}" data="{{ layer.url }}">{{ layer.title }}</option>
+                                                            <option value="{{ layer.ui_id }}"
+                                                                    data="{{ layer.url }}">{{ layer.title }}</option>
 
                                                         {% endif %}
                                                     {% endfor %}
@@ -2377,13 +2441,21 @@ function selectcompare(which){
                                                     />
                                                 </div>
 
+                                                <div class="legend-container" id="left_legend_container">
+                                                    <span class="legend-text">Legend</span>
+                                                    <img src="{% static '/images/crop_land.png' %}" id="left_legend_image" width="10" height="10"
+                                                         alt="Legend"/>
+
+                                                </div>
+
                                             </div>
-                                        <div class="box-connector"></div>
+                                            <div class="box-connector"></div>
                                             <div class="box" style="border-left: 1px solid #0D3309">
-                                                <select id="right_compare_layer">
+                                                <select id="right_compare_layer" onchange="updateChangeLegend(this.value, 'right')">
                                                     {% for layer in data_layers %}
                                                         {% if layer.hasVisualization and layer.compare_enabled %}
-                                                           <option value="{{ layer.ui_id }}" data="{{ layer.url }}">{{ layer.title }}</option>
+                                                            <option value="{{ layer.ui_id }}"
+                                                                    data="{{ layer.url }}">{{ layer.title }}</option>
                                                         {% endif %}
                                                     {% endfor %}
                                                 </select>
@@ -2399,7 +2471,11 @@ function selectcompare(which){
                                                            value="2023"
                                                     />
                                                 </div>
-
+                                                <div class="legend-container" id="right_legend_container">
+                                                    <span class="legend-text">Legend</span>
+                                                    <img src="{% static '/images/crop_land_compare.png' %}" id="right_legend_image" width="10" height="10"
+                                                         alt="Legend"/>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2582,7 +2658,7 @@ function selectcompare(which){
                                                                     <i id="legend_{{ layer.ui_id }}TimeLayer "
                                                                            class="fas fa-list legend-btn"
                                                                            onclick="openLegend('{{ layer.ui_id }}TimeLayer')"
-                                                                           style="float: right; margin: 0 15px 15px 15px;">
+                                                                           style="float: right; margin: 0 15px 15px 15px; cursor: pointer;">
 
                                                                         </i>
 
