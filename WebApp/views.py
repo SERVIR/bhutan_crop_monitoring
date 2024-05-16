@@ -788,6 +788,10 @@ def about(request):
     return render(request, 'WebApp/about.html', {})
 
 
+def about2(request):
+    return render(request, 'WebApp/about2.html', {})
+
+
 @xframe_options_exempt
 def feedback(request):
     return render(request, 'WebApp/feedback.html', {})
