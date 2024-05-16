@@ -8,6 +8,25 @@
     height: 100px;
 }
 
+#title_class {
+    padding-top: 1.5rem;
+    width: 75%;
+    margin: auto;
+    font-size: 2.5rem;
+    font-family: Arial, serif;
+    text-shadow: black 0.1em 0.1em 0.2em;
+    color: white;
+}
+
+.vertical_center {
+    margin: 0;
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
 .member-wrap {
     display: flex;
 }
