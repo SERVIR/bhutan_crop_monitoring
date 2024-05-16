@@ -134,7 +134,7 @@
                         width: containerWidth
                     },
                     title: {
-                        text: 'Rice area distribution in acres by Dzongkhag'
+                        text: 'Paddy area distribution in acres by Dzongkhag'
                     },
                     tooltip: {
                         useHTML: true,
@@ -330,7 +330,7 @@
 
             const h4 = document.createElement('h4');
 
-            h4.textContent = "Average rice area by " + data.admin_level;
+            h4.textContent = "Average paddy area by " + data.admin_level;
             tableContainer.appendChild(h4);
             // Append table to container
             tableContainer.appendChild(table);
@@ -592,21 +592,21 @@
                         unit: '&deg;C'
                     },
                     {
-                        name: 'Rice Yield',
+                        name: 'Paddy Yield',
                         data: full_data["yield"].map(function (data) {
                             return [data.x, data.yield];
                         }),
                         unit: 'Kg/acres'
                     },
                     {
-                        name: 'Predicted Rice Yield',
+                        name: 'Predicted Paddy Yield',
                         data: full_data["yield"].map(function (data) {
                             return [data.x, data.predicted];
                         }),
                         unit: 'Kg/acres'
                     },
                     {
-                        name: 'Rice Area',
+                        name: 'Paddy Area',
                         data: full_data["rice_area"].map(function (data) {
                             return [data.x, data.val];
                         }),
@@ -617,7 +617,7 @@
 
 
 
-                buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
+                buildChart('rice_yield', 'Paddy Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
                     name: 'Yield',
                     data: full_data["yield"].map(function (data) {
                             return [data.x, data.yield];
@@ -632,7 +632,7 @@
             // rice_area
 
 
-                buildChart("rice_area", "Rice Area", '', 'line', '', 'Acres', '',  [seriesData.find(data => data.name === 'Rice Area')],  ['rgb(0,93,14)'])
+                buildChart("rice_area", "Paddy Area", '', 'line', '', 'Acres', '',  [seriesData.find(data => data.name === 'Paddy Area')],  ['rgb(0,93,14)'])
 
                 buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[seriesData.find(data => data.name === 'NDVI')],  ['rgb(0,93,14)']);
 
@@ -1150,9 +1150,9 @@ var yearSlider;
                 let data;
                 if(all_active){
                     data = full_data;
-                    piechart.setTitle({ text: `Rice area distribution in acres by Dzongkhag`});
+                    piechart.setTitle({ text: `Paddy area distribution in acres by Dzongkhag`});
                 } else{
-                piechart.setTitle({ text: `Rice area distribution in acres by Gewog`});
+                piechart.setTitle({ text: `Paddy area distribution in acres by Gewog`});
                     data = debug_dzongkhag_data;
                 }
 
@@ -1388,15 +1388,15 @@ var yearSlider;
                             })
                         }], [ 'rgb(0,93,14)']);
 
-                        buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
-                            name: 'Rice Area',
+                        buildChart('rice_area', 'Paddy Area', 'something different', 'line', '' , 'acres', '', [{
+                            name: 'Paddy Area',
                             data: gewog_data["rice_area"].map(function (data) {
                             return [data.x, data.val];
                         })
                         }], [ 'rgb(0,93,14)']);
 
 
-                         buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
+                         buildChart('rice_yield', 'Paddy Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
                             name: 'Yield',
                             data: gewog_data["yield"].map(function (data) {
                                 return [data.x, data.yield];
@@ -1510,15 +1510,15 @@ var debug_dzongkhag_data;
                         })
                 }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
 
-                buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
-                            name: 'Rice Area',
+                buildChart('rice_area', 'Paddy Area', 'something different', 'line', '' , 'acres', '', [{
+                            name: 'Paddy Area',
                             data: full_data["rice_area"].map(function (data) {
                             return [data.x, data.val];
                         })
                         }], [ 'rgb(0,93,14)']);
                 /* This is incorrect, not sure what is going wrong, but need to debug please */
 
-                 buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
+                 buildChart('rice_yield', 'Paddy Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
                     name: 'Yield',
                     data: full_data["yield"].map(function (data) {
                             return [data.x, data.yield];
@@ -1574,7 +1574,7 @@ var debug_dzongkhag_data;
                             })
                         }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
 
-                        buildChart('rice_area', 'Rice Area', 'something different', 'line', '' , 'acres', '', [{
+                        buildChart('rice_area', 'Paddy Area', 'something different', 'line', '' , 'acres', '', [{
                             name: 'Rice Area',
                             data: dzongkhag_data["rice_area"].map(function (data) {
                             return [data.x, data.val];
@@ -1584,7 +1584,7 @@ var debug_dzongkhag_data;
 
                         debug_dzongkhag_data = dzongkhag_data;
 
-                        buildChart('rice_yield', 'Rice Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
+                        buildChart('rice_yield', 'Paddy Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
                             name: 'Yield',
                             data: dzongkhag_data["yield"].map(function (data) {
                                 return [data.x, data.yield];
