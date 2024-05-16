@@ -2,11 +2,12 @@
 /*  width: 257px !important;*/
 /*  height: 257px !important;*/
 /*}*/
-body{
+body {
     overflow: hidden;
 
 }
-.sparkline-chart{
+
+.sparkline-chart {
     max-height: 300px;
 }
 
@@ -15,18 +16,18 @@ body{
     transform: translate(50%, 80%);
 }
 
-.noUi-marker-horizontal.noUi-marker-large{
-    height:10px
+.noUi-marker-horizontal.noUi-marker-large {
+    height: 10px
 }
+
 .noUi-value.noUi-value-horizontal.noUi-value-large {
     rotate: 90deg;
     transform: translate(50%, 80%);
 }
 
 
-
-.tab-button{
-    min-width:100px;
+.tab-button {
+    min-width: 100px;
     background-color: rgb(13 51 9 / 26%);
     color: white;
     padding: 10px 3px;
@@ -35,16 +36,16 @@ body{
     border-top-right-radius: 5px; /* Rounded top-right corner */
 }
 
-.tab-button.active{
-    min-width:100px;
+.tab-button.active {
+    min-width: 100px;
     background-color: #0D3309;
     color: white;
     padding: 10px 3px;
 }
 
- .sidebar-scroller{
-        max-height: calc(100vh - 170px);
-    }
+.sidebar-scroller {
+    max-height: calc(100vh - 170px);
+}
 
 img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     /* work-around from here: https://github.com/Leaflet/Leaflet/issues/161 */
@@ -94,10 +95,12 @@ img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     color: #ffffff;
     padding-top: 120px;
 }
+
 .map-thumb:hover .caption-text {
     opacity: 1;
     transform: scale(1.2);
 }
+
 .map-thumb .caption-text h2,
 .map-thumb .caption-text p {
     width: 100%;
@@ -107,12 +110,6 @@ img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
     font-size: 100%;
 }
 
-@media (min-width: 768px) and (max-width: 991px){
-    .map-thumb .caption-text h2,
-.map-thumb .caption-text p {
-        top: 25%;
-    }
-}
 
 .basemapbtn {
     width: 100%;
@@ -159,18 +156,19 @@ img.leaflet-tile, img.leaflet-marker-icon, img.leaflet-marker-shadow {
 .row {
     margin-left: 0;
 }
-.datepicker{
+
+.datepicker {
     position: absolute;
     border: 1px solid #0D3309;
 }
 
-.datepicker table tr td span.active{
-    background-image:linear-gradient(to bottom,#0D3309,#134d0f)!important;
+.datepicker table tr td span.active {
+    background-image: linear-gradient(to bottom, #0D3309, #134d0f) !important;
 }
 
-.year.active{
-    background-image: linear-gradient(to bottom,#0D3309, #134d0f)!important;
-    background-color: #0D3309!important;
+.year.active {
+    background-image: linear-gradient(to bottom, #0D3309, #134d0f) !important;
+    background-color: #0D3309 !important;
 }
 
 .datepicker table tr td span:hover {
@@ -330,10 +328,10 @@ ol {
     width: 100%;
     table-layout: fixed;
     overflow-x: auto;
-     font-size: 0.7em;
+    font-size: 0.7em;
 }
 
-#paddyHolder{
+#paddyHolder {
     border-top: solid 1px #0D3309;
     border-left: solid 1px #0D3309;
     border-right: solid 1px #0D3309;
@@ -341,15 +339,17 @@ ol {
     padding: 0;
 }
 
-#riceAreaHolder, #sparkLineHolder{
+#riceAreaHolder, #sparkLineHolder {
     right: 16px;
     padding: 0;
     max-height: 350px;
 }
+
 .table-wrapper {
     overflow-x: auto; /* Allow horizontal scrolling if table exceeds container width */
     width: 100%; /* Ensure the wrapper div occupies 100% width */
 }
+
 #sparklineTable {
     width: 100%;
     table-layout: fixed;
@@ -375,7 +375,7 @@ ol {
 }
 
 
-#rice_area{
+#rice_area {
     height: 100%;
     width: 100%;
     overflow-y: auto;
@@ -466,7 +466,7 @@ ol {
 
 .ui-widget {
     font-family: "Work Sans", Roboto;;
-     font-size: inherit;
+    font-size: inherit;
 }
 
 .ui-dialog-content {
@@ -549,9 +549,9 @@ input[type='range'] {
     border-radius: 5px; /* Set border radius */
 }
 
-.ui-sortable-placeholder{
+.ui-sortable-placeholder {
     opacity: .25;
-    visibility: visible!important;
+    visibility: visible !important;
     background-color: #0D3309;
 }
 
@@ -572,28 +572,28 @@ input[type='range'] {
 }
 
 .input-container {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .compare-container {
-  position: relative;
-  border: 1px solid #000;
-        padding: 20px 0 0 2px;
+    position: relative;
+    border: 1px solid #000;
+    padding: 20px 0 0 2px;
 }
 
 .box-connector {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 30px;
-  height: 30px;
-  background: rgb(192, 200, 191);
-  border: 1px solid #0D3309;
-  border-radius: 20px;
-  cursor: default;
-  z-index: 1; /* Ensure the connector is above the boxes */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    background: rgb(192, 200, 191);
+    border: 1px solid #0D3309;
+    border-radius: 20px;
+    cursor: default;
+    z-index: 1; /* Ensure the connector is above the boxes */
     background-image: url(range-icon.png);
     background-position: 50% 50%;
     background-repeat: no-repeat;
@@ -605,12 +605,12 @@ input[type='range'] {
 }
 
 .compare-text {
-  position: absolute;
-  top: -12px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #fdfdfc;
-  padding: 0 10px;
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #fdfdfc;
+    padding: 0 10px;
 }
 
 .legend-container {
@@ -624,36 +624,36 @@ input[type='range'] {
 
 .legend-container img {
     margin-right: 5px; /* Adjust the margin between the image and text */
-     align-self: center;
+    align-self: center;
 }
 
 .legend-text {
     margin-bottom: 2px; /* Adjust the margin between the image and text */
-     align-self: center;
+    align-self: center;
 }
 
 .box {
-  width: 49%;
-  height: 100px;
-  display: inline-block;
-  border: 0;
+    width: 49%;
+    height: 100px;
+    display: inline-block;
+    border: 0;
     padding-left: 3px;
     position: relative;
 }
 
 #left_compare_date + *, #right_compare_date + * {
-  left: 0 !important;
+    left: 0 !important;
 }
 
 .slider.opacity-control::-webkit-slider-thumb:hover {
-        cursor: ew-resize;
+    cursor: ew-resize;
 }
 
-.no-list-type{
+.no-list-type {
     list-style-type: none;
 }
 
-.wizard-button{
+.wizard-button {
     min-width: 100px;
     background-color: #0D3309;
     color: white;
@@ -685,7 +685,7 @@ input[type='range'] {
     -webkit-appearance: none;
     display: inline-block !important;
     vertical-align: middle;
-    height: 0!important;
+    height: 0 !important;
     padding: 0;
     margin: 0;
     border: 0;
@@ -721,11 +721,12 @@ input[type='range'] {
 
 /* For whatever reason, these need to be defined
  * on their own so dont group them */
-.leaflet-control-container{
+.leaflet-control-container {
     z-index: 2000;
 }
-.slider-container{
-        margin: 5px 0;
+
+.slider-container {
+    margin: 5px 0;
 }
 
 .leaflet-sbs-range::-webkit-slider-thumb {
@@ -801,19 +802,51 @@ input[type='range'] {
     border: 0;
 }
 
-@media (max-width: 1200px) {
-    body{
-    overflow: auto;
+@media (min-width: 1660px) and (max-width: 1800px) {
+    .tab-button, .tab-button.active {
+        min-width: 80px;
+    }
+
 }
-    .sidebar-scroller{
+
+@media (min-width: 1212px) and (max-width: 1660px) {
+    .tab-button, .tab-button.active {
+        min-width: 60px;
+        font-size: 0.7em;
+    }
+
+}
+
+@media (min-width: 1200px) and (max-width: 1212px) {
+    .tab-button, .tab-button.active {
+        min-width: 60px;
+        font-size: 0.65em;
+    }
+
+}
+
+@media (max-width: 1200px) {
+    body {
+        overflow: auto;
+    }
+
+    .sidebar-scroller {
         max-height: unset;
     }
+
     .pie-slider {
         border-top: solid 1px #0D3309;
         border-left: solid 1px #0D3309;
         border-right: solid 1px #0D3309;
         right: 12px;
         padding: 0 0 0 16px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .map-thumb .caption-text h2,
+    .map-thumb .caption-text p {
+        top: 25%;
     }
 }
 

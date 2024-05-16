@@ -2336,7 +2336,7 @@ function selectcompare(which){
                             </span>
                                 </h1>
                                <!-- Step 1: Introduction and Instructions -->
-                                <div id="compareStep1" style="display: none;">
+                                <div id="compareStep1" style="display: none; padding:5px;">
                                     <h2 class="step-marker">Introduction</h2>
                                     <p>Welcome to the Layer Comparison Tool. This tool empowers you to explore and
                                         compare various layers of data on a map, facilitating insightful analysis of
@@ -2356,23 +2356,23 @@ function selectcompare(which){
                                     <ol style="padding-left: 1rem;">
                                         <li>Choose Layers and Dates:
                                             <ul>
-                                                <li>On the left side of the map, select a dominant layer and its
-                                                    corresponding date for comparison.
+                                                <li>On the left side of the map, select a layer and year as a base 
+                                                    comparison.
                                                 </li>
-                                                <li>On the right side of the map, select another dominant layer and its
-                                                    corresponding date for comparison.
+                                                <li>On the right side of the map, select the compare layer and date. 
                                                 </li>
                                             </ul>
                                         </li>
                                         <li>Comparison Display:
                                             <ul>
-                                                <li>The map will display both selected layers on each side, with the
-                                                    dominant layer loaded on top to highlight the differences.
+                                                <li>The map will display the base comparison layer on each side, with 
+                                                    the compare layer loaded on the right side above to highlight 
+                                                    the differences.
                                                 </li>
-                                                <li>If the layers are the same data type the left side dominant / right
-                                                    side compare will retain the original layer color scheme however,
-                                                    the left side compare and the right side dominant will receive a
-                                                contrasting color scheme.</li>
+                                                <li>If the layers are the same data type the left side base comparison
+                                                     will retain the original layer color scheme however,
+                                                    right side compare contrasting color scheme.</li>
+                                                <li>You will notice the associated legend change accordingly</li>
                                                 <li>This visualization helps you to identify changes, trends, or
                                                     disparities between the selected layers.
                                                 </li>
@@ -2397,23 +2397,20 @@ function selectcompare(which){
                                 </div>
 
                                 <!-- Step 2: Layer Selection -->
-                                <div id="compareStep2" >
+                                <div id="compareStep2" style=" padding:5px;">
                                     <h2 class="step-marker">Choose Layers to Compare</h2>
 
                                     <div id="layer-selection">
-                                        <!-- Layer selection options will be populated here -->
-                                        <p>This is only for demo purposes currently. Selecting different
-                                        layers and years is not functional yet, it will be coming soon.</p>
-                                    There are layers in the background hard coded for the demo.<br><br>
-                                    <p>
+                                       
                                         If you have layers already on the map that you intend to compare,
                                         we recommend disabling them from the layer panel prior to adding them to
                                         this tool to avoid having duplicate and possibly misleading layers visible.
+                                    You can remove them from the map with the Remove button below.
                                     </p>
                                       <ul style="padding-left: 1rem;">
                                         <li class="no-list-type">
-                                            <button onclick="removeAllLayers()" class="wizard-button">Remove</button>
-                                            <p>Removes layers managed by Layer manager that are on the map.</p>
+                                            <button onclick="removeAllLayers()" class="wizard-button">Remove Non-Tool Layers</button>
+                                            <p></p>
                                         </li>
                                       </ul>
 
@@ -2505,87 +2502,14 @@ function selectcompare(which){
                                     </p>
                                 </div>
 
-                                <!-- Step 3: Date Selection (Optional) -->
-                                <div id="notneededstep3" style="display: none;">
-                                    <h2 class="step-marker">Select Date for Comparison</h2>
-                                    <div id="date-selection">
-                                        <!-- Date selection options will be populated here -->
-                                    </div>
-                                    <p style="text-align: right;">
-                                    <button onclick="prevStep()" class="wizard-button">Back</button>
-                                    <button onclick="nextStep()" class="wizard-button">Next</button>
-                                    </p>
-                                </div>
+
 
                                 <!-- Step 4: Confirmation and Visualization -->
-                                <div id="step3" style="display: none;">
-                                    <h2 class="step-marker">Confirmation and Visualization</h2>
-                                     <p>Finalize your layer comparison setup and control its display using the buttons below:</p>
-   
-                                    <p>Selected Layers:</p>
-                                    <ul id="selected-layers">
-                                        <!-- Selected layers will be displayed here -->
-                                    </ul>
-                                    <p>Comparison Visualization:</p>
-                                    <div id="comparison-visualization">
-                                        <!-- Visualization of the comparison will be displayed here -->
-                                    </div>
-                                    <p style="text-align: right;">
-                                    <ul style="padding-left: 1rem;">
-                                        <li class="no-list-type">
-                                            <button onclick="performComparison()" class="wizard-button">Compare</button>
-                                            <p>Click this button to activate the layer comparison tool with the selected
-                                                parameters.</p>
-                                        </li>
-                                        <li class="no-list-type">
-                                            <button onclick="removeComparison()" class="wizard-button">Exit Tool
-                                            </button>
-                                            <p>Click this button to remove the layer comparison tool from the UI. The
-                                                comparison tool will remain displayed until this button is clicked, even
-                                                if you navigate to a different panel tab.</p>
-                                        </li>
-                                        <li class="no-list-type">
-                                            <button onclick="resetToStep1()" class="wizard-button">Reset</button>
-                                            <p>Click this button to reset the parameters and return to Step 1. Note that
-                                                this will not remove the layer comparison tool from the UI.</p>
-                                        </li>
-                                    </ul>
-                                    </p>
-                                </div>
+                                
 
                             </div>
                         </div>
-                        <div class="sidebar-pane" id="chart2">
-                            <h1 class="sidebar-header">
-                                Statistical Query
-                                <span class="sidebar-close">
-                              <i class="fas fa-caret-left"></i>
-                            </span>
-                            </h1>
-                            <div id="step1">
-
-                                <form id="query-form2" onsubmit="return false;">
-                                    <h2 class="step-marker">Select Data</h2>
-                                    <div class="form-group panel-buffer">
-                                        <label for="requestTypeSelect">Type</label>
-                                        <i
-                                                onclick="stats_info('type')"
-                                                class="fas fa-question-circle"
-                                                aria-hidden="true"
-                                                style="float: right;"></i>
-                                        <select name="requestTypeSelect" class="form-control" id="requestTypeSelect"
-                                                onchange="openDataTypePanel(this)">
-                                            <option value="datasets">Dataset</option>
-                                            <option value="monthly_analysis">Monthly Rainfall Analysis</option>
-                                        </select>
-                                    </div>
-
-
-                                </form>
-
-
-                            </div>
-                        </div>
+                     
                         <div class="sidebar-pane" id="layers">
                             <h1 class="sidebar-header">
                                 Layers
