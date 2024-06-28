@@ -22,9 +22,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 f = open(str(BASE_DIR) + '/data.json', )
 data = json.load(f)
 
+css_version = 1.03
+
 
 def home(request):
-    context = {}
+    context = {'version': css_version}
 
     return render(request, 'WebApp/home.html', context)
 
@@ -50,7 +52,7 @@ def dashboard(request):
 
     # Pass the country_geometry in the context
     context = {'dzongkhags': dzongkhag_data, 'data_layers': data_layers, 'boundary': get_menu_data(),
-               'full_data': get_country_data("BT"), 'version': 1.02}
+               'full_data': get_country_data("BT"), 'version': css_version}
 
     return render(request, 'WebApp/dashboard.html', context)
 
@@ -785,11 +787,11 @@ def fix_shapefile(request):
 
 
 def about(request):
-    return render(request, 'WebApp/about.html', {})
+    return render(request, 'WebApp/about.html', {'version':css_version})
 
 
 def about2(request):
-    return render(request, 'WebApp/about2.html', {})
+    return render(request, 'WebApp/about2.html', {'version':css_version})
 
 
 @xframe_options_exempt
