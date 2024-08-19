@@ -881,6 +881,7 @@
          * @param {string} which - Name of layer to open legend for
          */
         function openLegend(which) {
+            console.log("opening");
             close_dialog();
             const dialog = $("#dialog");
             let id = which.replace("TimeLayer", "") + "ens";
@@ -891,8 +892,9 @@
                 active_layer.layers +
                 "&colorscalerange=" +
                 active_layer.colorrange +
-                "&PALETTE=" +
-                active_layer.styles.substr(active_layer.styles.indexOf("/") + 1);
+                "&style=" + active_layer.styles.substring(active_layer.styles.indexOf("/") + 1) +
+                "&format=image/png" ; //+
+                // active_layer.styles.substring(active_layer.styles.indexOf("/") + 1);
             const style = "text-align:center;";
             dialog.html(
                 '<p style="' + style + '"><img src="' + src + '" alt="legend"></p>'
