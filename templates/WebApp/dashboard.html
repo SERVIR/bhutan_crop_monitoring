@@ -7,24 +7,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css"
           integrity="sha512-aOG0c6nPNzGk+5zjwyJaoRUgCdOrfSDhmMID2u4+OIslr0GjpLKo7Xm0Ao3xmpM4T8AmIouRkqwj1nrdVsLKEQ=="
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/series-label.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
-    {#    <link rel="stylesheet" href="{% static '/js/jquery-ui.min.css' %}">#}
-
     <link rel="stylesheet" href="{% static '/css/yearpicker.css' %}">
-    <script src="{% static '/js/yearpicker.js' %}" async></script>
-    <!-- CSS -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
-
     <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css" rel="stylesheet">
-
     <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.1/dist/leaflet.timedimension.control.min.css"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
@@ -32,43 +18,39 @@
     <link rel="stylesheet"
           href="{% static '/css/leaflet-sidebar.css' %}"
     />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
+    <link
+            rel="stylesheet"
+            href="{% static '/css/geosearch.css' %}"
+    />
+    <link rel="stylesheet" href="{% static 'css/common.css' %}?v={{ version }}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v={{ version }}">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/series-label.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+    <script src="{% static '/js/yearpicker.js' %}" async></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
             integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
     <script src="https://unpkg.com/esri-leaflet@3.0.8/dist/esri-leaflet.js"
             integrity="sha512-E0DKVahIg0p1UHR2Kf9NX7x7TUewJb30mxkxEm2qOYTVJObgsAGpEol9F6iK6oefCbkJiA4/i6fnTHzM6H1kEA=="
             crossorigin=""></script>
     <script src="https://unpkg.com/esri-leaflet-vector@4/dist/esri-leaflet-vector.js"></script>
-
     <script src="{% static 'js/leaflet-side-by-side.js' %}"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
-    {#    <script src="{% static '/js/L.Control.Opacity.js' %}"></script>#}
-    {#    <link href="{% static '/css/L.Control.Opacity.css' %}" rel="stylesheet"/>#}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"/>
     <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-search/3.0.5/leaflet-search.src.js"
             integrity="sha512-PDM7dpetuBcPp2fV/ZyCj9BGV8ybPchsrSzQqVZ3WoM8YcxEa2lAj0n1+4MCRzgsEROmVTwQXGw0IrXCCgH+/Q=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{% static '/js/jquery-ui.min.js' %}"></script>
-    {#    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>#}
-    {#    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>#}
-
-    {#    <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>#}
     <script src="{% static '/js/leaflet-providers.js' %}"></script>
-    {#    <script src="{% static 'js/boundary.js' %}"></script>#}
-
     <script src="{% static 'js/utils.js' %}"></script>
-
     <script src="{% static 'js/basemaps.js' %}"></script>
     <script src="{% static 'js/base-layers.js' %}"></script>
     <script src="{% static '/js/geosearch.umd.js' %}"></script>
-    <link
-            rel="stylesheet"
-            href="{% static '/css/geosearch.css' %}"
-    />
-
-
-    <link rel="stylesheet" href="{% static 'css/common.css' %}?v={{ version }}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v={{ version }}">
 
     <script>
         const static_url = "{% static '' %}";
@@ -80,11 +62,12 @@
         let compare_left_pass;
         let compare_right_dom;
         let compare_right_pass;
-        var the_picker;
-        var dzongkhagLayer;
-        var gewog_features;
-        var full_data = {{ full_data|safe }};
-        var boundary = {{ boundary|safe }};
+        let the_picker;
+        let dzongkhagLayer;
+        let gewog_features;
+        let full_data = JSON.parse('{{ full_data|safe }}');
+        let boundary = {{ boundary|safe }};
+        let dzongkhagData = {{ dzongkhags|safe }}; // Assuming dzongkhags is a list of Dzongkhag data
 
         {% for layer in data_layers %}
             client_layers.push({
@@ -102,2162 +85,9 @@
             })
         {% endfor %}
 
-        // Function to update chart dimensions
-        function updateChartDimensions() {
-            // Get the width of the container element
-            const containerWidth = document.getElementById('pie_chart').clientWidth;
-
-            // Calculate height based on the container width and aspect ratio
-            const aspectRatio = 16 / 9;
-            const height = containerWidth / aspectRatio;
-
-            // Update the chart dimensions
-            piechart.setSize(containerWidth, height);
-        }
-
-        window.addEventListener('resize', function () {
-            updateChartDimensions();
-        });
-
-        function buildPie() {
-            // Get the width of the container element
-            const containerWidth = document.getElementById('pie_chart').clientWidth;
-
-// Calculate height based on the container width and aspect ratio
-            const aspectRatio = 16 / 9;
-            const height = containerWidth / aspectRatio;
-
-                piechart = Highcharts.chart('pie_chart', {
-                    chart: {
-                        type: 'pie',
-                        height: height,
-                        width: containerWidth
-                    },
-                    title: {
-                        text: 'Paddy area distribution in acres by Dzongkhag'
-                    },
-                    tooltip: {
-                        useHTML: true,
-                        headerFormat: '<table>',
-                        footerFormat: '</table>',
-                        pointFormatter: function () {
-                            let dataSum = 0,
-                                percentage;
-
-                            this.series.points.forEach(function (point) {
-                                dataSum += point.y;
-                            });
-
-                            percentage = ((this.y / dataSum) * 100).toFixed(2);
-
-                            return `<tr><th colspan="2"><b>${this.name}</b></th></tr>
-                                    <tr><th>Value:</th><td>${this.y} acres</td></tr>
-                                    <tr><th>Percent:</th><td>${percentage}%</td></tr>`
-                        }
-                    },
-                    series: [{
-                        name: 'Percentage',
-                        colorByPoint: true,
-                        data: getPieChartData(get_formatted_data(full_data), selectedYear)
-                    }]
-                });
-        }
-
-        function buildChart(id, title, subtitle, type, pointStart, yAxisText, rangeDescription, seriesObject, color, isYearly) {
-            const isArrayData = seriesObject[0].data[0] instanceof Array;
-
-            xaxisObj = {
-
-            }
-            if(isArrayData){
-                xaxisObj.type = 'datetime';
-            }
-
-            Highcharts.chart(id, {
-                    chart: {
-                        type: type,
-                        zoomType: 'xy'
-                    },
-                    colors: color,
-                    title: {
-                        text: title,
-                        align: 'left'
-                    },
-
-                    yAxis: {
-                        title: {
-                            text: yAxisText
-                        }
-                    },
-
-                    xAxis: xaxisObj,
-
-                    legend: {
-                        layout: 'vertical',
-                        align: 'right',
-                        verticalAlign: 'middle'
-                    },
-
-                    plotOptions: {
-                        series: {
-                            states: {
-                                inactive: {
-                                    opacity: 1
-                                }
-                            },
-                            inactiveOtherPoints: false,
-                            label: {
-                                connectorAllowed: false
-                            },
-                            tooltip: {
-                                 xDateFormat: isYearly ? '%Y':'%m/%Y',
-                                pointFormatter: function () {
-
-                                    var tooltip = '<span style="color:' + this.series.color + '">\u25CF</span> ' + this.series.name + ': <b>' + this.y + ' ' + yAxisText + '</b><br/>';
-
-                                    // Loop through other series to add their values to the tooltip
-                                    this.series.chart.series.forEach(function(series) {
-                                        if (series !== this.series) {
-                                            var point = series.points[this.index];
-                                            tooltip += '<span style="color:' + series.color + '">\u25CF</span> ' + series.name + ': <b>' + point.y + ' ' + yAxisText + '</b><br/>';
-                                        }
-                                    }, this);
-
-                                    return tooltip;
-                                  /*  if (Number.isInteger(this.y)) {
-                                        return this.y + " " + yAxisText;
-                                    }else {
-                                        return Highcharts.numberFormat(this.y, 2) + " " + yAxisText;
-                                    } */
-                                }
-                            },
-                        }
-                    },
-
-                    series: seriesObject,
-
-                    responsive: {
-                        rules: [{
-                            condition: {
-                                width: '100%',
-                            },
-                            chartOptions: {
-                                legend: {
-                                    layout: 'horizontal',
-                                    align: 'center',
-                                    verticalAlign: 'bottom'
-                                }
-                            }
-                        }]
-                    }
-
-                },
-                function () {
-                    this.series[0].hide();
-                    this.series[0].show();
-                }
-            );
-
-        }
-
-        // Function to create the table
-        function createTable(data) {
-
-            const tableContainer = document.getElementById('rice_area');
-            tableContainer.innerHTML = '';
-            const table = document.createElement('table');
-            const thead = document.createElement('thead');
-            const tbody = document.createElement('tbody');
-
-            // Create table header
-            const headerRow = document.createElement('tr');
-            const adminLevelHeader = document.createElement('th');
-            adminLevelHeader.textContent = data.admin_level;
-            headerRow.appendChild(adminLevelHeader);
-
-            data.data[0].values.forEach(entry => {
-                const yearHeader = document.createElement('th');
-                yearHeader.textContent = entry.year;
-                headerRow.appendChild(yearHeader);
-            });
-            thead.appendChild(headerRow);
-
-            // Create table body
-            data.data.forEach(item => {
-                const row = document.createElement('tr');
-                const adminLevelCell = document.createElement('td');
-                adminLevelCell.textContent = item.name;
-                row.appendChild(adminLevelCell);
-
-                item.values.forEach(entry => {
-                    const valueCell = document.createElement('td');
-                    valueCell.textContent = entry.value;
-                    row.appendChild(valueCell);
-                });
-
-                tbody.appendChild(row);
-            });
-
-             // Add a separator row
-            const separatorRow = document.createElement('tr');
-            const separatorCell = document.createElement('td');
-            separatorCell.colSpan = data.data[0].values.length + 1; // Span all columns
-            separatorCell.textContent = data.admin_level.toLowerCase().trim() === "dzongkhag" ? '--- Country Sum ---' : '--- Dzongkhag Sum ---'; // Separate label
-            separatorRow.appendChild(separatorCell);
-            tbody.appendChild(separatorRow);
-
-
-            // Calculate and add country totals row
-            const countryTotalsRow = document.createElement('tr');
-            const countryTotalsLabelCell = document.createElement('td');
-            countryTotalsLabelCell.textContent = data.active;
-            countryTotalsRow.appendChild(countryTotalsLabelCell);
-
-            // Calculate sum of values for each year
-            data.data[0].values.forEach((_, index) => {
-                const sum = data.data.reduce((total, item) => total + item.values[index].value, 0);
-                const valueCell = document.createElement('td');
-                valueCell.textContent = sum.toFixed(2); // Format to two decimal places
-                countryTotalsRow.appendChild(valueCell);
-            });
-
-            tbody.appendChild(countryTotalsRow);
-
-
-            // Append header and body to table
-            table.appendChild(thead);
-            table.appendChild(tbody);
-
-            const h4 = document.createElement('h4');
-
-            h4.textContent = "Average paddy area by " + data.admin_level;
-            tableContainer.appendChild(h4);
-            // Append table to container
-            tableContainer.appendChild(table);
-        }
-
-        function loadGewogs(dzongkhag, which) {
-            document.getElementById("gewogOptions").innerHTML = "";
-            addFilterBox("gewogOptions", "gewogsFilter")
-
-            addOptions([{
-                name: "All Gewogs",
-                gewog_id: "-999"
-            }, ...(getGewogs(dzongkhag))], "gewogOptions", "gewogsFilter", 'gewog');
-            if (which) {
-                dzongkhag = which;
-            }
-
-            $.ajax({
-                url: '/get-gewog-by-dzongkhag-id/' + dzongkhag, // Adjust the URL as per your Django API endpoint
-                method: 'GET',
-                success: function (data) {
-                    // Handle the response data here
-                    // Remove previously added features
-                    removePreviousFeatures();
-
-// Add features from JSON object to the layer
-                    addFeaturesToLayer(data);
-                },
-                error: function (error) {
-                    // Handle errors here
-                    console.error('Error loading Gewogs:', error);
-                }
-            });
-        }
-
-        function createSparklineChart(container, data) {
-
-            var units = ['NDVI', 'mm', 'mm', '&deg;C'];
-
-            const isArrayData = data.data[0] instanceof Array;
-
-            xaxisObj = {
-                 visible: false,
-            }
-            if(isArrayData){
-                xaxisObj.type = 'datetime';
-            } else{
-                xaxisObj.categories = ['2016', '2017', '2018', '2019', '2020', '2021', '2022'];
-            }
-            Highcharts.setOptions({
-                lang: {
-                    thousandsSep: ','
-                }
-            });
-            Highcharts.chart(container, {
-                chart: {
-                    type: 'line',
-                    zoomType: 'xy',
-                    backgroundColor: null,
-                    borderWidth: 0,
-                    {#margin: [22, 22, 22, 22],#}
-                    {# marginLeft: 22,#}
-                    {#marginRight: 22,#}
-                    style: {
-                        overflow: 'visible'
-                    }
-                },
-                title: {
-                    text: null
-                },
-                credits: {
-                    enabled: false
-                },
-                xAxis: xaxisObj,
-                yAxis: {
-                    visible: false
-                },
-                legend: {
-                    enabled: false
-                },
-                tooltip: {
-                    formatter: function () {
-                        if(isArrayData) {
-                            var date = new Date(this.x);
-
-                            // Format the date as desired (e.g., 'January 2016')
-                            var formattedDate = Highcharts.dateFormat('%B %Y', date);
-
-                            var pointIndex = this.point.index;
-                            var series = this.series.chart.series[this.series.index];
-                            var unit = series.userOptions.unit;
-
-                            // Return the formatted tooltip
-                            return '<b>' + formattedDate + '</b><br/>' +
-                                Highcharts.numberFormat(this.y, 2) + ' ' + unit;
-                        }else{
-                            var pointIndex = this.point.index;
-                            var series = this.series.chart.series[this.series.index];
-                            var unit = series.userOptions.unit;
-                            return '<b>' + Highcharts.dateFormat('%Y', this.x) + '</b><br/>' +
-                                Highcharts.numberFormat(this.y, 2) + ' ' + unit;
-                        }
-                    }
-                },
-                plotOptions: {
-                    series: {
-                        animation: false,
-                        color: 'white'
-                    },
-                    lang: {
-                        thousandsSep: ','
-                    }
-                },
-                exporting: {
-                    enabled: false // Disable exporting for this chart
-                },
-                series: [data]
-            });
-        }
-
-        function highlightTableRow(name) {
-            // Remove background color from all rows
-            const tableRows = document.querySelectorAll('#rice_area tbody tr');
-            tableRows.forEach(row => {
-                row.style.backgroundColor = '';
-            });
-
-            // Find the row with the matching name and add background color
-            tableRows.forEach(row => {
-                const firstCell = row.querySelector('td:first-child');
-                if (firstCell && firstCell.textContent.trim() === name) {
-                    row.style.backgroundColor = 'darkcyan';
-                }
-            });
-        }
-
-        // Function to update the range of the slider
-        function updateSliderRange() {
-
-            yearSlider.noUiSlider.updateOptions({
-                range: {
-                    'min': minYear,
-                    'max': maxYear
-                }
-            });
-        }
-
-        let minYear = Infinity;
-        let maxYear = -Infinity;
-
-        function get_formatted_data(data) {
-            const formatted_data = [];
-            const excluded = ["temperature", "precipitation", "ndvi", "soil_moisture", "paddy_gain", "paddy_loss", "yield", "rice_area"];
-            var holdmin = minYear;
-            var holdmax = maxYear;
-            minYear = Infinity;
-            maxYear = -Infinity;
-            for (var dzongkhag_name in data) {
-                if (data.hasOwnProperty(dzongkhag_name) && !excluded.includes(dzongkhag_name)) {
-                    // Initialize an array to store the values for the current Dzongkhag
-                    var dzongkhag_values = [];
-
-
-
-
-                    // Loop through each year's data for the current Dzongkhag
-                    for (var year in data[dzongkhag_name]) {
-                        try {
-                            if (data[dzongkhag_name].hasOwnProperty(year)) {
-                                // Extract the average rice value for the current year
-                                var average_rice_value = data[dzongkhag_name][year]['average_rice'];
-
-                                // Push the year and value pair to the dzongkhag_values array
-                                dzongkhag_values.push({
-                                    'year': parseInt(year),
-                                    'value': average_rice_value.length > 0 ? average_rice_value[0] : null
-                                });
-                                minYear = Math.min(minYear, parseInt(year));
-                                // Update minYear and maxYear
-                                maxYear = Math.max(maxYear, parseInt(year));
-                            } else {
-                                console.log("this");
-                            }
-                        } catch(e){console.log('nothing to see here.');}
-                    }
-
-
-                    // Push the formatted data for the current Dzongkhag to the formatted_data array
-                    formatted_data.push({
-                        'name': dzongkhag_name,
-                        'values': dzongkhag_values
-                    });
-
-
-                }
-            }
-            if(minYear == Infinity){
-                minYear = holdmin;
-            }
-            if(maxYear == -Infinity){
-                maxYear = holdmax;
-            }
-
-            return formatted_data;
-        }
-        var debug_me;
-        var debug_me2;
-
-        $(function () {
-                // Initial call to set aspect ratio on page load
-                updateAspectRatio();
-
-                buildChart('paddy_gain', 'Paddy change since base year', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
-                    name: 'Base 2008, Transition to democracy',
-                    data: full_data["paddy_gain"].map(function (data) {
-                            return [data.year, data.val];
-                        })
-                }, {
-                    name: 'Base 2020, COVID Outbreak',
-                    data: full_data["paddy_loss"].map(function (data) {
-                            return [data.year, data.val];
-                        })
-                }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
-
-                var seriesData = [
-                    {
-                        name: 'NDVI',
-                        data: full_data["ndvi"].map(function (data) {
-                            return [data.x, data.val];
-                        }),
-                        unit: 'NDVI'
-                    },
-                    {
-                        name: 'Precipitation',
-                        data: full_data["precipitation"].map(function (data) {
-                            return  [data.x, data.val];
-                        }),
-                        unit: 'mm'
-                    },
-                    {
-                        name: 'Soil Moisture',
-                        data: full_data["soil_moisture"].map(function (data) {
-                            return [data.x, data.val];
-                        }),
-                        unit: 'mm'
-                    },
-                    {
-                        name: 'Temperature Min',
-                        data: full_data["temperature"].map(function (data) {
-                            return [data.x, data.min];
-                        }),
-                        unit: '&deg;C'
-                    },
-                    {
-                        name: 'Temperature Max',
-                        data: full_data["temperature"].map(function (data) {
-                            return [data.x, data.max];
-                        }),
-                        unit: '&deg;C'
-                    },
-                    {
-                        name: 'Paddy Yield',
-                        data: full_data["yield"].map(function (data) {
-                            return [data.x, data.yield];
-                        }),
-                        unit: 'Kg/acres'
-                    },
-                    {
-                        name: 'Predicted Paddy Yield',
-                        data: full_data["yield"].map(function (data) {
-                            return [data.x, data.predicted];
-                        }),
-                        unit: 'Kg/acres'
-                    },
-                    {
-                        name: 'Paddy Area',
-                        data: full_data["rice_area"].map(function (data) {
-                            return [data.x, data.val];
-                        }),
-                        unit: 'acres'
-                    }
-                ];
-
-
-
-
-                buildChart('rice_yield', 'Paddy Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
-                    name: 'Yield',
-                    data: full_data["yield"].map(function (data) {
-                            return [data.x, data.yield];
-                        })
-                }, {
-                    name: 'Predicted',
-                    data: full_data["yield"].map(function (data) {
-                            return [data.x, data.predicted];
-                        })
-                }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
-
-            // rice_area
-
-
-                buildChart("rice_area", "Paddy Area", '', 'line', '', 'Acres', '',  [seriesData.find(data => data.name === 'Paddy Area')],  ['rgb(0,93,14)'])
-
-                buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[seriesData.find(data => data.name === 'NDVI')],  ['rgb(0,93,14)']);
-
-
-                buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Precipitation')],  ['rgb(0,93,14)']);
-
-                buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '',[seriesData.find(data => data.name === 'Soil Moisture')],  ['rgb(0,93,14)']);
-                buildChart('temperature-spark', 'Temperature', '', 'line', '', '&deg;C', '',[seriesData.find(data => data.name === 'Temperature Min'), seriesData.find(data => data.name === 'Temperature Max')],  ['#8AAFFF', '#FF0200']);
-
-                buildPie();
-
-                map = L.map('map', {
-                    zoomControl: true, fullscreenControl: true, center: [27.41016657183734, 90.44523404431789], zoom: 8
-                });
-
-                map.createPane('left');
-                map.createPane('right');
-                map.zoomControl.setPosition('topright');
-
-                // Add the Search Control to the map
-                const search = new GeoSearch.GeoSearchControl({
-                    id:"search_ctl",
-                    provider: new GeoSearch.OpenStreetMapProvider(), showMarker: false, // optional: true|false  - default true
-                    showPopup: false, position: 'topright', autoClose: true,
-                });
-                map.addControl(search);
-                var dzongkhagData = {{ dzongkhags|safe }}; // Assuming dzongkhags is a list of Dzongkhag data
-
-                // Create an empty array to hold the GeoJSON features
-                var dzongkhagFeatures = [];
-
-                // Iterate over the Dzongkhag data
-                dzongkhagData.forEach(function (dzongkhag) {
-                    // Create a GeoJSON feature object
-                    var feature = {
-                        "type": "Feature",
-                        "properties": {
-                            "id": dzongkhag.id,
-                            "name": dzongkhag.name
-                        },
-                        "geometry": dzongkhag.geometry
-                    };
-
-                    // Add the feature to the array
-                    dzongkhagFeatures.push(feature);
-                });
-                gewog_features = L.geoJSON(null, {
-                    id: 'gewog_features',
-                    // Add style function to customize the appearance of features
-                    style: function (feature) {
-                        return {
-                            fillColor: 'transparent', // Set fill color to 'none' to remove fill
-                            color: '#0a57c9', // Set border color (stroke color)
-                            weight: 4 // Set border width (stroke width)
-                        };
-                    },
-                    onEachFeature: function (feature, layer) {
-
-                        // Add a click event listener to load Gewogs when clicking the layer
-                        layer.on('click', function (e) {
-
-                            var bounds = layer.getBounds();
-
-
-                            // Fit the map view to the bounds of the clicked feature
-                            {#map.fitBounds(bounds);#}
-                            // Call the loadGewogs function passing the ID from the clicked feature
-                            selectGewogOption(feature.properties.name, feature.properties.id);
-
-
-
-                            if (feature.properties.id != "-999") {
-                                L.DomEvent.stopPropagation(e);
-                                L.DomEvent.preventDefault(e);
-                                L.DomEvent.stop(e);
-                                L.DomEvent.stopPropagation(e.originalEvent);
-                                L.DomEvent.preventDefault(e.originalEvent);
-                                L.DomEvent.stop(e.originalEvent);
-                            }
-                        });
-                    }
-                }).addTo(map);
-
-                // Create a GeoJSON layer with hover and click events
-                dzongkhagLayer = L.geoJSON(dzongkhagFeatures, {
-                    id: "dzongkhagLayer",
-                    style: function (feature) {
-                        return {
-                            fillColor: 'transparent', // Set fill color to 'none' to remove fill
-                            color: '#ffffff', // Set border color (stroke color)
-                            weight: 2 // Set border width (stroke width)
-                        };
-                    },
-                    onEachFeature: function (feature, layer) {
-
-                        // Add a click event listener to load Gewogs when clicking the layer
-                        layer.on('click', function (e) {
-                            var bounds = layer.getBounds();
-
-                            map.fitBounds(bounds);
-
-                            var sidebarWidth = document.getElementById('sidebar-content').offsetWidth;
-                            var mapCenter = map.getCenter();
-                            var newCenter = map.unproject(map.project(mapCenter).subtract(L.point(sidebarWidth / 2, 0)));
-
-
-                            // Fit the map view to the bounds of the clicked feature
-
-
-                            // Call the loadGewogs function passing the ID from the clicked feature
-                            selectOption(feature.properties.name, feature.properties.id);
-
-                            map.setView(newCenter);
-
-                        });
-                    }
-                }).addTo(map);
-
-// Fit the map to the extent of the GeoJSON layer
-                map.fitBounds(dzongkhagLayer.getBounds());
-                $(".leaflet-bar-timecontrol").css("margin-left", "50px");
-                $('.leaflet-bar-timecontrol').css('display', 'inline');
-                window.dispatchEvent(new Event('resize'));
-
-
-                {#var formatted_data = [];#}
-
-// Loop through each Dzongkhag in the full_data object
-
-
-                // Call the function with your JSON data
-                {#createTable({#}
-                {#    "active": "Bhutan",#}
-                {#    "admin_level": "Dzongkhag",#}
-                {#    "data": get_formatted_data(full_data)#}
-                {#});#}
-                setupMenu();
-                makeSlider();
-                add_paddy_wms(2016);
-                baseLayers = getCommonBaseLayers(map); // use baselayers.js to add, remove, or edit
-                sidebar = L.control.sidebar("sidebar").addTo(map);
-                for (let key of Object.keys(baseLayers)) {
-                    const map_thumb = $("<div>");
-                    map_thumb.addClass("map-thumb");
-                    map_thumb.attr("datavalue", key);
-                    map_thumb.on("click", handleBaseMapSwitch);
-
-                    const thumb_cap = $("<div>");
-                    thumb_cap.addClass("caption-text");
-
-                    const thumb_text = $("<h2>");
-                    thumb_text.text(baseLayers[key].options.displayName);
-
-                    thumb_text.appendTo(thumb_cap);
-                    const img = $("<img src='" +
-                        static_url + "" +
-                        baseLayers[key].options.thumb +
-                        "' alt='" +
-                        baseLayers[key].options.displayName + "'>", {
-                        title: baseLayers[key].options.displayName,
-                        datavalue: key,
-                        click: 'handleBaseMapSwitch($(this)[0].getAttribute("datavalue"))'
-                    });
-                    img.addClass("basemapbtn");
-                    img.appendTo(map_thumb);
-                    thumb_cap.appendTo(map_thumb);
-                    map_thumb.appendTo("#basemap");
-                }
-
-                sidebar.open('layers');
-
-                client_layers.forEach(createLayer);
-                sortableLayerSetup();
-                adjustLayerIndex();
-                $('.yearpicker').off();
-                setupYearPicker();
-                setupMonthlyPicker();
-
-
-            }
-        )
-        //End ready
-
-        // Function to remove previously added features from the layer
-        function removePreviousFeatures() {
-            gewog_features.clearLayers();
-        }
-
-        // Function to add features from JSON object to the layer
-        function addFeaturesToLayer(data) {
-            // Iterate over each gewog in the JSON object
-            data.gewogs.forEach(function (gewog) {
-                // Create a GeoJSON feature for each gewog
-                var feature = {
-                    "type": "Feature",
-                    "properties": {
-                        "id": gewog.id,
-                        "name": gewog.name
-                    },
-                    "geometry": gewog.geometry
-                };
-
-                // Add the feature to the layer
-                gewog_features.addData(feature);
-            });
-        }
-
-
-        // Resize sparkline charts when window is resized
-        $(window).resize(function () {
-            $('#sparklineTable .sparkline-chart').each(function () {
-                var chart = $(this).highcharts();
-                if (chart) {
-                    chart.setSize(this.offsetWidth, 50);
-                }
-            });
-        });
-
-        var the_input;
-
-        function positionDatepicker(inputField) {
-            the_input = inputField;
-            var inputOffset = inputField.offset();
-            var sidebarContentOffset = $('.sidebar-content').offset();
-            var inputHeight = inputField.outerHeight();
-            var datePicker = $(inputField.siblings()[2]);
-            var datePickerHeight = datePicker.outerHeight();
-            var windowHeight = $(window).height();
-            var sidebarContentHeight = $('#sidebar').height();
-
-            the_picker = datePicker;
-
-            // Check if the datepicker would be partially or fully outside the sidebar content
-            if (inputOffset.top + inputHeight + datePickerHeight > sidebarContentOffset.top + sidebarContentHeight) {
-                datePicker.css('top', datePickerHeight * -1 + "px");
-            }
-        }
-
-        function openPicker(which) {
-            $("#" + which.id).datepicker('show');
-        }
-
-        /**
-         * openLegend
-         * Opens the legend for the selected layer
-         * @param {string} which - Name of layer to open legend for
-         */
-        function openLegend(which) {
-            console.log("opening");
-            close_dialog();
-            const dialog = $("#dialog");
-            let id = which.replace("TimeLayer", "") + "ens";
-            const active_layer = getLayer(which) || getLayer($("[id^=" + id + "]")[0].id);
-            const src =
-                active_layer.url +
-                "&REQUEST=GetLegendGraphic&LAYER=" +
-                active_layer.layers +
-                "&colorscalerange=" +
-                active_layer.colorrange +
-                "&style=" + active_layer.styles.substring(active_layer.styles.indexOf("/") + 1) +
-                "&format=image/png" ; //+
-                // active_layer.styles.substring(active_layer.styles.indexOf("/") + 1);
-            const style = "text-align:center;";
-            dialog.html(
-                '<p style="' + style + '"><img src="' + src + '" alt="legend"></p>'
-            );
-            dialog.dialog({
-                title: active_layer.title,
-                resizable: {handles: "se"},
-                width: 169,
-                height: 322,
-                position: {
-                    my: "center",
-                    at: "center",
-                    of: window
-                }
-            });
-            $(".ui-dialog-title").attr("title", active_layer.title);
-        }
-
-        /**
-         * close_dialog
-         * Closes the dialog if it is open
-         */
-        function close_dialog() {
-            const dialog = $("#dialog");
-            if (dialog.dialog()) {
-                dialog.dialog("close");
-            }
-        }
-
-        /**
-         * getLayer
-         * Helper function to get a layer out of globalLayerArray
-         * @param {string} which - name of layer requesting
-         * @returns layer json object
-         */
-        function getLayer(which) {
-            return client_layers.find(
-                (item) => item.id === which.replace("TimeLayer", "")
-            );
-        }
-
-        /**
-         * handleBaseMapSwitch
-         * Switches the basemap to the user selected map.
-         * @param {string} which - The Key of the basemap
-         */
-        function handleBaseMapSwitch(which) {
-            if (which.currentTarget) {
-                which = which.currentTarget.getAttribute('datavalue');
-            }
-            map.removeLayer(baseLayers[active_basemap]);
-            active_basemap = which;
-            baseLayers[active_basemap].addTo(map);
-            changeDzongkhagLayerStyle(which);
-        }
-
-        function validateYear(input) {
-            var year = parseInt(input.value);
-            if (isNaN(year)) {
-                alert("Please enter a valid year.");
-                input.value = ""; // Clear the input field
-            } else if (year < 2016 || year > 2022) {
-                alert("Please enter a valid 4-digit year.");
-                input.value = ""; // Clear the input field
-            }
-        }
-
-        // Function to find the layer with the specified ID
-        function findLayerById(id) {
-            var foundLayer = null;
-            map.eachLayer(function (layer) {
-                if (layer.options && layer.options.id === id) {
-                    foundLayer = layer;
-                }
-            });
-            return foundLayer;
-        }
-
-        function changeDzongkhagLayerStyle(basemapName) {
-
-            {#dzongkhagLayer = findLayerById("dzongkhagLayer");#}
-            // Check the name of the basemap and set the fill color of dzongkhagLayer accordingly
-            const white = ["Gsatellite", "Satellite"]
-            const green = ["OSM", "Topo", "Terrain", "NatGeo"]
-            dzongkhagLayer.eachLayer(function (layer) {
-                // Define default style properties
-                var style = {
-                    fillColor: 'transparent', // Default fill color
-                    color: '#0D3309', // Default border color
-                    weight: 2 // Default border width
-                };
-
-                // Update style based on the basemapName
-                if (green.includes(basemapName)) {
-                    style.color = '#0D3309'; // Change fill color to green
-                } else if (white.includes(basemapName)) {
-                    style.color = '#ffffff'; // Change fill color to white
-                }
-
-                layer.setStyle(style);
-            });
-
-
-        }
-
-        /**
-         * layer_filter
-         * Helper function to filter layers by user input
-         * in the text field layer_filter
-         */
-        function layer_filter() {
-            const input = document.getElementById('layer_filter');
-            const filter = input.value.toUpperCase();
-            const layer_list = document.getElementById("layer-list");
-            const layers = layer_list.getElementsByTagName('li');
-
-            for (let i = 0; i < layers.length; i++) {
-                const label = layers[i].getElementsByClassName("cblabel")[0];
-                if (label) {
-                    const txtValue = label.textContent || label.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        layers[i].style.display = "";
-                    } else {
-                        layers[i].style.display = "none";
-                    }
-                }
-            }
-        }
-
-        function showNextElement(element) {
-            // Find the next sibling element
-            var nextElement = element.nextElementSibling;
-
-            // Remove the "hide" class from the next element
-            if (nextElement) {
-                nextElement.classList.remove("hide");
-            }
-        }
-
-        function setupMonthlyPicker() {
-            $('.monthlypicker').each(function () {
-                var container = $(this).parent();
-
-
-                $(this).datepicker({
-                    format: "mm-yyyy", // Set the format to display month and year
-                    viewMode: "months", // Display the datepicker in month view mode
-                    minViewMode: "months", // Set the minimum view mode to months
-                    autoclose: true,
-                    container: container,
-                    orientation: 'auto',
-                    startDate: "01-2002", // Set the start date to January 2016
-                    endDate: "12-2023", // Set the end date to December 2022
-                    defaultViewDate: {year: 2016, month: 0}
-                }).on('show', function (event) {
-                    positionDatepicker($(this));
-                });
-            });
-
-        }
-
-        function setupYearPicker() {
-
-            $('.yearpicker').each(function () {
-                var container = $(this).parent();
-
-                $(this).datepicker({
-                    format: "yyyy",
-                    viewMode: "years",
-                    startView: "years",
-                    minViewMode: "years",
-                    maxViewMode: "years",
-                    autoclose: true,
-                    container: container,
-                    orientation: 'auto',
-                    startDate: new Date(2002, 0, 1)
-                }).on('show', function (event) {
-
-
-                    var currentYear = $(this).datepicker('getDate').getFullYear();
-
-                    var startYear = 2002;
-                    var endYear = 2023;
-                    var numYears = endYear - startYear + 1;
-
-
-                    // Clear out all existing years
-                    $('.datepicker-years .datepicker-switch').text(startYear);
-
-
-                    // Generate and append years
-                    var yearsHtml = '';
-                    for (var i = 0; i < numYears; i++) {
-                        var year = startYear + i;
-                        yearsHtml += '<span class="year' + (year === currentYear ? ' active' : '') + '">' + year + '</span>';
-                    }
-                    $('.datepicker-years tbody').html('<tr><td colspan="7">' + yearsHtml + '</td></tr>');
-
-                    positionDatepicker($(this));
-
-                });
-
-            });
-        }
-
-var yearSlider;
-            function makeSlider() {
-                // Initialize noUiSlider
-                yearSlider = document.getElementById('yearSlider');
-                noUiSlider.create(yearSlider, {
-                    start: [2016], // Initial value
-                    step: 1,
-                    range: {
-                        'min': [2016],
-                        'max': [2022]
-                    },
-                    pips: {
-                        mode: 'steps',
-                        density: -1
-                    }
-                });
-                updateSliderRange();
-
-// Listen for change event
-                yearSlider.noUiSlider.on('update', function (values, handle) {
-                    // set pie chart data for selected year
-                    setPieYear(parseInt(values[handle]));
-
-                });
-            }
-
-            function getPieChartData(data, year) {
-                // Find the dzongkhag data for the selected year
-                // Find the dzongkhag data for the selected year
-                var piedata = data.map(function (item) {
-                    var piedata = item.values.find(function (value) {
-                        return value.year === year;
-                    });
-                    return {
-                        name: item.name,
-                        y: piedata ? piedata.value : 0
-                    };
-                });
-
-                return piedata.filter(function (item) {
-                    return item.y > 0; // Remove dzongkhags with zero values
-                });
-            }
-
-            var selectedYear = 2016;
-        var all_active = true;
-
-            function setPieYear(year) {
-
-                let data;
-                if(all_active){
-                    data = full_data;
-                    piechart.setTitle({ text: `Paddy area distribution in acres by Dzongkhag`});
-                } else{
-                piechart.setTitle({ text: `Paddy area distribution in acres by Gewog`});
-                    data = debug_dzongkhag_data;
-                }
-
-                selectedYear = year;
-                // Update the pie chart data
-                piechart.series[0].setData(getPieChartData(get_formatted_data(data), selectedYear));
-
-
-
-            }
-
-        window.addEventListener('resize', updateAspectRatio);
-
-        function updateAspectRatio() {
-            var aspectRatio = 9 / 16; // 9:16 aspect ratio
-            var containers = document.querySelectorAll('.aspect-ratio-container');
-            containers.forEach(function (container) {
-                var containerWidth = container.offsetWidth;
-                var containerHeight = containerWidth * aspectRatio;
-                container.style.height = containerHeight + 'px';
-            });
-        }
-
-        const levels = {
-            country: ["Bhutan"],
-            dzongkhag: [
-                "All Dzongkhags",
-                "Bumthang",
-                "Chukha",
-                "Dagana",
-                "Gasa",
-                "Haa",
-                "Lhuentse",
-                "Mongar",
-                "Paro",
-                "Pemagatshel",
-                "Punakha",
-                "Samdrup Jongkhar",
-                "Samtse",
-                "Sarpang",
-                "Thimphu",
-                "Trashigang",
-                "Trashiyangtse",
-                "Trongsa",
-                "Tsirang",
-                "Wangdue Phodrang",
-                "Zhemgang"
-            ], // Replace with actual Dzongkhags of Bhutan
-            gewog: ["walla", "whalla", "bing", "bang"], // Replace with actual Gewogs of Bhutan
-        };
-
-        let selectedValue = "Bhutan"; // Variable to store selected value
-
-        function handleChange() {
-            selectedValue = document.getElementById("levelSelect").value;
-            const dropdownContainer = document.getElementById("dropdownContainer");
-
-            if (selectedValue === "country") {
-                dropdownContainer.innerHTML = `<input type="text" style="width:1px; visibility: hidden;">
-                                                <select id="levelDropdown"><option>Bhutan</option></select>`; // Clear dropdown
-            } else {
-                const options = levels[selectedValue].map(option => `<option>${option}</option>`).join('');
-                dropdownContainer.innerHTML = `<input type="text" id="filterInput" onkeyup="filterDropdown()" onfocus="openDropdown()" placeholder="Search...">
-                                                  <select id="levelDropdown" onchange="updateFilter();" onclick="updateFilter();">${options}</select> `;
-
-            }
-        }
-
-        function updateFilter() {
-            const dropdown = document.getElementById("levelDropdown");
-            const selectedOption = dropdown.options[dropdown.selectedIndex].textContent;
-            document.getElementById("filterInput").value = selectedOption;
-            closeDropdown();
-        }
-
-        function filterDropdown() {
-            const input = document.getElementById("filterInput").value.toUpperCase();
-            const dropdown = document.getElementById("levelDropdown");
-            const options = dropdown.getElementsByTagName("option");
-            let closestMatch = "";
-
-            for (let i = 0; i < options.length; i++) {
-                const text = options[i].textContent.toUpperCase();
-                if (text.indexOf(input) > -1) {
-                    options[i].style.display = "";
-                    if (!closestMatch) {
-                        closestMatch = options[i].textContent;
-                    }
-                } else {
-                    options[i].style.display = "none";
-                }
-            }
-
-            // Update selected value to the closest match
-            if (closestMatch && !options.namedItem(selectedValue)) {
-                dropdown.value = closestMatch;
-            }
-        }
-
-        function openDropdown() {
-            const dropdown = document.getElementById("levelDropdown");
-            dropdown.size = dropdown.options.length;
-            dropdown.style.position = "absolute"; // Position dropdown absolutely
-        }
-
-        function closeDropdown() {
-            const dropdown = document.getElementById("levelDropdown");
-            dropdown.size = 1;
-            dropdown.style.position = ""; // Reset position
-        }
-
-        function filterOptions(optionsID, filterID) {
-
-            var input, filter, ul, li, a, i;
-            input = document.getElementById(filterID);
-            filter = input.value.toUpperCase();
-            ul = document.getElementById(optionsID);
-            li = ul.getElementsByTagName("li");
-            for (i = 1; i < li.length; i++) {
-                a = li[i].getElementsByTagName("a")[0];
-                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = "";
-                } else {
-                    li[i].style.display = "none";
-                }
-            }
-        }
-
-        function addFilterBox(optionsID, filterID) {
-            var filterInput = document.createElement("input");
-            filterInput.setAttribute("class", "form-control");
-            filterInput.setAttribute("type", "text");
-            filterInput.setAttribute("id", filterID);
-            filterInput.setAttribute("onkeyup", "filterOptions('" + optionsID + "','" + filterID + "')");
-            filterInput.setAttribute("placeholder", "Search...");
-            var filterLi = document.createElement("li");
-            filterLi.appendChild(filterInput);
-            document.getElementById(optionsID).appendChild(filterLi);
-        }
-
-        function getGewogs(dzongkha) {
-            let country = $("#selectedCountry").text();
-            if (boundary["Countries"][country]["dzongkhags"][dzongkha]) {
-                return boundary["Countries"][country]["dzongkhags"][dzongkha]["gewogs"];
-            } else {
-                return [];
-            }
-        }
-
-        function loadDzongkhags(country) {
-            // Clear the previous options
-            document.getElementById("dzongkhagOptions").innerHTML = "";
-            addFilterBox("dzongkhagOptions", "dzongkhagFilter")
-
-            const dzongkhags = getDzongkhags(country);
-            const dzongkhas_list = []
-            for (const key in dzongkhags) {
-
-                dzongkhas_list.push(dzongkhags[key]);
-
-            }
-
-
-            addOptions([{
-                name: "All Dzongkhags",
-                dzongkhag_id: "-999"
-            }, ...dzongkhas_list], "dzongkhagOptions", "dzongkhagFilter");
-        }
-
-        function getDzongkhags(country) {
-            if (boundary["Countries"][country]) {
-                return boundary["Countries"][country]["dzongkhags"];
-            } else {
-                return [];
-            }
-        }
-
-        function addOptions(options, dropdownID, filterID, isGewog) {
-            const gewog = isGewog ? "Gewog" : "";
-            var ul = document.getElementById(dropdownID);
-
-
-            options.forEach(function (option) {
-                var li = document.createElement("li");
-                var a = document.createElement("a");
-                a.setAttribute("href", "#");
-                a.setAttribute("class", "dropdown-item");
-                if (isGewog) {
-                    a.setAttribute("onclick", "select" + gewog + "Option('" + option.name + "', '" + option.gewog_id + "')");
-                } else {
-                    a.setAttribute("onclick", "selectOption('" + option.name + "', '" + option.dzongkhag_id + "')");
-                }
-                a.textContent = option.name;
-                li.appendChild(a);
-                ul.appendChild(li);
-            });
-        }
-
-        function selectGewogOption(name, id) {
-            // Update the label of the second dropdown
-            document.getElementById("selectGewog").innerHTML = name;
-            $("#gewogsFilter").val('');
-            filterOptions('gewogOptions', 'gewogsFilter');
-            if (id == "-999") {
-                gewog_features.clearLayers();
-                // ********   selectOption()
-                var buttonText = document.getElementById('selectDzongkhag').innerText.trim();
-
-                // Step 2: Iterate through the list items inside the dropdown menu
-                var listItems = document.querySelectorAll('#dzongkhagOptions .dropdown-item');
-                listItems.forEach(function (listItem) {
-                    // Step 3: Extract the text of the <a> tag
-                    var linkText = listItem.innerText.trim();
-
-                    // Step 4: If the text matches the text of the button, trigger a click event on that <a> tag
-                    if (linkText === buttonText) {
-                        listItem.click();
-                        // If you want to stop after finding the first match, you can break the loop here
-                        // return;
-                    }
-                });
-            } else {
-                highlightTableRow(name);
-                $.ajax({
-                    url: '/get-gewog-data/' + id, // Adjust the URL as per your Django API endpoint
-                    method: 'GET',
-                    success: function (gewog_data) {
-
-                        buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
-                            name: 'Base 2020, COVID Outbreak',
-                            data: gewog_data["paddy_loss"].map(function (data) {
-                                return [data.year, data.val];
-                            })
-                        }], [ 'rgb(0,93,14)']);
-
-                        buildChart('rice_area', 'Paddy Area', 'something different', 'line', '' , 'acres', '', [{
-                            name: 'Paddy Area',
-                            data: gewog_data["rice_area"].map(function (data) {
-                            return [data.x, data.val];
-                        })
-                        }], [ 'rgb(0,93,14)']);
-
-
-                         buildChart('rice_yield', 'Paddy Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
-                            name: 'Yield',
-                            data: gewog_data["yield"].map(function (data) {
-                                return [data.x, data.yield];
-                            })
-                        }, {
-                            name: 'Predicted',
-                            data: gewog_data["yield"].map(function (data) {
-                                return [data.x, data.predicted];
-                            })
-                        }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
-
-                        var precip_data = {
-                            name: 'Precipitation',
-                            data: gewog_data["precipitation"].map(function (data) {
-                                return  [data.x, data.val];
-                            }),
-                            unit: 'mm'
-                        }
-
-                          const temp_min = {
-                            name: 'Temperature Min',
-                            data: gewog_data["temperature"].map(function (data) {
-                                return [data.x, data.min];
-                            }),
-                            unit: '&deg;C'
-                        };
-
-                        const temp_max = {
-                            name: 'Temperature Max',
-                            data: gewog_data["temperature"].map(function (data) {
-                                return [data.x, data.max];
-                            }),
-                            unit: '&deg;C'
-                        };
-
-                        // uncomment this line when temp data for Dzongkhags is loaded
-                       buildChart('temperature-spark', 'Temperature', '', 'line', '', '&deg;C', '', [temp_min, temp_max], ['#8AAFFF', '#FF0200']);
-
-
-
-                        var ndvi_data = {
-                            name: 'NDVI',
-                            data: gewog_data["ndvi"].map(function (data) {
-                                return  [data.x, data.val];
-                            }),
-                            unit: 'mm'
-                        };
-
-
-                        buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[ndvi_data],  ['rgb(0,93,14)']);
-
-                        const sm_data = {
-                            name: 'Soil Moisture',
-                            data: gewog_data["soil_moisture"].map(function (data) {
-                                return [data.x, data.val];
-                            }),
-                            unit: 'mm'
-                        }
-
-
-                        buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '', [sm_data], ['rgb(0,93,14)']);
-
-
-
-                         buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '',[precip_data],  ['rgb(0,93,14)']);
-
-
-
-                    },
-                    error: function (error) {
-                        // Handle errors here
-                        console.error('Error getting new data:', error);
-                    }
-                });
-
-
-                gewog_features.eachLayer(function (layer) {
-                    // Check if the layer's feature id matches the provided featureId
-                    if (layer.feature.properties.id === id) {
-                        // Fit the map bounds to the geometry of the matched layer
-                        map.fitBounds(layer.getBounds());
-                    }
-                });
-            }
-            updateSliderRange();
-            console.log("Ajax to get and update values for gewog");
-        }
-var debug_dzongkhag_data;
-        var debug_me3;
-        function selectOption(option, dzongkhagID) {
-
-            // Update the label of the second dropdown
-            document.getElementById("selectDzongkhag").innerHTML = option;
-            if (option.toLowerCase() === "all dzongkhags") {
-                $("#gewoglist").hide();
-                {# createTable({#}
-                {#     "active": "Bhutan",#}
-                {#    "admin_level": "Dzongkhag",#}
-                {#    "data": get_formatted_data(full_data)#}
-                {#});#}
-                gewog_features.clearLayers();
-                buildChart('paddy_gain', 'Paddy change since base year', 'Bumthang Dzongkhag 2016: 10.96 acres', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
-                    name: 'Base 2008, Transition to democracy',
-                    data: full_data["paddy_gain"].map(function (data) {
-                            return [data.year, data.val];
-                        })
-                }, {
-                    name: 'Base 2020, COVID Outbreak',
-                    data: full_data["paddy_loss"].map(function (data) {
-                            return [data.year, data.val];
-                        })
-                }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
-
-                buildChart('rice_area', 'Paddy Area', 'something different', 'line', '' , 'acres', '', [{
-                            name: 'Paddy Area',
-                            data: full_data["rice_area"].map(function (data) {
-                            return [data.x, data.val];
-                        })
-                        }], [ 'rgb(0,93,14)']);
-                /* This is incorrect, not sure what is going wrong, but need to debug please */
-
-                 buildChart('rice_yield', 'Paddy Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
-                    name: 'Yield',
-                    data: full_data["yield"].map(function (data) {
-                            return [data.x, data.yield];
-                        })
-                }, {
-                    name: 'Predicted',
-                    data: full_data["yield"].map(function (data) {
-                            return [data.x, data.predicted];
-                        })
-                }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
-
-                debug_me3 = [{
-                        name: 'NDVI',
-                        data: full_data["ndvi"].map(function (data) {
-                            return [data.x, data.val];
-                        }),
-                        unit: 'NDVI'
-                    }];
-                buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '',[{
-                        name: 'NDVI',
-                        data: full_data["ndvi"].map(function (data) {
-                            return [data.x, data.val];
-                        }),
-                        unit: 'NDVI'
-                    }],  ['rgb(0,93,14)']);
-
-
-
-                map.fitBounds(dzongkhagLayer.getBounds());
-                all_active = true;
-                setPieYear(2016);
-            } else {
-                $.ajax({
-                    url: '/get-dzongkhag-data/' + dzongkhagID, // Adjust the URL as per your Django API endpoint
-                    method: 'GET',
-                    success: function (dzongkhag_data) {
-
-                        const tabledata = {
-                            "active": getFeatureByDzongkhagID(dzongkhagID).feature.properties.name,
-                            "admin_level": "Gewog",
-                            "data": get_formatted_data(dzongkhag_data)
-                        }
-
-                        buildChart('paddy_gain', 'Paddy change since base year', 'something different', 'column', 2017, 'acres', 'Range: 2016 to 2022', [{
-                            name: 'Base 2008, Transition to democracy',
-                            data: dzongkhag_data["paddy_gain"].map(function (data) {
-                                return [data.year, data.val];
-                            })
-                        }, {
-                            name: 'Base 2020, COVID Outbreak',
-                            data: dzongkhag_data["paddy_loss"].map(function (data) {
-                                return [data.year, data.val];
-                            })
-                        }], ['rgb(90,254,44)', 'rgb(0,93,14)']);
-
-                        buildChart('rice_area', 'Paddy Area', 'something different', 'line', '' , 'acres', '', [{
-                            name: 'Rice Area',
-                            data: dzongkhag_data["rice_area"].map(function (data) {
-                            return [data.x, data.val];
-                        })
-                        }], [ 'rgb(0,93,14)']);
-
-
-                        debug_dzongkhag_data = dzongkhag_data;
-
-                        buildChart('rice_yield', 'Paddy Yield vs Predicted', '', 'line', 2017, 'Kg/acres', '', [{
-                            name: 'Yield',
-                            data: dzongkhag_data["yield"].map(function (data) {
-                                return [data.x, data.yield];
-                            })
-                        }, {
-                            name: 'Predicted',
-                            data: dzongkhag_data["yield"].map(function (data) {
-                                return [data.x, data.predicted];
-                            })
-                        }], ['rgb(90,254,44)', 'rgb(0,93,14)'], true);
-
-
-                        all_active = false;
-
-                        setPieYear(2018);
-                        const ndvi_data = {
-                            name: 'NDVI',
-                            data: dzongkhag_data["ndvi"].map(function (data) {
-                                return [data.x, data.val];
-                            }),
-                            unit: 'mm'
-                        }
-
-                        buildChart('ndvi-spark', 'NDVI', '', 'line', '', 'NDVI', '', [ndvi_data], ['rgb(0,93,14)']);
-
-                        const precip_data = {
-                            name: 'Precipitation',
-                            data: dzongkhag_data["precipitation"].map(function (data) {
-                                return [data.x, data.val];
-                            }),
-                            unit: 'mm'
-                        }
-
-                        buildChart('precipitation-spark', 'Monthly Precipitation', '', 'line', '', 'mm', '', [precip_data], ['rgb(0,93,14)']);
-
-                        // adding yield
-
-                        const sm_data = {
-                            name: 'Soil Moisture',
-                            data: dzongkhag_data["soil_moisture"].map(function (data) {
-                                return [data.x, data.val];
-                            }),
-                            unit: 'mm'
-                        }
-
-
-                        buildChart('soil-moisture-spark', 'Soil Moisture', '', 'line', '', 'mm', '', [sm_data], ['rgb(0,93,14)']);
-
-                        // adding temperature-spark
-
-
-                        const temp_min = {
-                            name: 'Temperature Min',
-                            data: dzongkhag_data["temperature"].map(function (data) {
-                                return [data.x, data.min];
-                            }),
-                            unit: '&deg;C'
-                        };
-
-                        const temp_max = {
-                            name: 'Temperature Max',
-                            data: dzongkhag_data["temperature"].map(function (data) {
-                                return [data.x, data.max];
-                            }),
-                            unit: '&deg;C'
-                        };
-
-                        // uncomment this line when temp data for Dzongkhags is loaded
-                       buildChart('temperature-spark', 'Temperature', '', 'line', '', '&deg;C', '', [temp_min, temp_max], ['#8AAFFF', '#FF0200']);
-
-
-                        {#createTable(tabledata);#}
-                        updateSliderRange();
-                        // Clear all graphs and load with the new data
-                    },
-                    error: function (error) {
-                        // Handle errors here
-                        console.error('Error getting new data:', error);
-                    }
-                });
-
-
-                loadGewogs(option, dzongkhagID);
-                document.getElementById("selectGewog").innerHTML = "All Gewogs";
-                $("#gewoglist").show();
-
-                let feature = getFeatureByDzongkhagID(dzongkhagID);
-
-                // Fit map bounds to the feature's geometry
-                if (feature) {
-                    map.fitBounds(feature.getBounds());
-                }
-            }
-            $("#dzongkhagFilter").val('');
-            filterOptions('dzongkhagOptions', 'dzongkhagFilter');
-            updateSliderRange();
-        }
-
-        function getFeatureByDzongkhagID(dzongkhagID) {
-            // Iterate through the GeoJSON layer's features to find the one with the matching dzongkhag ID
-            let feature = null;
-            dzongkhagLayer.eachLayer(function (layer) {
-                if (layer.feature.properties.id === dzongkhagID) {
-                    feature = layer;
-                }
-            });
-            return feature;
-        }
-
-        function setupMenu() {
-            // Get the button element
-            var selectedCountryBtn = document.getElementById("selectedCountry");
-            // Get the ul element
-            var countryList = document.getElementById("countryList");
-
-            // Check the number of countries
-            var countryCount = Object.keys(boundary["Countries"]).length;
-
-            // If there's only one country, set the button text to that country's name
-            if (countryCount === 1) {
-                var countryName = Object.keys(boundary["Countries"])[0];
-                selectedCountryBtn.textContent = countryName;
-                $("#selectedCountry").removeClass("dropdown-toggle");
-                $("#selectedCountry").removeAttr("data-bs-toggle");
-                loadDzongkhags(countryName);
-                selectedCountryBtn.addEventListener("click", function() {
-                    selectOption("All Dzongkhags");
-                });
-            } else {
-                // If there are multiple countries, set the button text to "Select Country"
-                selectedCountryBtn.textContent = "Select Country";
-
-                // Add a list of countries sorted in alphabetical order
-                var countries = Object.keys(boundary["Countries"]).sort();
-                countries.forEach(function (country) {
-                    var li = document.createElement("li");
-                    var a = document.createElement("a");
-                    a.setAttribute("href", "#");
-                    a.setAttribute("class", "dropdown-item");
-                    a.textContent = country;
-                    // Add click event listener to load dzongkhags for the selected country
-                    a.addEventListener("click", function () {
-                        loadDzongkhags(country);
-                    });
-                    li.appendChild(a);
-                    countryList.appendChild(li);
-                });
-                $("#selectedCountry").addClass("dropdown-toggle");
-                $("#selectedCountry").attr("data-bs-toggle", "dropdown");
-                $(countryList).removeClass("display");
-            }
-        }
-
-        let paddy_layer;
-        // Initialize a variable to track the status of compare_control
-        let compareControlAdded = false;
-        let compare_control;
-
-        function add_paddy_wms(year) {
-            if (paddy_layer) {
-                map.removeLayer(paddy_layer);
-            }
-            /*            paddy_layer = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area." + year + "0101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
-                            layers: "paddy",
-                            format: "image/png",
-                            transparent: true,
-                            colorscalerange: '.5,1',
-                            abovemaxcolor: "transparent",
-                            belowmincolor: "transparent",
-                            numcolorbands: 100,
-                            styles: 'boxfill/paddy',
-                            tileSize: 256,
-                            version: "1.3.0"
-                        });
-                        */
-            {#map.addLayer(paddy_layer);#}
-        }
-
-        function testCompare() {
-
-            paddy_layer16 = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area.20160101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
-                layers: "paddy",
-                format: "image/png",
-                transparent: true,
-                colorscalerange: '.5,1',
-                abovemaxcolor: "transparent",
-                belowmincolor: "transparent",
-                numcolorbands: 100,
-                styles: 'boxfill/paddy',
-                tileSize: 256,
-                version: "1.3.0",
-                pane: "left"
-            });
-            map.addLayer(paddy_layer16);
-
-            paddy_layer16_compare = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area.20160101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
-                layers: "paddy",
-                format: "image/png",
-                transparent: true,
-                colorscalerange: '.5,1',
-                abovemaxcolor: "transparent",
-                belowmincolor: "transparent",
-                numcolorbands: 100,
-                styles: 'boxfill/paddy_compare',
-                tileSize: 256,
-                version: "1.3.0",
-                pane: "right"
-            });
-            map.addLayer(paddy_layer16_compare);
-
-            paddy_layer20 = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area.20200101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
-                layers: "paddy",
-                format: "image/png",
-                transparent: true,
-                colorscalerange: '.5,1',
-                abovemaxcolor: "transparent",
-                belowmincolor: "transparent",
-                numcolorbands: 100,
-                styles: 'boxfill/paddy',
-                tileSize: 256,
-                version: "1.3.0",
-                pane: "right"
-            });
-            map.addLayer(paddy_layer20);
-
-            paddy_layer20_compare = L.tileLayer.wms("https://thredds.servirglobal.net/thredds/wms/cropmonitor/bhutan/paddy/paddy-area.20200101T000000Z.bhutan.30m.yearly.nc4?service=WMS&version=1.3.0&crs=EPSG%3A3857", {
-                layers: "paddy",
-                format: "image/png",
-                transparent: true,
-                colorscalerange: '.5,1',
-                abovemaxcolor: "transparent",
-                belowmincolor: "transparent",
-                numcolorbands: 100,
-                styles: 'boxfill/paddy_compare',
-                tileSize: 256,
-                version: "1.3.0",
-                pane: "left"
-            });
-            map.addLayer(paddy_layer20_compare);
-            compare_control = L.control.sideBySide([paddy_layer16, paddy_layer20_compare], [paddy_layer20, paddy_layer16_compare]).addTo(map);
-
-
-            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('min', '-0.01');
-            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('max', '1.01');
-
-            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseover', 'map.dragging.disable()')
-            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseout', 'map.dragging.enable()')
-        }
-
-        function toggleLayer(which) {
-            // Get date from the button and set b4 adding, else the layer and date will be out of sync
-            const date_control = $("#" + which + "_date");
-            if (map.hasLayer(overlayMaps[which])) {
-                map.removeLayer(overlayMaps[which]);
-
-                date_control.addClass("disabled");
-                date_control.prop("disabled", true);
-            } else {
-                map.addLayer(overlayMaps[which]);
-                date_control.removeClass("disabled");
-                date_control.prop("disabled", false);
-            }
-        }
-
-        function createLayer(item) {
-
-            const layer_obj = {
-                layers: item.layers,
-                format: "image/png",
-                transparent: true,
-                colorscalerange: item.colorrange,
-                abovemaxcolor: item.overrange,
-                belowmincolor: item.belowrange,
-                numcolorbands: 100,
-                styles: item.styles,
-                tileSize: 256,
-                version: "1.3.0",
-                time: item.default_year + "-01-01T00:00:00.000Z"
-            }
-            if(item.pane){
-                layer_obj.pane = item.pane;
-            }
-            if(item.time){
-                layer_obj.time = item.time;
-            }
-
-            overlayMaps[item.id] = L.tileLayer.wms(item.url + "&crs=EPSG%3A3857", layer_obj);
-            if (item.default_on === "True") {
-                toggleLayer(item.id);
-            }
-        }
-
-        function removeAllLayers(){
-            // Get all elements with class "rst__rowTitle"
-            var elements = document.getElementsByClassName("rst__rowTitle");
-
-            // Iterate over each element
-            for (var i = 0; i < elements.length; i++) {
-                var input = elements[i].querySelector('input[type="checkbox"]');
-
-                // Check if the input is checked
-                if (input.checked) {
-                    $(input).click();
-                }
-            }
-        }
-
-        function updateChangeLegend(layer, side) {
-            const target = document.getElementById(side + "_legend_image");
-            const right_legend = document.getElementById("right_legend_image");
-            let layer_name = "paddy_compare.png";
-
-            switch (layer) {
-                case "rice_":
-                    layer_name = "paddy";
-                    break;
-                case "maize_":
-                    layer_name = "maize";
-                    break;
-                case "crop_land_":
-                    layer_name = "crop_land";
-                    break;
-            }
-
-            if (side === "left") {
-                console.log("is left");
-                if ($("#left_compare_layer").val() === $("#right_compare_layer").val()) {
-                    let r_src = right_legend.src.split('/').pop();
-                    console.log(r_src);
-                    if (!r_src.indexOf("_compare") > -1) {
-                        console.log(r_src.indexOf("_compare"));
-                        let src_split = r_src.split(".");
-                        console.log("setting src to: " + static_url + "images/" + src_split[0] + "_compare." + src_split[1]);
-                        right_legend.src = static_url + "images/" + src_split[0] + "_compare." + src_split[1];
-                    }
-                } else {
-                    right_legend.src = right_legend.src.replace("_compare", '');
-                }
-            } else if (side === "right") {
-
-                if ($("#left_compare_layer").val() === $("#right_compare_layer").val()) {
-                    layer_name = layer_name + "_compare";
-                } else {
-                    layer_name = layer_name;
-                }
-            }
-
-            target.src = static_url + "images/" + layer_name + ".png";
-        }
-
-        function updateLayer(which) {
-
-
-            const id = which.id.replace("_date", "");
-
-            var layer = overlayMaps[id];
-
-            // Check if the layer is a WMS layer
-            if (layer instanceof L.TileLayer.WMS) {
-                // Update the time parameter
-                if (which.value.indexOf("-") > 0) {
-                    const date_values = which.value.split("-");
-                    layer.setParams({time: date_values[1] + "-" + date_values[0] + "-01T00:00:00.000Z"});
-                } else {
-
-                    layer.setParams({time: which.value + "-01-01T00:00:00.000Z"});
-                }
-            }
-        }
-
-        function navigateDate(inputId, direction) {
-            const input = document.getElementById(inputId);
-            const dateValue = input.value;
-
-            // Extract year and month from the date value
-            const dateValues = dateValue.split("-");
-            const year = parseInt(dateValues[0]);
-            const month = parseInt(dateValues[1]) || 1; // Default to 1 if month is not provided
-
-            // Calculate the new date based on the direction
-            let newYear = year;
-            let newMonth = month;
-            if (direction === 'prev') {
-                newMonth -= 1;
-                if (newMonth < 1) {
-                    newMonth = 12;
-                    newYear -= 1;
-                }
-            } else if (direction === 'next') {
-                newMonth += 1;
-                if (newMonth > 12) {
-                    newMonth = 1;
-                    newYear += 1;
-                }
-            }
-
-            // Update the input value with the new date
-            input.value = newYear + "-" + (newMonth < 10 ? '0' : '') + newMonth;
-
-            // Trigger the onchange event to update the layer
-            updateLayer(input);
-        }
-
-
-        /**
-         * sortableLayerSetup
-         * Sets up the sortable layers in the layer manager
-         * jshint says onChange is not used, but it is used.
-         * DO NOT REMOVE onChange
-         */
-        function sortableLayerSetup() {
-            $("ol.layers").sortable({
-                group: "simple_with_animation",
-                handle: ".rst__moveHandle",
-                revert: true,
-                pullPlaceholder: true,
-                ghostClass: "ui-sortable-placeholder",  // Class name for the drop placeholder
-                chosenClass: "sortable-chosen",  // Class name for the chosen item
-                dragClass: "sortable-drag",  // Class name for the dragging item
-                animation: 150,
-                easing: "cubic-bezier(1, 0, 0, 1)",
-                change: function (event, ui) {
-                    adjustLayerIndex(ui);
-                },
-                update: function () {
-                    adjustLayerIndex();
-                },
-                filter: ".slider",
-                tolerance: "pointer",
-            });
-        }
-
-        /**
-         * adjustLayerIndex
-         * adjusts the layer indexes to match the order in the layer manager
-         */
-        function adjustLayerIndex(ui) {
-
-            let count = 10;
-            const ol_layers = $("ol.layers");
-
-            if (ui) {
-                const current_index = ui.placeholder.index();
-                const dragging_id = ui.helper[0].id;
-
-                // Remove the dragging element temporarily
-                const dragging_element = ol_layers.find(`#${dragging_id}`).detach();
-
-                // Insert the dragging element at the correct position
-                if (current_index === ol_layers.children().length) {
-                    // Insert after the last element
-                    ol_layers.append(dragging_element);
-                } else {
-                    ol_layers.children().eq(current_index).before(dragging_element);
-                }
-            }
-            const li_elements = ol_layers.find("li").toArray().reverse();
-            // Re-index the overlayMaps
-            li_elements.forEach(function (element) {
-                const id = $(element)[0].id.replace("_node", "");
-                if (overlayMaps[id]) {
-                    overlayMaps[id].setZIndex(count);
-                    count++;
-                } else {
-                    const ensId = id + "ens";
-                    $("[id^=" + ensId + "]").each(function () {
-                        overlayMaps[$(this)[0].id].setZIndex(count);
-                        count++;
-                    });
-                }
-            });
-        }
-
-        function set_layer_opacity(layer_id, value) {
-            overlayMaps[layer_id].setOpacity(value / 100);
-
-        }
-
-        // Variables to keep track of current step
-        var currentStep = 1;
-
-        // Function to show the next step
-        function nextStep() {
-            var nextStepId = "compareStep" + (currentStep + 1);
-            var currentStepId = "compareStep" + currentStep;
-            var nextStepDiv = document.getElementById(nextStepId);
-            var currentStepDiv = document.getElementById(currentStepId);
-            if (nextStepDiv) {
-                currentStepDiv.style.display = "none";
-                nextStepDiv.style.display = "block";
-                currentStep++;
-            }
-        }
-
-        // Function to show the previous step
-        function prevStep() {
-            var prevStepId = "compareStep" + (currentStep - 1);
-            var currentStepId = "compareStep" + currentStep;
-            var prevStepDiv = document.getElementById(prevStepId);
-            var currentStepDiv = document.getElementById(currentStepId);
-            if (prevStepDiv) {
-                currentStepDiv.style.display = "none";
-                prevStepDiv.style.display = "block";
-                currentStep--;
-            }
-        }
-
-        // Function to handle user's selection of layers
-        function proceedToStep3() {
-            // Add logic here to handle layer selection
-            // For now, just move to the next step
-            nextStep();
-        }
-
-        // Function to handle user's selection of dates
-        function proceedToStep4() {
-            // Add logic here to handle date selection
-            // For now, just move to the next step
-            nextStep();
-        }
-
-        function removeCompareLayers() {
-            overlayMaps = Object.keys(overlayMaps).filter(objKey =>
-                !objKey.includes("compare")).reduce((newObj, key) => {
-                newObj[key] = overlayMaps[key];
-                return newObj;
-            }, {});
-        }
-
-        function clear_compare_variables(){
-             if(compare_left_dom && map.hasLayer(compare_left_dom)){
-
-                map.removeLayer(compare_left_dom);
-            }
-            if(compare_left_pass && map.hasLayer(compare_left_pass)){
-                map.removeLayer(compare_left_pass);
-            }
-            if(compare_right_dom && map.hasLayer(compare_right_dom)){
-                map.removeLayer(compare_right_dom);
-
-            }
-            if(compare_right_pass && map.hasLayer(compare_right_pass)){
-                map.removeLayer(compare_right_pass);
-
-            }
-            compare_left_dom = null;
-            compare_left_pass = null;
-            compare_right_dom = null;
-            compare_right_pass = null;
-             removeCompareLayers();
-        }
-
-
-        // Function to handle user's confirmation and visualization
-        function performComparison() {
-            removeComparison();
-            // first removeCompareLayer for both sides if they exist
-            // Add logic here to perform comparison and visualize the results
-            // For now, just alert the user and reset to the first step
-            const left_base_id = $("#left_compare_layer").val();
-            const right_base_id = $("#right_compare_layer").val();
-
-            let contrast = "";
-            if (left_base_id == right_base_id) {
-                contrast = "_compare";
-            }
-
-            const left_time = $("#left_compare_date").val();
-            const right_time = $("#right_compare_date").val();
-
-
-
-
-            const left_string = JSON.stringify(getLayer(left_base_id));
-
-            let hold_left_dom = JSON.parse(left_string);
-
-            hold_left_dom.id = left_base_id + "compare_left_dom";
-            hold_left_dom.pane = "left";
-            hold_left_dom.time = left_time + "-01-01T00:00:00.000Z";
-            hold_left_dom.default_on = "True";
-
-
-            let hold_right_pass = JSON.parse(left_string);
-
-            hold_right_pass.id = left_base_id + "compare_right_pass";
-
-            hold_right_pass.pane = "right";
-            hold_right_pass.time = left_time + "-01-01T00:00:00.000Z";
-            hold_right_pass.default_on = "True";
-
-
-            const right_string = JSON.stringify(getLayer(right_base_id));
-
-            let hold_right_dom = JSON.parse(right_string);
-            hold_right_dom.pane = "right";
-            hold_right_dom.time = right_time + "-01-01T00:00:00.000Z";
-            hold_right_dom.styles = hold_right_dom.styles + contrast;
-
-            hold_right_dom.id = right_base_id + "compare_right_dom";
-            hold_right_dom.default_on = "True";
-
-            let hold_left_pass = JSON.parse(right_string);
-
-            hold_left_pass.id = right_base_id + "compare_left_pass";
-            hold_left_pass.time = right_time + "-01-01T00:00:00.000Z";
-
-
-            hold_left_pass.styles = hold_left_pass.styles + contrast;
-            hold_left_pass.pane = "left";
-            hold_left_pass.default_on = "True";
-
-
-
-            {#createLayer(hold_left_pass);#}
-            createLayer(hold_left_dom);
-
-            createLayer(hold_right_pass);
-            createLayer(hold_right_dom);
-
-            compare_left_dom = overlayMaps[left_base_id + "compare_left_dom"];
-            compare_left_pass = overlayMaps[right_base_id + "compare_left_pass"];
-            compare_right_dom = overlayMaps[right_base_id + "compare_right_dom"];
-            compare_right_pass = overlayMaps[left_base_id + "compare_right_pass"];
-
-
-            compare_control = L.control.sideBySide([compare_left_dom], [compare_right_dom, compare_right_pass]).addTo(map);
-            //compare_control = L.control.sideBySide([compare_left_dom, compare_left_pass], [compare_right_dom, compare_right_pass]).addTo(map);
-
-
-            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('min', '-0.01');
-            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('max', '1.01');
-
-            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseover', 'map.dragging.disable()')
-            document.getElementsByClassName('leaflet-sbs-range')[0].setAttribute('onmouseout', 'map.dragging.enable()')
-
-            compareControlAdded = true;
-            // save the ids globally, so they can be removed as needed here as well as in the exit
-
-        }
-
-        function removeComparison(){
-            // implement this correctly with the dynamically created layers
-            if(compareControlAdded) {
-                clear_compare_variables();
-                map.removeControl(compare_control);
-                compareControlAdded = false;
-            }
-        }
-
-        // Function to reset to the first step
-        function resetToStep1() {
-            currentStep = 1;
-            for (var i = 2; i <= 4; i++) {
-                var stepId = "compareStep" + i;
-                var stepDiv = document.getElementById(stepId);
-                if (stepDiv) {
-                    stepDiv.style.display = "none";
-                }
-            }
-            var step1Div = document.getElementById("compareStep1");
-            if (step1Div) {
-                step1Div.style.display = "block";
-            }
-        }
-function selectcompare(which){
-            console.log("do something about:");
-            console.log(this);
-}
 
     </script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
 
 
 {% endblock %}
@@ -2265,7 +95,7 @@ function selectcompare(which){
 {% block content %}
 
     <div class="container-fluid p-0  bg-white">
-        <div class="row row-sm sidebar-scroller" >
+        <div class="row row-sm sidebar-scroller">
             <div class="col-xl-9 mg-t-20 sidebar-scroller" style="padding-left: 0; z-index: 1006;">
                 <div class="col-12 d-flex justify-content-center"
                      style="background-color: #909d6b94; position: absolute; z-index: 1000; width: 99%;">
@@ -2320,10 +150,6 @@ function selectcompare(which){
                             </li>
                         </ul>
                         <ul role="tablist">
-{#                            <li id="tour_box_blink" class="tour_box_blink">#}
-{#                                <a role="tab" id="tour_link" onclick="open_tour()" title="Open interactive tour"><i#}
-{#                                        id="tour_icon" class="fas fa-info-circle tour_icon_blink"></i></a>#}
-{#                            </li>#}
                         </ul>
                     </div>
 
@@ -2337,8 +163,8 @@ function selectcompare(which){
                               <i class="fas fa-caret-left"></i>
                             </span>
                                 </h1>
-                               <!-- Step 1: Introduction and Instructions -->
-                                <div id="compareStep1" style="display: none; padding:5px;">
+                                <!-- Step 1: Introduction and Instructions -->
+                                <div id="compare_tool" style="display: none; padding:5px;">
                                     <h2 class="step-marker">Introduction</h2>
                                     <p>Welcome to the Layer Comparison Tool. This tool empowers you to explore and
                                         compare various layers of data on a map, facilitating insightful analysis of
@@ -2353,27 +179,27 @@ function selectcompare(which){
                                         displayed via the comparison tool.
                                     </p>
 
-
                                     <p>Here's how it works:</p>
                                     <ol style="padding-left: 1rem;">
                                         <li>Choose Layers and Dates:
                                             <ul>
-                                                <li>On the left side of the map, select a layer and year as a base 
+                                                <li>On the left side of the map, select a layer and year as a base
                                                     comparison.
                                                 </li>
-                                                <li>On the right side of the map, select the compare layer and date. 
+                                                <li>On the right side of the map, select the compare layer and date.
                                                 </li>
                                             </ul>
                                         </li>
                                         <li>Comparison Display:
                                             <ul>
-                                                <li>The map will display the base comparison layer on each side, with 
-                                                    the compare layer loaded on the right side above to highlight 
+                                                <li>The map will display the base comparison layer on each side, with
+                                                    the compare layer loaded on the right side above to highlight
                                                     the differences.
                                                 </li>
                                                 <li>If the layers are the same data type the left side base comparison
-                                                     will retain the original layer color scheme however,
-                                                    right side compare contrasting color scheme.</li>
+                                                    will retain the original layer color scheme however,
+                                                    right side compare contrasting color scheme.
+                                                </li>
                                                 <li>You will notice the associated legend change accordingly</li>
                                                 <li>This visualization helps you to identify changes, trends, or
                                                     disparities between the selected layers.
@@ -2394,32 +220,36 @@ function selectcompare(which){
                                     <p>Ready to start comparing layers? Click on the "Next" button to begin the layer
                                         selection process.</p>
                                     <p style="text-align: right;">
-                                        <button onclick="nextStep()" class="wizard-button">Next</button>
+                                        <button onclick="toggle_instructions()" class="wizard-button">Next</button>
                                     </p>
                                 </div>
 
                                 <!-- Step 2: Layer Selection -->
-                                <div id="compareStep2" style=" padding:5px;">
+                                <div id="compare_instructions" style=" padding:5px;">
                                     <h2 class="step-marker">Choose Layers to Compare</h2>
 
                                     <div id="layer-selection">
-                                       
-                                        If you have layers already on the map that you intend to compare,
-                                        we recommend disabling them from the layer panel prior to adding them to
-                                        this tool to avoid having duplicate and possibly misleading layers visible.
-                                    You can remove them from the map with the Remove button below.
-                                    </p>
-                                      <ul style="padding-left: 1rem;">
-                                        <li class="no-list-type">
-                                            <button onclick="removeAllLayers()" class="wizard-button">Remove Non-Tool Layers</button>
-                                            <p></p>
-                                        </li>
-                                      </ul>
+                                        <p>
+                                            If you have layers already on the map that you intend to compare,
+                                            we recommend disabling them from the layer panel prior to adding them to
+                                            this tool to avoid having duplicate and possibly misleading layers visible.
+                                            You can remove them from the map with the Remove button below.
+                                        </p>
+                                        <ul style="padding-left: 1rem;">
+                                            <li class="no-list-type">
+                                                <button onclick="removeAllLayers()" class="wizard-button">Remove
+                                                    Non-Tool Layers
+                                                </button>
+                                                <p></p>
+                                            </li>
+                                        </ul>
 
                                         <div class="compare-container">
                                             <div class="compare-text">Compare</div>
                                             <div class="box" style="border-right: 1px solid #0D3309">
-                                                <select id="left_compare_layer" onchange="updateChangeLegend(this.value, 'left')">
+                                            <label id="left_compare_layer_label" for="left_compare_layer"></label>
+                                                <select id="left_compare_layer"
+                                                        onchange="updateChangeLegend(this.value, 'left')">
                                                     {% for layer in data_layers %}
                                                         {% if layer.hasVisualization and layer.compare_enabled %}
                                                             <option value="{{ layer.ui_id }}"
@@ -2430,20 +260,21 @@ function selectcompare(which){
                                                 </select>
                                                 <div class="buffer "
                                                      style="position: relative;">
+                                                    <label id="left_compare_date_label" for="left_compare_date"></label>
                                                     <input type="text"
                                                            class="yearpicker ignore-elements"
                                                            size="4"
                                                            id="left_compare_date"
                                                            onclick="openPicker(this)"
-                                                           onchange="selectcompare(this);"
-
+                                                           onchange="select_compare(this)"
                                                            value="2022"
                                                     />
                                                 </div>
 
                                                 <div class="legend-container" id="left_legend_container">
                                                     <span class="legend-text">Legend</span>
-                                                    <img src="{% static '/images/crop_land.png' %}" id="left_legend_image" width="10" height="10"
+                                                    <img src="{% static '/images/crop_land.png' %}"
+                                                         id="left_legend_image" width="10" height="10"
                                                          alt="Legend"/>
 
                                                 </div>
@@ -2451,7 +282,9 @@ function selectcompare(which){
                                             </div>
                                             <div class="box-connector"></div>
                                             <div class="box" style="border-left: 1px solid #0D3309">
-                                                <select id="right_compare_layer" onchange="updateChangeLegend(this.value, 'right')">
+                                            <label id="right_compare_layer_label" for="right_compare_layer"></label>
+                                                <select id="right_compare_layer"
+                                                        onchange="updateChangeLegend(this.value, 'right')">
                                                     {% for layer in data_layers %}
                                                         {% if layer.hasVisualization and layer.compare_enabled %}
                                                             <option value="{{ layer.ui_id }}"
@@ -2461,57 +294,56 @@ function selectcompare(which){
                                                 </select>
                                                 <div class="buffer "
                                                      style="position: relative;">
+                                                    <label id="right_compare_date_label" for="right_compare_date"></label>
                                                     <input type="text"
                                                            class="yearpicker ignore-elements"
                                                            size="4"
                                                            id="right_compare_date"
                                                            onclick="openPicker(this)"
-                                                           onchange="selectcompare(this);"
+                                                           onchange="select_compare(this);"
 
                                                            value="2023"
                                                     />
                                                 </div>
                                                 <div class="legend-container" id="right_legend_container">
                                                     <span class="legend-text">Legend</span>
-                                                    <img src="{% static '/images/crop_land_compare.png' %}" id="right_legend_image" width="10" height="10"
+                                                    <img src="{% static '/images/crop_land_compare.png' %}"
+                                                         id="right_legend_image" width="10" height="10"
                                                          alt="Legend"/>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <p style="text-align: right;">
-
-
-                                         <ul style="padding-left: 1rem;">
+                                    <p style="text-align: right;"></p>
+                                
+                                    <ul style="padding-left: 1rem;">
                                         <li class="no-list-type">
                                             <button onclick="performComparison()" class="wizard-button">Compare</button>
-                                            <p>Click this button to activate or update the layer comparison tool with the selected
+                                            <p>Click this button to activate or update the layer comparison tool with
+                                                the selected
                                                 parameters.</p>
                                         </li>
                                         <li class="no-list-type">
-                                            <button onclick="removeComparison()" class="wizard-button">Exit Tool
+                                            <button onclick="remove_comparison()" class="wizard-button">Exit Tool
                                             </button>
                                             <p>Click this button to remove the layer comparison tool from the UI. The
                                                 comparison tool will remain displayed until this button is clicked, even
                                                 if you navigate to a different panel tab.</p>
                                         </li>
                                         <li class="no-list-type">
-                                            <button onclick="resetToStep1()" class="wizard-button">More Info</button>
+                                            <button onclick="toggle_instructions()" class="wizard-button">More Info</button>
                                             <p>Click this button to get more info about the compare tool.</p>
                                         </li>
                                     </ul>
-                                    </p>
+                                    
                                 </div>
 
-
-
                                 <!-- Step 4: Confirmation and Visualization -->
-                                
 
                             </div>
                         </div>
-                     
+
                         <div class="sidebar-pane" id="layers">
                             <h1 class="sidebar-header">
                                 Layers
@@ -2540,63 +372,48 @@ function selectcompare(which){
                                                             <div class="rst__moveHandle"></div>
                                                             <div class="rst__rowContents ignore-elements ">
                                                                 <div class="rst__rowLabel ">
-
-                                                                        <span
-                                                                                class="rst__rowTitle "
-                                                                                title="{{ layer.title }}"
-                                                                                data-toggle="tooltip"
-                                                                        >
-                                      <input type="checkbox"
-                                             id="{{ layer.ui_id }}"
-                                             name="{{ layer.ui_id }}"
-                                             onchange="toggleLayer('{{ layer.ui_id }}')" {% if layer.default_on %}
-                                             checked {% endif %}/>
-                                      <label for="{{ layer.ui_id }}"
-                                             class="cblabel">{{ layer.title }}</label>
-                                      <br/>
-                                  </span>
-                                                                    <div class="ignore-elements "
-                                                                         style="position: relative;">
-{#                                                                    <div class="input-container">#}
-
-{#                                                                        <i class="fas fa-cog settings-btn"#}
-{#                                                                           onclick="openSettings('{{ layer.ui_id }}TimeLayer')"#}
-{#                                                                           style="float: right; margin: 0 0 15px 15px;">#}
-{##}
-{#                                                                        </i>#}
-
+                                                                    <span
+                                                                            class="rst__rowTitle "
+                                                                            title="{{ layer.title }}"
+                                                                            data-toggle="tooltip"
+                                                                    >
+                                                                          <input type="checkbox"
+                                                                                 id="{{ layer.ui_id }}"
+                                                                                 name="{{ layer.ui_id }}"
+                                                                                 onchange="toggleLayer('{{ layer.ui_id }}')" {% if layer.default_on %}
+                                                                                 checked {% endif %}/>
+                                                                          <label for="{{ layer.ui_id }}"
+                                                                                 class="cblabel">{{ layer.title }}</label>
+                                                                          <br/>
+                                                                    </span>
+                                                                    <div class="ignore-elements " style="position: relative;">
+                                                                    <label id="{{ layer.ui_id }}_date_label" for="{{ layer.ui_id }}_date"></label>
                                                                         <input type="text"
-                                                                               class="{% if layer.default_month %}monthlypicker {% else %}yearpicker {% endif %} ignore-elements  {% if not layer.default_on %}
-                                                                       disabled {% endif %}"
-                                                                               size="{% if layer.default_month %}6{% else %}4{% endif %}"
-                                                                               id="{{ layer.ui_id }}_date"
-                                                                               onclick="openPicker(this)"
-                                                                               onchange="updateLayer(this);"
-                                                                                {% if not layer.default_on %}
-                                                                               disabled {% endif %}
-                                                                               value="{% if layer.default_month %}{{ layer.default_month }}-{% endif %}{{ layer.default_year }}"
+                                                                           class="{% if layer.default_month %}monthlypicker {% else %}yearpicker {% endif %} ignore-elements  {% if not layer.default_on %}
+                                                                           disabled {% endif %}"
+                                                                           size="{% if layer.default_month %}6{% else %}4{% endif %}"
+                                                                           id="{{ layer.ui_id }}_date"
+                                                                           onclick="openPicker(this)"
+                                                                           onchange="updateLayer(this);"
+                                                                            {% if not layer.default_on %}
+                                                                           disabled {% endif %}
+                                                                           value="{% if layer.default_month %}{{ layer.default_month }}-{% endif %}{{ layer.default_year }}"
                                                                         />
-{##}
-{#                                                                        <div class="container">#}
-{#                                                                            <div class="compare-text">Compare</div>#}
-{#                                                                            <div class="box"></div>#}
-{#                                                                            <div class="box"></div>#}
-{#                                                                        </div>#}
-                                                                    <i id="legend_{{ layer.ui_id }}TimeLayer "
+                                                                        <i id="legend_{{ layer.ui_id }}TimeLayer "
                                                                            class="fas fa-list legend-btn"
                                                                            onclick="openLegend('{{ layer.ui_id }}TimeLayer')"
                                                                            style="float: right; margin: 0 15px 15px 15px; cursor: pointer;">
-
                                                                         </i>
 
-{#</div>#}
                                                                     </div>
                                                                     <div class="slider-container opacity-control">
+                                                                        <label id="slider_{{ layer.ui_id }}_label" for="slider_{{ layer.ui_id }}"></label>
                                                                         <input type="range" min="0" max="100"
-                                                                               value="100"
-                                                                               class="slider opacity-control"
-                                                                               style="display:block; width:100%"
-                                                                               oninput="set_layer_opacity('{{ layer.ui_id }}', this.value )">
+                                                                            value="100"
+                                                                            id="slider_{{ layer.ui_id }}"
+                                                                            class="slider opacity-control"
+                                                                            style="display:block; width:100%"
+                                                                            oninput="set_layer_opacity('{{ layer.ui_id }}', this.value )">
                                                                     </div>
 
                                                                 </div>
@@ -2613,14 +430,12 @@ function selectcompare(which){
                                 {% endfor %}
                             </ol>
                         </div>
-
-
                         <div class="sidebar-pane" id="basemap">
                             <h1 class="sidebar-header" style="margin-bottom: 8px;">
                                 Basemaps
                                 <span class="sidebar-close">
-                              <i class="fas fa-caret-left"></i>
-                            </span>
+                                  <i class="fas fa-caret-left"></i>
+                                </span>
                             </h1>
                         </div>
                     </div>
@@ -2630,13 +445,11 @@ function selectcompare(which){
                 </div>
             </div>
 
-
             <div class="col-sm-12  col-xl-3 mg-t-20 sidebar-scroller" style=" overflow-y: scroll">
                 <div class="row">
                     <div class="col-sm-12  col-xl-12 mg-t-20" id="riceAreaHolder" style="z-index: 1005;">
                         <div id="rice_area" class="chart-holder">
                         </div>
-
                     </div>
                     <div class="col-sm-12  col-xl-12 mg-t-20 aspect-ratio-container" id="paddyHolder"
                          style="z-index: 1004;">
@@ -2646,37 +459,46 @@ function selectcompare(which){
                          style="z-index: 1004;">
                         <div id="rice_yield" class="chart-holder"></div>
                     </div>
-
-
-                        <div id="sparklineChart" class="chart-holder">
-                            <!-- Nav tabs -->
-                            <ul class="nav nav-tabs" role="tablist">
-                                <li role="presentation" ><button data-bs-target="#ndvi-tab" aria-controls="ndvi-tab"
-                                                                          role="tab" data-bs-toggle="tab" class="tab-button active">NDVI</button></li>
-                                <li role="presentation"><button data-bs-target="#precipitation-tab" aria-controls="precipitation-tab"
-                                                           role="tab" data-bs-toggle="tab" class="tab-button">Precipitation</button></li>
-                                <li role="presentation"><button data-bs-target="#soil-moisture-tab" aria-controls="soil-moisture-tab"
-                                                           role="tab" data-bs-toggle="tab" class="tab-button">Soil Moisture</button></li>
-                                <li role="presentation"><button data-bs-target="#temperature-tab" aria-controls="temperature-tab"
-                                                           role="tab" data-bs-toggle="tab" class="tab-button">Temperature</button></li>
-                            </ul>
-
-                            <!-- Tab panes -->
-                            <div class="tab-content">
-                                <div role="tabpanel" class="tab-pane active" id="ndvi-tab">
-                                    <div class="sparkline-chart" id="ndvi-spark"></div>
-                                </div>
-                                <div role="tabpanel" class="tab-pane" id="precipitation-tab">
-                                    <div class="sparkline-chart" id="precipitation-spark"></div>
-                                </div>
-                                <div role="tabpanel" class="tab-pane" id="soil-moisture-tab">
-                                    <div class="sparkline-chart" id="soil-moisture-spark"></div>
-                                </div>
-                                <div role="tabpanel" class="tab-pane" id="temperature-tab">
-                                    <div class="sparkline-chart" id="temperature-spark"></div>
-                                </div>
+                    <div id="sparklineChart" class="chart-holder">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation">
+                                <button data-bs-target="#ndvi-tab" aria-controls="ndvi-tab"
+                                        role="tab" data-bs-toggle="tab" class="tab-button active">NDVI
+                                </button>
+                            </li>
+                            <li role="presentation">
+                                <button data-bs-target="#precipitation-tab" aria-controls="precipitation-tab"
+                                        role="tab" data-bs-toggle="tab" class="tab-button">Precipitation
+                                </button>
+                            </li>
+                            <li role="presentation">
+                                <button data-bs-target="#soil-moisture-tab" aria-controls="soil-moisture-tab"
+                                        role="tab" data-bs-toggle="tab" class="tab-button">Soil Moisture
+                                </button>
+                            </li>
+                            <li role="presentation">
+                                <button data-bs-target="#temperature-tab" aria-controls="temperature-tab"
+                                        role="tab" data-bs-toggle="tab" class="tab-button">Temperature
+                                </button>
+                            </li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="ndvi-tab">
+                                <div class="sparkline-chart" id="ndvi-spark"></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="precipitation-tab">
+                                <div class="sparkline-chart" id="precipitation-spark"></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="soil-moisture-tab">
+                                <div class="sparkline-chart" id="soil-moisture-spark"></div>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" id="temperature-tab">
+                                <div class="sparkline-chart" id="temperature-spark"></div>
                             </div>
                         </div>
+                    </div>
                     <div class="col-sm-12 col-md-12 col-xl-12 mg-t-20 pie-slider order-sm-second"
                          style="z-index: 1002; border-bottom: solid 1px; border-left: solid 1px; border-right: solid 1px;">
                         <div class="form-group year-slider">
@@ -2687,8 +509,6 @@ function selectcompare(which){
                     </div>
                 </div>
             </div>
-
-
         </div>
         <div id="dialog" style="display: none" class="ui-widget-content dialog-max-height">
             <p>
